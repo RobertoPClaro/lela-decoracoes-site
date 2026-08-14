@@ -57,7 +57,7 @@ button { color: inherit; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 50px; padding: .75rem 1.25rem; border: 1px solid transparent; border-radius: 999px; color: var(--white); background: var(--purple-600); box-shadow: 0 10px 22px rgba(123, 63, 152, .2); font-weight: 700; line-height: 1.2; text-align: center; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
 .button:hover { background: var(--purple-700); box-shadow: 0 14px 30px rgba(123, 63, 152, .25); transform: translateY(-2px); }
 .button--small { min-height: 42px; padding: .6rem 1rem; font-size: .82rem; }
-.button--header { box-shadow: none; }
+.primary-nav .button--header { color: var(--white); box-shadow: none; }
 .button--secondary { color: var(--purple-700); background: transparent; border-color: var(--lilac); box-shadow: none; }
 .button--secondary:hover { color: var(--purple-800); background: var(--lilac-soft); box-shadow: none; }
 .button--light { color: var(--purple-800); background: var(--white); box-shadow: none; }
