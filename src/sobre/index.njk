@@ -1,0 +1,20 @@
+---
+layout: layouts/base.njk
+title: "Sobre a Lela Decorações"
+description: "Conheça a Lela Decorações, criada por Letícia para oferecer decorações práticas, delicadas e acessíveis em Joinville e Araquari."
+permalink: /sobre/
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Sobre a Lela
+    url: /sobre/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Uma história feita de detalhes</p><h1>Decorar também é cuidar.</h1></div><p class="page-hero__copy">A Lela nasceu para transformar pequenos momentos em experiências bonitas, práticas e possíveis.</p></div></section>
+
+<section class="section"><div class="container split"><div class="split__visual split__visual--owner"><img src="{{ site.ownerAvatar.src | url }}" alt="{{ site.ownerAvatar.alt }}" width="{{ site.ownerAvatar.width }}" height="{{ site.ownerAvatar.height }}" loading="lazy" decoding="async"></div><div class="split__content"><p class="eyebrow">Sobre a Lela</p><h2>Olá, eu sou a Letícia.</h2><p>Letícia é a proprietária da Lela Decorações, uma empresa voltada a decorações práticas, delicadas e econômicas. A proposta é ajudar cada cliente a comemorar com beleza, tranquilidade e um processo possível de entender.</p><ul class="check-list"><li>Pegue e Monte e Mini Festa na Mesa como núcleo da oferta.</li><li>Atendimento para Joinville e Araquari, Santa Catarina.</li><li>Temas reais para inspirar a escolha da sua comemoração.</li></ul></div></div></section>
+
+<section class="section section--lilac"><div class="container"><div class="section-heading"><p class="eyebrow">O que guia o trabalho</p><h2>Menos complicação. Mais presença no momento.</h2></div><div class="audience-grid"><article class="audience-card"><p class="eyebrow">Praticidade</p><h3>Você entende o caminho.</h3><p>Escolha, reserva, retirada, montagem e devolução aparecem de forma clara.</p></article><article class="audience-card"><p class="eyebrow">Delicadeza</p><h3>O detalhe tem intenção.</h3><p>Paletas, temas e formatos são apresentados para inspirar sem deixar tudo com a mesma cara.</p></article><article class="audience-card"><p class="eyebrow">Economia</p><h3>O formato acompanha a festa.</h3><p>Kits compactos ajudam a encontrar uma solução proporcional ao espaço e ao momento.</p></article></div></div></section>
+
+{% set message = "Olá, Lela! Conheci a história da Lela Decorações e quero conversar sobre a minha festa." %}{% set label = "Falar com a Lela" %}{% include "partials/whatsapp-cta.njk" %}

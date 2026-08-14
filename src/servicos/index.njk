@@ -1,0 +1,45 @@
+---
+layout: layouts/base.njk
+title: "Serviços de decoração | Lela Decorações"
+description: "Conheça o Pegue e Monte e a Mini Festa na Mesa da Lela Decorações para festas em Joinville e Araquari."
+permalink: /servicos/
+schemaServiceName: "Serviços de decoração para festas"
+schemaServiceDescription: "Pegue e Monte e Mini Festa na Mesa para celebrações em Joinville e Araquari."
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Serviços
+    url: /servicos/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero">
+  <div class="container page-hero__grid">
+    <div><p class="eyebrow">O que a Lela oferece</p><h1>Escolha a forma de celebrar.</h1></div>
+    <p class="page-hero__copy">Soluções pensadas para quem quer uma festa bonita, prática e proporcional ao espaço e ao momento.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% set eyebrow = "Duas propostas, muitas possibilidades" %}{% set heading = "Um caminho claro para começar." %}{% set copy = "O tema muda, o carinho também. A lógica é simples: você escolhe a experiência que combina com a sua festa e conversa com a Lela para confirmar composição e disponibilidade." %}{% include "partials/section-heading.njk" %}
+    <div class="service-grid">
+      {% set number = "01" %}{% set eyebrow = "Principal" %}{% set heading = "Pegue e Monte" %}{% set copy = "Kit temático para retirar, transportar, montar e devolver. Uma solução para ter autonomia e economia." %}{% set url = "/pegue-e-monte/" %}{% set linkLabel = "Conhecer o Pegue e Monte" %}{% set featured = true %}{% include "partials/service-card.njk" %}
+      {% set number = "02" %}{% set eyebrow = "Principal" %}{% set heading = "Mini Festa na Mesa" %}{% set copy = "Uma montagem compacta para o bolo, o mêsversário, a casa, o restaurante e as celebrações íntimas." %}{% set url = "/mini-festa-na-mesa/" %}{% set linkLabel = "Conhecer a Mini Festa" %}{% set featured = true %}{% include "partials/service-card.njk" %}
+      {% set number = "03" %}{% set eyebrow = "Inspiração" %}{% set heading = "Temas e ocasiões" %}{% set copy = "Infantil, adulto, futebol, chá de bebê, chá revelação e outros estilos aparecem no portfólio real." %}{% set url = "/portfolio/" %}{% set linkLabel = "Explorar portfólio" %}{% set featured = false %}{% include "partials/service-card.njk" %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--lilac">
+  <div class="container comparison">
+    <article class="comparison-card comparison-card--accent"><p class="eyebrow">Dentro do Pegue e Monte</p><h3>Kit Minimalista</h3><p>Proposta compacta com painel temático de 50 × 50 cm, balões e outros elementos decorativos. Indicada para casa, restaurante ou poucas pessoas.</p><ul class="fact-row"><li>Compacto</li><li>Fácil de transportar</li><li>Composição a confirmar</li></ul></article>
+    <article class="comparison-card"><p class="eyebrow">Dentro do Pegue e Monte</p><h3>Kit Grande</h3><p>Montagem de maior impacto com painéis de 1,50 × 1,50 m, cilindros P/M/G e outros elementos. O espaço e o transporte entram na escolha.</p><ul class="fact-row"><li>Mais presença</li><li>Painéis e cilindros</li><li>Composição a confirmar</li></ul></article>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container"><p class="provisional-note">Consulte pelo WhatsApp os valores, itens disponíveis e a melhor opção para a sua festa.</p></div>
+</section>
+
+{% set message = "Olá, Lela! Quero entender qual serviço combina melhor com a minha festa." %}{% set label = "Quero escolher um serviço" %}{% include "partials/whatsapp-cta.njk" %}

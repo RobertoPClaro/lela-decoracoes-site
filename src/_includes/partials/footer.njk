@@ -1,0 +1,37 @@
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand brand--footer" href="{{ '/' | url }}" aria-label="Lela Decorações — início">
+        <img class="brand__logo" src="{{ '/assets/images/reference/763050356_18613920478042020_6619288363067691579_n.jpeg' | url }}" alt="" width="58" height="58">
+        <span class="brand__text"><strong>Lela</strong><span>Decorações</span></span>
+      </a>
+      <p>Pequenos momentos, cenários cheios de carinho.</p>
+      <div class="footer-socials">
+        <a href="{{ site.instagramUrl }}" target="_blank" rel="noopener">Instagram <span aria-hidden="true">↗</span></a>
+        <a href="{{ site.whatsappLink() }}" target="_blank" rel="noopener">WhatsApp <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <div>
+      <p class="footer-title">Navegue</p>
+      <ul class="footer-links">
+        <li><a href="{{ '/servicos/' | url }}">Serviços</a></li>
+        <li><a href="{{ '/portfolio/' | url }}">Portfólio</a></li>
+        <li><a href="{{ '/como-funciona/' | url }}">Como funciona</a></li>
+        <li><a href="{{ '/duvidas/' | url }}">Dúvidas</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-title">Atendimento</p>
+      <ul class="footer-links">
+        <li><address><a href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ site.address.streetAddress }}<br>{{ site.address.neighborhood }}, {{ site.address.city }} - {{ site.address.state }}<br>CEP {{ site.address.postalCode }}</a></address></li>
+        <li>{{ site.facts.serviceHours }}</li>
+        <li><a href="{{ site.whatsappLink() }}" target="_blank" rel="noopener">{{ site.phoneDisplay }}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© {{ '' | year }} Lela Decorações</span>
+    <a href="{{ '/politica-de-privacidade/' | url }}">Privacidade</a>
+    <span>Feito para celebrar com leveza.</span>
+  </div>
+</footer>

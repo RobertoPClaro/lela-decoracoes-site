@@ -1,0 +1,12 @@
+<article class="portfolio-card" data-filter-item data-category="{{ item.category }}" data-source="{{ item.sourceType }}" data-theme="{{ item.slug }}">
+  <button class="portfolio-card__button" type="button" data-lightbox-trigger data-lightbox-src="{{ site.pathPrefix }}assets/images/generated/{{ item.generatedBase }}-1200.jpg" data-lightbox-alt="{{ item.alt }}" data-lightbox-caption="{{ item.caption }}" aria-label="Ampliar foto: {{ item.themeName }}">
+    <span class="portfolio-card__media">
+      {% set imageClass = "portfolio-card__image" %}{% set imageSizes = "(min-width: 1100px) 25vw, (min-width: 700px) 33vw, 50vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
+      <span class="portfolio-card__zoom" aria-hidden="true">↗</span>
+    </span>
+    <span class="portfolio-card__content">
+      <span class="portfolio-card__tag">{{ item.categoryLabel }}</span>
+      <span class="portfolio-card__title">{{ item.themeName }}</span>
+    </span>
+  </button>
+</article>

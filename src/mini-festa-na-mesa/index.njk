@@ -1,0 +1,59 @@
+---
+layout: layouts/base.njk
+title: "Mini Festa na Mesa em Joinville | Lela Decorações"
+description: "Mini Festa na Mesa da Lela Decorações para mêsversário, aniversário e celebrações íntimas em Joinville e Araquari."
+permalink: /mini-festa-na-mesa/
+schemaServiceName: "Mini Festa na Mesa"
+schemaServiceDescription: "Decoração compacta para celebrações pequenas em Joinville e Araquari."
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Serviços
+    url: /servicos/
+  - label: Mini Festa na Mesa
+    url: /mini-festa-na-mesa/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero">
+  <div class="container page-hero__grid">
+    <div><p class="eyebrow">Uma celebração compacta</p><h1>Às vezes, uma mesa conta a história inteira.</h1></div>
+    <p class="page-hero__copy">Para o “só um bolinho”, o mêsversário, o chá ou uma comemoração em casa — com cuidado nos detalhes e sem excesso.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split split--reverse">
+    <div class="split__content">
+      <p class="eyebrow">Mini Festa na Mesa</p>
+      <h2>Pequena no tamanho. Inteira no carinho.</h2>
+      <p>As fotos do acervo mostram composições com mesa ou aparador, painel, boleira, bandejas, displays e balões. A composição muda de acordo com o tema e precisa ser confirmada em cada atendimento.</p>
+      <ul class="check-list">
+        <li>Boa para casa, restaurante e espaços menores.</li>
+        <li>Funciona para aniversários, mêsversários e encontros íntimos.</li>
+        <li>Permite começar pelo tema e adaptar a linguagem visual.</li>
+        <li>O que está incluso é explicado antes da reserva.</li>
+      </ul>
+      <div style="margin-top:1.6rem"><a class="button" href="{{ site.whatsappLink('Olá, Lela! Quero montar uma Mini Festa na Mesa.') }}" target="_blank" rel="noopener">Quero uma Mini Festa <span aria-hidden="true">↗</span></a></div>
+    </div>
+    <div class="split__visual">
+      {% set image = portfolio.featured[3] %}
+      {% set item = image %}{% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--lilac">
+  <div class="container">
+    {% set eyebrow = "Onde ela combina" %}{% set heading = "Uma solução para momentos que pedem presença, não exagero." %}{% set copy = "Use estes exemplos como inspiração. A Lela confirma o tema, os itens disponíveis e o melhor formato para a sua data." %}{% include "partials/section-heading.njk" %}
+    <div class="audience-grid">
+      <article class="audience-card"><p class="eyebrow">Infantil</p><h3>Aniversário e mêsversário</h3><p>Um cenário temático para fotos, bolo e parabéns sem ocupar o evento inteiro.</p></article>
+      <article class="audience-card"><p class="eyebrow">Família</p><h3>Chá de bebê e revelação</h3><p>Paletas delicadas e propostas neutras podem criar um ponto de encontro acolhedor.</p></article>
+      <article class="audience-card"><p class="eyebrow">Adulto</p><h3>Almoço, jantar e aniversário</h3><p>Composições com mais sobriedade para celebrar uma pessoa ou uma ocasião especial.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight"><div class="container"><p class="provisional-note">Consulte no atendimento se bolo, doces, personalizados, mobiliário e outros itens fazem parte da composição escolhida.</p></div></section>
+
+{% set message = "Olá, Lela! Quero consultar uma Mini Festa na Mesa. Data: [data]. Tema/ocasião: [tema]." %}{% set label = "Planejar minha Mini Festa" %}{% include "partials/whatsapp-cta.njk" %}

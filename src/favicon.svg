@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Lela Decorações</title>
+  <desc id="desc">Borboleta estilizada em roxo</desc>
+  <rect width="64" height="64" rx="18" fill="#7b3f98"/>
+  <path fill="#f3e9fa" d="M31.6 30.2c-5-12.2-16.5-13.5-18.8-7.5-1.7 4.4 3 8.7 11.6 10.1-8.6 1.5-13.3 5.8-11.6 10.1 2.3 6 13.8 4.7 18.8-7.5.1 6.4-1.4 10.5-4 13.2l4.3 2.4 4.3-2.4c-2.6-2.7-4.1-6.8-4-13.2 5 12.2 16.5 13.5 18.8 7.5 1.7-4.3-3-8.6-11.6-10.1 8.6-1.4 13.3-5.7 11.6-10.1-2.3-6-13.8-4.7-18.8 7.5Z"/>
+  <circle cx="32" cy="32" r="2.4" fill="#7b3f98"/>
+</svg>

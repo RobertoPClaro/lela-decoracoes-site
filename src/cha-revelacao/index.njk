@@ -1,0 +1,23 @@
+---
+layout: layouts/base.njk
+title: "Decoração para chá revelação em Joinville | Lela Decorações"
+description: "Planeje uma decoração delicada para chá revelação com a Lela Decorações em Joinville e Araquari."
+permalink: /cha-revelacao/
+schemaServiceName: "Decoração para chá revelação"
+schemaServiceDescription: "Decorações para chá revelação em Joinville e Araquari, com consulta de tema e disponibilidade."
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Portfólio
+    url: /portfolio/
+  - label: Chá revelação
+    url: /cha-revelacao/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Um momento de expectativa</p><h1>Uma decoração neutra até a hora da revelação.</h1></div><p class="page-hero__copy">Referências para celebrar a chegada do bebê com delicadeza, espaço para fotos e uma montagem que respeita o tamanho do encontro.</p></div></section>
+
+<section class="section"><div class="container split"><div class="split__visual">{% set image = portfolio.featured[1] %}{% set item = image %}{% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}</div><div class="split__content"><p class="eyebrow">Como conversar com a Lela</p><h2>Conte a data e o clima. O segredo fica com você.</h2><p>Para planejar um chá revelação, informe a ocasião e as cores desejadas. Se houver uma informação que precisa permanecer em sigilo, combine pelo WhatsApp a melhor forma de enviar os detalhes.</p><ul class="check-list"><li>Defina se prefere uma composição neutra ou combinada.</li><li>Consulte o porte e os itens disponíveis para sua data.</li><li>Confirme retirada, montagem, devolução e condições da reserva.</li></ul></div></div></section>
+
+<section class="section section--lilac"><div class="container"><div class="section-heading"><p class="eyebrow">Inspiração para a mesa</p><h2>O tema pode ser sutil. O momento, não.</h2><p>Use o portfólio como referência e consulte no atendimento a composição disponível para a sua data.</p></div><div class="portfolio-grid">{% for item in portfolio.themes | where("category", "tema-diversos") | take(6) %}{% include "partials/portfolio-card.njk" %}{% endfor %}</div></div></section>
+{% set message = "Olá, Lela! Quero planejar um chá revelação. Data: [data]. Cidade/bairro: [local]. Gostaria de conversar sobre o tema e o sigilo." %}{% set label = "Planejar chá revelação" %}{% include "partials/whatsapp-cta.njk" %}

@@ -1,0 +1,71 @@
+---
+layout: layouts/base.njk
+title: "Pegue e Monte em Joinville e Araquari | Lela Decorações"
+description: "Entenda como funciona o Pegue e Monte da Lela Decorações: escolha o tema, consulte a data, retire, monte e devolva com orientação."
+permalink: /pegue-e-monte/
+schemaServiceName: "Pegue e Monte"
+schemaServiceDescription: "Kits temáticos para retirar, transportar, montar e devolver em Joinville e Araquari."
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Serviços
+    url: /servicos/
+  - label: Pegue e Monte
+    url: /pegue-e-monte/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero">
+  <div class="container page-hero__grid">
+    <div><p class="eyebrow">Serviço principal</p><h1>Você monta. A festa ganha vida.</h1></div>
+    <p class="page-hero__copy">Um jeito prático de levar uma decoração temática para casa, restaurante ou espaço de comemoração sem contratar uma produção grande.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div class="split__visual">
+      {% set image = portfolio.featured[6] %}
+      {% set item = image %}{% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
+    </div>
+    <div class="split__content">
+      <p class="eyebrow">Autonomia com apoio</p>
+      <h2>Bonito, possível e explicado.</h2>
+      <p>O Pegue e Monte concentra a decoração em um kit temático para você retirar, levar ao evento, montar em poucos minutos, desmontar e devolver na data combinada.</p>
+      <ul class="check-list">
+        <li>Escolha o tema e o porte que fazem sentido para a sua celebração.</li>
+        <li>Consulte a disponibilidade antes de reservar.</li>
+        <li>Receba orientações de cuidado e montagem.</li>
+        <li>Retirada e devolução pelo cliente são a regra; logística pode ser consultada.</li>
+      </ul>
+      <div style="margin-top:1.6rem"><a class="button" href="{{ site.whatsappLink('Olá, Lela! Quero consultar um kit Pegue e Monte.') }}" target="_blank" rel="noopener">Consultar meu kit <span aria-hidden="true">↗</span></a></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--lilac">
+  <div class="container">
+    {% set eyebrow = "Escolha o porte" %}{% set heading = "Duas referências para orientar a conversa." %}{% set copy = "Itens, quantidades e disponibilidade variam conforme o tema e são definidos no atendimento." %}{% include "partials/section-heading.njk" %}
+    <div class="comparison">
+      <article class="comparison-card comparison-card--accent"><p class="eyebrow">Compacto</p><h3>Minimalista</h3><p>Painel temático de 50 × 50 cm, balões e outros elementos decorativos. Uma alternativa para espaços menores e encontros com poucas pessoas.</p><ul class="fact-row"><li>Casa</li><li>Restaurante</li><li>Poucas pessoas</li></ul></article>
+      <article class="comparison-card"><p class="eyebrow">Mais impacto</p><h3>Grande</h3><p>Painéis de 1,50 × 1,50 m, cilindros P, M e G e outros elementos. Considere espaço, transporte e o efeito que você quer criar.</p><ul class="fact-row"><li>Painéis</li><li>Cilindros P/M/G</li><li>Espaço necessário</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% set eyebrow = "Como funciona" %}{% set heading = "Um fluxo que você consegue visualizar." %}{% set copy = "Antes de falar em preço, o mais importante é saber como a experiência acontece." %}{% include "partials/section-heading.njk" %}
+    <div class="timeline">
+      <article class="timeline-item"><span class="timeline-number">1</span><div><h3>Escolha o tema</h3><p>Explore o portfólio e envie para a Lela o tema, estilo ou ocasião que você procura.</p></div></article>
+      <article class="timeline-item"><span class="timeline-number">2</span><div><h3>Consulte data e porte</h3><p>Informe data, cidade/bairro e se pensa no Minimalista, no Grande ou ainda está em dúvida.</p></div></article>
+      <article class="timeline-item"><span class="timeline-number">3</span><div><h3>Reserve</h3><p>A data é confirmada após o pagamento de entrada de 50%, conforme as condições vigentes.</p></div></article>
+      <article class="timeline-item"><span class="timeline-number">4</span><div><h3>Retire e monte</h3><p>Leve o kit ao evento e monte seguindo as orientações recebidas.</p></div></article>
+      <article class="timeline-item"><span class="timeline-number">5</span><div><h3>Devolva no combinado</h3><p>Desmonte e devolva os itens dentro do prazo alinhado. Entrega/retirada no local pode ser consultada.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight section--lilac"><div class="container"><p class="provisional-note">Antes de reservar, consulte no contrato as regras de cuidado, atraso, danos, cancelamento, pagamento e logística.</p></div></section>
+
+{% set message = "Olá, Lela! Quero consultar um Pegue e Monte. Data: [data]. Cidade/bairro: [local]. Tema: [tema]." %}{% set label = "Consultar um Pegue e Monte" %}{% include "partials/whatsapp-cta.njk" %}

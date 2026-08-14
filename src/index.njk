@@ -1,0 +1,132 @@
+---
+layout: layouts/base.njk
+title: "Lela Decorações | Pegue e Monte em Joinville e Araquari"
+description: "Decorações para festas em Joinville e Araquari: Pegue e Monte e Mini Festa na Mesa com praticidade, delicadeza e economia."
+permalink: /
+activeNav: home
+bodyClass: home
+breadcrumbs:
+  - label: Início
+    url: /
+---
+
+{% set hero = portfolio.featured[0] %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy-block">
+      <p class="eyebrow">Lela Decorações · Joinville &amp; Araquari</p>
+      <h1>Uma festa bonita, <em>leve</em> de montar.</h1>
+      <p class="hero-copy">Pegue e Monte e Mini Festa na Mesa para celebrar com praticidade, delicadeza e economia — do jeitinho que o seu momento merece.</p>
+      <div class="hero-actions">
+        <a class="button" href="{{ site.whatsappLink('Olá, Lela! Quero consultar a disponibilidade de uma decoração.') }}" target="_blank" rel="noopener">Consultar disponibilidade <span aria-hidden="true">↗</span></a>
+        <a class="button button--secondary" href="{{ '/portfolio/' | url }}">Ver trabalhos</a>
+      </div>
+      <div class="hero-note" aria-label="Diferenciais">
+        <span>Temas reais do acervo</span>
+        <span>Processo explicado</span>
+        <span>Atendimento próximo</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual__frame">
+        {% set item = hero %}{% set imageClass = "hero-visual__image" %}{% set imageSizes = "(min-width: 900px) 45vw, 92vw" %}{% set imageLoading = "eager" %}{% set imageFetchPriority = "high" %}{% set imagePreset = "hero" %}{% include "partials/image.njk" %}
+      </div>
+      <div class="hero-label"><strong>Ursinho Bebê</strong><span>kit montado</span></div>
+      <div class="hero-stamp">feito para<br>celebrar<br>com carinho</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="servicos">
+  <div class="container">
+    {% set eyebrow = "Escolha o seu jeito" %}{% set heading = "Decoração que cabe no momento e no seu espaço." %}{% set copy = "Duas soluções principais para quem quer uma comemoração especial sem transformar a organização em um peso." %}
+    {% include "partials/section-heading.njk" %}
+    <div class="service-grid">
+      {% set number = "01" %}{% set eyebrow = "Serviço principal" %}{% set heading = "Pegue e Monte" %}{% set copy = "Você escolhe o tema, agenda a retirada, monta no seu evento e devolve na data combinada. Autonomia com orientação." %}{% set url = "/pegue-e-monte/" %}{% set linkLabel = "Entender como funciona" %}{% set featured = true %}
+      {% include "partials/service-card.njk" %}
+      {% set number = "02" %}{% set eyebrow = "Serviço principal" %}{% set heading = "Mini Festa na Mesa" %}{% set copy = "Uma composição compacta para o bolo, o mêsversário, a casa, o restaurante ou aquela celebração íntima cheia de significado." %}{% set url = "/mini-festa-na-mesa/" %}{% set linkLabel = "Ver a proposta" %}{% set featured = true %}
+      {% include "partials/service-card.njk" %}
+      {% set number = "03" %}{% set eyebrow = "Variações de porte" %}{% set heading = "Minimalista ou Grande" %}{% set copy = "Escolha o impacto e o espaço da montagem. A composição final e a disponibilidade são confirmadas no atendimento." %}{% set url = "/pegue-e-monte/" %}{% set linkLabel = "Comparar opções" %}{% set featured = false %}
+      {% include "partials/service-card.njk" %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--lilac" id="portfolio-home">
+  <div class="container">
+    <div class="section-intro-row">
+      <div>{% set eyebrow = "Portfólio real" %}{% set heading = "Ideias para você se enxergar na festa." %}{% set copy = "Use as fotos como ponto de partida e consulte o tema desejado." %}{% include "partials/section-heading.njk" %}</div>
+      <a class="text-link" href="{{ '/portfolio/' | url }}">Ver portfólio completo <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="portfolio-grid">
+      {% for item in portfolio.featured | take(8) %}
+        {% include "partials/portfolio-card.njk" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--dark" id="como-funciona-resumo">
+  <div class="container">
+    {% set eyebrow = "Sem complicação" %}{% set heading = "Do tema escolhido à devolução, você sabe o próximo passo." %}{% set copy = "O Pegue e Monte foi pensado para deixar a celebração mais acessível e a organização mais tranquila." %}{% include "partials/section-heading.njk" %}
+    <div class="steps-grid">
+      <article class="step"><span class="step__number">01</span><h3>Escolha a ideia</h3><p>Veja os temas e conte o que você imagina para a sua data.</p></article>
+      <article class="step"><span class="step__number">02</span><h3>Consulte a data</h3><p>A Lela verifica disponibilidade, porte e forma de retirada.</p></article>
+      <article class="step"><span class="step__number">03</span><h3>Monte com calma</h3><p>Você leva o kit ao evento e monta com as orientações recebidas.</p></article>
+      <article class="step"><span class="step__number">04</span><h3>Devolva combinado</h3><p>Desmonte e devolva os itens no prazo alinhado no atendimento.</p></article>
+    </div>
+    <div style="margin-top:2rem"><a class="button button--light" href="{{ '/como-funciona/' | url }}">Ver detalhes do processo <span aria-hidden="true">→</span></a></div>
+  </div>
+</section>
+
+<section class="section" id="temas">
+  <div class="container">
+    {% set eyebrow = "Para cada celebração" %}{% set heading = "Um acervo para começar a imaginar." %}{% set copy = "Kits montados." %}{% include "partials/section-heading.njk" %}
+    <div class="audience-grid">
+      {% for card in portfolio.categoryCards | take(5) %}
+        <a class="audience-card" href="{{ '/portfolio/' | url }}#{{ card.slug }}" style="text-decoration:none">
+          <p class="eyebrow">{{ card.eyebrow }}</p>
+          <h3>{{ card.folder }}</h3>
+          <p>{{ card.copy }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--lilac" id="sobre-resumo">
+  <div class="container split split--reverse">
+    <div class="split__content">
+      <p class="eyebrow">Sobre a Lela</p>
+      <h2>Pequenos momentos também merecem um cenário especial.</h2>
+      <p>Letícia criou a Lela Decorações para oferecer alternativas bonitas, práticas e acessíveis para quem quer comemorar sem complicação.</p>
+      <ul class="check-list">
+        <li>Atendimento para Joinville e Araquari, em Santa Catarina.</li>
+        <li>Pegue e Monte e Mini Festa na Mesa como ofertas centrais.</li>
+        <li>Orientação clara para escolher, montar e devolver.</li>
+      </ul>
+      <div style="margin-top:1.6rem"><a class="text-link" href="{{ '/sobre/' | url }}">Conhecer a história <span aria-hidden="true">→</span></a></div>
+    </div>
+    <div class="split__visual split__visual--owner">
+      <img src="{{ site.ownerAvatar.src | url }}" alt="{{ site.ownerAvatar.alt }}" width="{{ site.ownerAvatar.width }}" height="{{ site.ownerAvatar.height }}" loading="lazy" decoding="async">
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="section-intro-row">
+      <div>{% set eyebrow = "Transparência desde o começo" %}{% set heading = "O que já dá para saber antes de chamar." %}{% set copy = "Veja as principais condições antes de reservar e tire qualquer dúvida pelo WhatsApp." %}{% include "partials/section-heading.njk" %}</div>
+      <a class="text-link" href="{{ '/duvidas/' | url }}">Ver dúvidas frequentes <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="policy-grid">
+      <article class="policy-card"><h3>Reserva</h3><p>{{ site.facts.reservationEntry }}. Consulte a disponibilidade antes de enviar a entrada.</p></article>
+      <article class="policy-card"><h3>Retirada e entrega</h3><p>{{ site.facts.delivery }}</p></article>
+      <article class="policy-card"><h3>Atendimento</h3><p>WhatsApp {{ site.phoneDisplay }}, de {{ site.facts.serviceHours }}.</p></article>
+    </div>
+  </div>
+</section>
+
+{% set message = "Olá, Lela! Vi o site e quero consultar a disponibilidade para a minha festa." %}{% set label = "Falar sobre a minha festa" %}{% include "partials/whatsapp-cta.njk" %}
+
+<div class="lightbox" aria-hidden="true"></div>

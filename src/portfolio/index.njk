@@ -1,0 +1,33 @@
+---
+layout: layouts/base.njk
+title: "Portfólio de decorações | Lela Decorações"
+description: "Veja temas e exemplos de kits montados da Lela Decorações para festas infantis, adultas, futebol e celebrações especiais."
+permalink: /portfolio/
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Portfólio
+    url: /portfolio/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Trabalhos e inspirações</p><h1>Veja o que pode nascer de um tema.</h1></div></div></section>
+
+<section class="section">
+  <div class="container">
+    <div class="filter-bar" role="group" aria-label="Filtrar portfólio">
+      <button class="filter-button" type="button" data-filter-button data-filter="all" aria-pressed="true">Todos</button>
+      {% for category in site.categories %}<button class="filter-button" id="{{ category.slug }}" type="button" data-filter-button data-filter="{{ category.slug }}" aria-pressed="false">{{ category.label }}</button>{% endfor %}
+      <button class="filter-button" type="button" data-filter-button data-filter="kit-example" aria-pressed="false">Kits montados</button>
+    </div>
+    <div class="portfolio-grid" id="temas">
+      {% for item in portfolio.themes %}{% include "partials/portfolio-card.njk" %}{% endfor %}
+    </div>
+    <div style="margin-top:4.5rem" id="kits-montados">
+      <div class="section-heading"><p class="eyebrow">Referência de montagem</p><h2>Kits montados</h2></div>
+      <div class="kit-gallery">{% for item in portfolio.kits %}{% include "partials/portfolio-card.njk" %}{% endfor %}</div>
+    </div>
+  </div>
+</section>
+
+{% set message = "Olá, Lela! Vi o portfólio e quero consultar a disponibilidade do tema [tema] para a data [data]." %}{% set label = "Consultar um tema" %}{% include "partials/whatsapp-cta.njk" %}
