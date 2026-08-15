@@ -16,6 +16,7 @@ const required = [
   "404.html",
   "robots.txt",
   "sitemap.xml",
+  "llms.txt",
   "favicon.svg",
   "assets/css/styles.css",
   "assets/js/main.js"
@@ -32,6 +33,7 @@ const originalCount = fs.existsSync(originalsRoot)
 const htmlFiles = fs.existsSync(root)
   ? fs.readdirSync(root, { recursive: true }).filter((file) => String(file).endsWith(".html"))
   : [];
+const productionOrigin = String(process.env.SITE_URL || "").replace(/\/$/, "");
 
 if (missing.length) {
   console.error(`Build inválido. Ausentes: ${missing.join(", ")}`);
@@ -47,12 +49,34 @@ for (const file of htmlFiles) {
     console.error(`HTML sem metadados/estrutura esperada: ${file}`);
     process.exit(1);
   }
+  if (productionOrigin) {
+    if (!content.includes('rel="canonical"') || !content.includes(productionOrigin)) {
+      console.error(`Canonical ausente ou fora da origem configurada: ${file}`);
+      process.exit(1);
+    }
+  }
 }
 const prefix = String(process.env.PATH_PREFIX || "").replace(/\/+$/, "");
 if (prefix && prefix !== "/") {
   const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
   if (!home.includes(`${prefix}/assets/css/styles.css`) || !home.includes(`${prefix}/portfolio/`)) {
     console.error(`Prefixo de publicação não encontrado nos links: ${prefix}`);
+    process.exit(1);
+  }
+}
+
+if (productionOrigin) {
+  const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
+  const generated = htmlFiles.map((file) => fs.readFileSync(path.join(root, file), "utf8")).join("\n");
+  const siteBase = `${productionOrigin}${prefix && prefix !== "/" ? prefix : ""}`;
+  const forbidden = /robertopclaro\.github\.io|localhost|\/lela-decoracoes-site\/|http:\/\/leladecoracoes\.com/;
+  if (!sitemap.includes(`${siteBase}/`) || !robots.includes(`Sitemap: ${siteBase}/sitemap.xml`)) {
+    console.error(`Sitemap/robots não usam a base configurada: ${siteBase}`);
+    process.exit(1);
+  }
+  if (forbidden.test(`${generated}\n${sitemap}\n${robots}`)) {
+    console.error("Build de produção contém URL pública antiga ou origem insegura.");
     process.exit(1);
   }
 }

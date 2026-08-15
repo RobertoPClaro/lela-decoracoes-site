@@ -13,8 +13,10 @@ npm start
 O preview abre em `http://localhost:8080/`. Para simular publicação em uma subpasta:
 
 ```bash
-PATH_PREFIX=/meu-repositorio/ SITE_URL=https://usuario.github.io/meu-repositorio npm run build
+PATH_PREFIX=/meu-repositorio/ SITE_URL=https://usuario.github.io npm run build
 ```
+
+`SITE_URL` é a origem sem caminho; `PATH_PREFIX` é o caminho de publicação. No domínio próprio, use `SITE_URL=https://leladecoracoes.com` e `PATH_PREFIX=/`.
 
 ## Imagens
 
@@ -31,16 +33,20 @@ O acervo respeita a organização confirmada pela proprietária:
 
 ## Publicação no GitHub Pages
 
-O workflow em `.github/workflows/pages.yml` executa `npm ci`, `npm run build`, valida o resultado e publica `dist`. Ative Pages com a fonte **GitHub Actions**.
+O site oficial é `https://leladecoracoes.com`. O workflow em `.github/workflows/pages.yml` executa `npm ci`, `npm run build`, valida o resultado e publica `dist` no GitHub Pages usando **GitHub Actions**.
 
-Por padrão, o workflow assume GitHub Pages de projeto e monta automaticamente `PATH_PREFIX` como `/<nome-do-repositorio>/`. Para domínio próprio, configure as variáveis do repositório:
+As variáveis de produção do repositório são:
 
 ```text
 PATH_PREFIX=/
-SITE_URL=https://seudominio.com
+SITE_URL=https://leladecoracoes.com
 ```
 
-O domínio real e o arquivo `CNAME` só devem ser adicionados após autorização e confirmação da cliente.
+Com o workflow atual, o GitHub Pages usa o domínio customizado configurado nas definições do repositório; não é necessário adicionar `CNAME` ao código. O `www` deve ser configurado no DNS como CNAME para `robertopclaro.github.io` e o GitHub Pages fará o redirecionamento para o domínio canônico quando os dois registros estiverem corretos.
+
+Para o domínio raiz, configure na Hostinger os quatro registros A oficiais do GitHub Pages: `185.199.108.153`, `185.199.109.153`, `185.199.110.153` e `185.199.111.153`. Remova apenas o registro de estacionamento/construtor que conflitar com o domínio; preserve registros de e-mail como MX, SPF, DKIM e DMARC.
+
+Depois da propagação DNS e emissão do certificado, habilite **Enforce HTTPS** em Settings → Pages. O deploy ocorre automaticamente a cada push na branch `main`.
 
 ## Dados ainda pendentes
 

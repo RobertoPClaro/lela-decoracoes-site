@@ -46,7 +46,7 @@ O site não publica preço, avaliação, endereço de retirada ou composição d
 ```bash
 npm install
 npm run build
-PATH_PREFIX=/preview/ SITE_URL=https://example.test/preview npm run build
+PATH_PREFIX=/preview/ SITE_URL=https://example.test npm run build
 ```
 
 O script de validação verifica páginas essenciais, sitemap, robots, assets e derivados de imagem. A auditoria visual final deve ser executada em 360, 390, 430, 768, 1024 e 1440 px, além de Lighthouse no build publicado em preview.

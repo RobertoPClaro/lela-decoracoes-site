@@ -18,8 +18,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      PATH_PREFIX: ${{ vars.PATH_PREFIX || format('/{0}/', github.event.repository.name) }}
-      SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
+      PATH_PREFIX: ${{ vars.PATH_PREFIX || '/' }}
+      SITE_URL: ${{ vars.SITE_URL || 'https://leladecoracoes.com' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -4,6 +4,7 @@ const pathPrefix = rawPrefix && rawPrefix !== "/"
   : "/";
 const origin = String(process.env.SITE_URL || "").replace(/\/$/, "");
 const baseUrl = origin ? `${origin}${pathPrefix === "/" ? "" : pathPrefix.slice(0, -1)}` : "";
+const organizationId = baseUrl ? `${baseUrl}/#organization` : "";
 
 const phoneDisplay = "(47) 98856-7488";
 const phoneDigits = "5547988567488";
@@ -36,7 +37,11 @@ function serviceSchema(name, description, urlPath) {
     "@type": "Service",
     name,
     description,
-    provider: { "@type": "LocalBusiness", name: "Lela Decorações" },
+    provider: {
+      "@type": "LocalBusiness",
+      ...(organizationId ? { "@id": organizationId } : {}),
+      name: "Lela Decorações"
+    },
     areaServed: ["Joinville", "Araquari"],
     url: absoluteUrl(urlPath)
   });
@@ -71,7 +76,7 @@ function faqSchema(items = [], urlPath = "/duvidas/") {
 const localBusinessSchema = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": absoluteUrl("/") || instagramUrl,
+  "@id": organizationId || instagramUrl,
   name: "Lela Decorações",
   description: "Pegue e Monte e Mini Festa na Mesa com praticidade, delicadeza e economia.",
   telephone: `+${phoneDigits}`,
@@ -86,7 +91,7 @@ const localBusinessSchema = JSON.stringify({
   hasMap: mapsUrl,
   areaServed: ["Joinville, SC", "Araquari, SC"],
   sameAs: [instagramUrl],
-  ...(baseUrl ? { url: baseUrl } : {})
+  ...(baseUrl ? { url: absoluteUrl("/") } : {})
 });
 
 module.exports = {
