@@ -146,6 +146,6 @@ module.exports = {
   sitemapPaths: [
     "/", "/servicos/", "/pegue-e-monte/", "/mini-festa-na-mesa/", "/festas-infantis/",
     "/cha-de-bebe/", "/cha-revelacao/", "/portfolio/", "/como-funciona/", "/sobre/",
-    "/duvidas/", "/contato/", "/politica-de-privacidade/"
+    "/duvidas/", "/contato/", "/politica-de-privacidade/", "/parceiros/"
   ]
 };
