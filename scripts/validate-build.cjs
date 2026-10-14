@@ -2,13 +2,15 @@ const fs = require("node:fs");
 const path = require("node:path");
 const site = require("../src/_data/site.cjs");
 const locations = require("../src/_data/locations.cjs");
+const portfolio = require("../src/_data/portfolio.cjs");
+const themes = require("../src/_data/themes.cjs");
 
 const root = path.resolve(__dirname, "../dist");
 const required = [
   "index.html", "servicos/index.html", "pegue-e-monte/index.html",
   "mini-festa-na-mesa/index.html", "portfolio/index.html", "como-funciona/index.html",
   "sobre/index.html", "duvidas/index.html", "contato/index.html", "parceiros/index.html",
-  "regioes-atendidas/index.html", "404.html", "robots.txt", "sitemap.xml", "llms.txt",
+  "regioes-atendidas/index.html", "temas/index.html", "404.html", "robots.txt", "sitemap.xml", "llms.txt",
   "favicon.svg", "assets/css/styles.css", "assets/js/main.js"
 ];
 const allowedCoverageStatuses = new Set(["UNCONFIRMED", "CONFIRMED", "CONDITIONAL", "NOT_OFFERED"]);
@@ -191,6 +193,105 @@ function validateDistinctContent(pages) {
   }
 }
 
+function validateThemeRegistry() {
+  if (!Array.isArray(themes.pages) || !Array.isArray(themes.published)) fail("cadastro de temas incompleto");
+  const allowedStatuses = new Set(["DRAFT", "READY_FOR_REVIEW", "PUBLISHED"]);
+  const publishedByStatus = themes.pages.filter((page) => page.publicationStatus === "PUBLISHED");
+  if (publishedByStatus.length !== themes.published.length ||
+      publishedByStatus.some((page, index) => themes.published[index]?.path !== page.path)) {
+    fail("themes.published deve conter somente as páginas com status PUBLISHED");
+  }
+
+  const slugs = new Set();
+  const paths = new Set(["/temas/"]);
+  const names = new Set();
+  const catalogByFile = new Map(portfolio.all.map((item) => [`${item.folder}/${item.filename}`, item]));
+  const publishedTitles = new Set();
+  const publishedDescriptions = new Set();
+  const publishedFaqQuestions = new Set();
+  const uniqueCopy = new Map(["intro", "galleryTitle", "galleryText"].map((field) => [field, new Set()]));
+
+  for (const page of themes.pages) {
+    if (!allowedStatuses.has(page.publicationStatus)) fail(`status de publicação de tema inválido: ${page.name}`);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(page.slug || "") || page.path !== `/temas/${page.slug}/`) {
+      fail(`slug ou URL de tema inválido: ${page.name || page.slug}`);
+    }
+    if (slugs.has(page.slug) || paths.has(page.path)) fail(`slug ou URL de tema duplicado: ${page.path}`);
+    const nameKey = String(page.name || "").trim().toLocaleLowerCase("pt-BR");
+    if (!nameKey || names.has(nameKey)) fail(`nome de tema ausente ou duplicado: ${page.name || page.slug}`);
+    slugs.add(page.slug);
+    paths.add(page.path);
+    names.add(nameKey);
+
+    if (page.publicationStatus !== "PUBLISHED") {
+      if (themes.byName[page.name]?.path === page.path) fail(`tema não publicado exposto em links internos: ${page.path}`);
+      if (site.sitemapPaths.includes(page.path)) fail(`tema não publicado no sitemap: ${page.path}`);
+      const unpublishedFile = `${page.path.replace(/^\//, "")}index.html`;
+      if (fs.existsSync(path.join(root, unpublishedFile))) fail(`tema não publicado possui página gerada: ${page.path}`);
+      continue;
+    }
+
+    const requiredText = ["name", "title", "description", "h1", "intro", "galleryTitle", "galleryText"];
+    if (requiredText.some((field) => typeof page[field] !== "string" || !page[field].trim())) {
+      fail(`conteúdo de tema incompleto: ${page.name || page.slug}`);
+    }
+    if (page.title.length < 35 || page.description.length < 80 || page.intro.length < 80 || page.galleryText.length < 90) {
+      fail(`conteúdo de tema curto para justificar página própria: ${page.name}`);
+    }
+    const titleSlug = slugify(page.title);
+    const identifyingSlugTerms = page.slug.split("-").filter((word) => !["a", "as", "da", "das", "de", "do", "dos", "e"].includes(word));
+    if (identifyingSlugTerms.some((word) => !titleSlug.includes(word)) ||
+        !page.title.includes("Joinville") || !page.title.includes("Araquari") ||
+        !page.description.includes("Joinville") || !page.description.includes("Araquari") ||
+        !page.h1.includes("Joinville") || !page.h1.includes("Araquari")) {
+      fail(`título, descrição ou H1 não identifica tema e área de atendimento: ${page.name}`);
+    }
+    if (page.availabilityStatus !== "VERIFY_BY_DATE") {
+      fail(`disponibilidade de tema não pode ser afirmada sem confirmação por data: ${page.name}`);
+    }
+    if (!Array.isArray(page.images) || page.images.length === 0 || !page.images.some((item) => item.sourceType === "theme")) {
+      fail(`tema sem material visual suficiente para página própria: ${page.name}`);
+    }
+    const imageFiles = new Set();
+    for (const image of page.images) {
+      const file = `${image.folder}/${image.filename}`;
+      const catalogItem = catalogByFile.get(file);
+      if (!catalogItem || catalogItem.themeName !== page.name || catalogItem.sourceType !== image.sourceType) {
+        fail(`imagem não corresponde ao tema publicado ${page.name}: ${file}`);
+      }
+      if (imageFiles.has(file)) fail(`imagem repetida na página ${page.name}: ${file}`);
+      if (!image.alt || image.alt.length < 20 || !image.caption || image.caption.length < 12) {
+        fail(`imagem de tema sem texto alternativo ou legenda útil: ${file}`);
+      }
+      imageFiles.add(file);
+    }
+    if (!Array.isArray(page.faqs) || page.faqs.length === 0 || page.faqs.some((faq) =>
+      !faq.question || faq.question.length < 18 || !faq.answer || faq.answer.length < 50
+    )) fail(`FAQ de tema incompleto: ${page.name}`);
+    for (const faq of page.faqs) {
+      const question = faq.question.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+      if (publishedFaqQuestions.has(question)) fail(`pergunta de FAQ repetida entre páginas de tema: ${page.name}`);
+      publishedFaqQuestions.add(question);
+    }
+
+    if (publishedTitles.has(page.title) || publishedDescriptions.has(page.description)) {
+      fail(`title ou meta description de tema duplicado: ${page.name}`);
+    }
+    publishedTitles.add(page.title);
+    publishedDescriptions.add(page.description);
+    for (const [field, values] of uniqueCopy) {
+      const normalized = page[field].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+      if (values.has(normalized)) fail(`texto ${field} repetido em páginas de tema: ${page.name}`);
+      values.add(normalized);
+    }
+    if (!site.sitemapPaths.includes(page.path)) fail(`página publicada de tema ausente do sitemap: ${page.path}`);
+  }
+
+  for (const route of themes.published.map((page) => page.path)) {
+    if (site.sitemapPaths.filter((item) => item === route).length !== 1) fail(`URL de tema ausente ou repetida no sitemap: ${route}`);
+  }
+}
+
 function validateRegistry() {
   const { cities, neighborhoods, publishedPages } = locations;
   if (![cities, neighborhoods, publishedPages].every(Array.isArray)) fail("cadastro de localidades incompleto");
@@ -317,8 +418,12 @@ function validateRegistry() {
 }
 
 validateRegistry();
+validateThemeRegistry();
 
-const dynamicRequired = locations.publishedPages.map((item) => `${item.path.replace(/^\//, "")}index.html`);
+const dynamicRequired = [
+  ...locations.publishedPages,
+  ...themes.published
+].map((item) => `${item.path.replace(/^\//, "")}index.html`);
 const missing = [...new Set([...required, ...dynamicRequired])].filter((file) => !fs.existsSync(path.join(root, file)));
 if (missing.length) fail(`arquivos ausentes: ${missing.join(", ")}`);
 
@@ -328,6 +433,7 @@ const forbidden = /robertopclaro\.github\.io|localhost|\/lela-decoracoes-site\/|
 const fullSiteBase = site.baseUrl;
 const seenTitles = new Set();
 const seenDescriptions = new Set();
+const seenHeadings = new Set();
 const referencedImages = new Set();
 
 function getAttribute(tag, name) {
@@ -365,13 +471,16 @@ for (const file of htmlFiles) {
   const title = content.match(/<title>(.*?)<\/title>/i)?.[1];
   const descriptionTag = content.match(/<meta\b[^>]*\bname="description"[^>]*>/i)?.[0];
   const description = descriptionTag?.match(/\bcontent="([^"]*)"/i)?.[1];
-  const h1Count = [...content.matchAll(/<h1\b/gi)].length;
+  const h1s = [...content.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
   if (!title || !description || !content.includes("<main")) fail(`HTML sem metadados/estrutura esperada: ${file}`);
   if (seenTitles.has(title)) fail(`title repetido: ${file} (${title})`);
   if (seenDescriptions.has(description)) fail(`meta description repetida: ${file}`);
-  if (h1Count !== 1) fail(`página deve ter um H1: ${file} (${h1Count})`);
+  if (h1s.length !== 1) fail(`página deve ter um H1: ${file} (${h1s.length})`);
+  const heading = normalizeText(h1s[0][1]);
+  if (seenHeadings.has(heading)) fail(`H1 repetido: ${file} (${heading})`);
   seenTitles.add(title);
   seenDescriptions.add(description);
+  seenHeadings.add(heading);
   schemasIn(content, file);
   if (productionOrigin) {
     const canonicalTag = content.match(/<link\b[^>]*\brel="canonical"[^>]*>/i)?.[0];
@@ -501,6 +610,97 @@ for (const route of regionalPaths) {
   }
 }
 
+const themesIndex = readOutput("temas/index.html");
+const themesIndexSchemas = schemasIn(themesIndex, "temas/index.html");
+const themesIndexWebPage = schemaOfType(themesIndexSchemas, "WebPage");
+const themesIndexBreadcrumb = schemaOfType(themesIndexSchemas, "BreadcrumbList");
+if (site.origin && (!themesIndexWebPage || !themesIndexBreadcrumb)) {
+  fail("página /temas/ sem WebPage ou BreadcrumbList");
+}
+if (productionOrigin && themesIndexWebPage.url !== `${fullSiteBase}/temas/`) {
+  fail("WebPage URL incorreta em /temas/");
+}
+for (const route of ["/portfolio/", "/regioes-atendidas/joinville/", "/regioes-atendidas/araquari/"]) {
+  if (!themesIndex.includes(`href="${site.pathPrefix}${route.replace(/^\//, "")}"`)) {
+    fail(`diretório de temas sem link interno para ${route}`);
+  }
+}
+for (const page of themes.published) {
+  const href = `${site.pathPrefix}${page.path.replace(/^\//, "")}`;
+  if (!themesIndex.includes(`href="${href}"`)) fail(`diretório de temas não lista ${page.path}`);
+
+  const file = `${page.path.replace(/^\//, "")}index.html`;
+  const html = readOutput(file);
+  const schemas = schemasIn(html, file);
+  const localBusiness = schemaOfType(schemas, "LocalBusiness");
+  const breadcrumb = schemaOfType(schemas, "BreadcrumbList");
+  const webPage = schemaOfType(schemas, "WebPage");
+  const service = schemaOfType(schemas, "Service");
+  const faqPage = schemaOfType(schemas, "FAQPage");
+  if (site.origin && (!localBusiness || !breadcrumb || !webPage || !service || !faqPage)) {
+    fail(`dados estruturados incompletos na página de tema: ${page.path}`);
+  }
+  if (localBusiness && (!Array.isArray(localBusiness.areaServed) ||
+      localBusiness.areaServed.join("|") !== "Joinville, SC|Araquari, SC")) {
+    fail(`LocalBusiness/areaServed inconsistente em ${page.path}`);
+  }
+  if (service && (!Array.isArray(service.areaServed) ||
+      service.areaServed.join("|") !== "Joinville, SC|Araquari, SC")) {
+    fail(`Service/areaServed inconsistente em ${page.path}`);
+  }
+  if (productionOrigin) {
+    const canonicalTag = html.match(/<link\b[^>]*\brel="canonical"[^>]*>/i)?.[0];
+    const canonical = canonicalTag && getAttribute(canonicalTag, "href");
+    if (canonical !== `${fullSiteBase}${page.path}`) fail(`canonical incorreta em ${page.path}: ${canonical}`);
+    if (webPage?.url !== `${fullSiteBase}${page.path}` || faqPage?.url !== `${fullSiteBase}${page.path}`) {
+      fail(`WebPage ou FAQPage URL incorreta em ${page.path}`);
+    }
+  }
+  if (!html.includes(page.h1) || !html.includes(page.galleryText)) fail(`conteúdo específico do tema ausente em ${page.path}`);
+  if (!page.images.every((image) => html.includes(image.alt))) fail(`alt de imagem do tema ausente em ${page.path}`);
+
+  const visibleQuestions = [...html.matchAll(/<summary>([\s\S]*?)<\/summary>/gi)]
+    .map((match) => normalizeText(match[1].replace(/<span\b[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/span>/i, "")));
+  const schemaQuestions = (faqPage?.mainEntity || []).map((item) => item.name);
+  const expectedQuestions = page.faqs.map((item) => item.question);
+  if (visibleQuestions.length !== expectedQuestions.length ||
+      visibleQuestions.some((question, index) => question !== expectedQuestions[index]) ||
+      schemaQuestions.length !== expectedQuestions.length ||
+      schemaQuestions.some((question, index) => question !== expectedQuestions[index])) {
+    fail(`FAQ visível e JSON-LD não correspondem em ${page.path}`);
+  }
+  const expectedBreadcrumbs = [
+    { label: "Início", url: "/" },
+    { label: "Temas", url: "/temas/" },
+    { label: page.name, url: page.path }
+  ];
+  const crumbs = breadcrumb?.itemListElement || [];
+  if (crumbs.length !== expectedBreadcrumbs.length || crumbs.some((crumb, index) =>
+    crumb.name !== expectedBreadcrumbs[index].label ||
+    (productionOrigin && crumb.item !== `${fullSiteBase}${expectedBreadcrumbs[index].url}`)
+  )) fail(`BreadcrumbList não corresponde à página de tema: ${page.path}`);
+
+  const message = `Olá, Lela! Vi a página do tema ${page.name} e quero consultar a disponibilidade para [data]. Cidade/bairro: [local].`;
+  if (!html.replace(/&amp;/g, "&").includes(site.whatsappLink(message))) {
+    fail(`CTA do WhatsApp não identifica o tema em ${page.path}`);
+  }
+  for (const relatedRoute of [
+    "/pegue-e-monte/", "/mini-festa-na-mesa/", "/regioes-atendidas/",
+    "/regioes-atendidas/joinville/", "/regioes-atendidas/araquari/"
+  ]) {
+    if (!html.includes(`href="${site.pathPrefix}${relatedRoute.replace(/^\//, "")}"`)) {
+      fail(`página de tema sem link relacionado para ${relatedRoute}: ${page.path}`);
+    }
+  }
+}
+
+for (const route of ["/", "/pegue-e-monte/", "/mini-festa-na-mesa/", "/portfolio/", "/regioes-atendidas/joinville/", "/regioes-atendidas/araquari/"]) {
+  const file = route === "/" ? "index.html" : `${route.replace(/^\//, "")}index.html`;
+  if (!readOutput(file).includes(`href="${site.pathPrefix}temas/"`)) {
+    fail(`página importante sem integração para /temas/: ${route}`);
+  }
+}
+
 if (productionOrigin) {
   const sitemap = readOutput("sitemap.xml");
   const robots = readOutput("robots.txt");
@@ -519,4 +719,4 @@ if (prefix && prefix !== "/") {
   }
 }
 
-console.log(`Build validado: ${htmlFiles.length} HTML, ${referencedImages.size} imagens locais referenciadas (${generatedImageFiles.length} derivadas geradas), ${locations.cities.length} cidades e ${locations.neighborhoods.length} bairros cadastrados; ${locations.publishedPages.length} páginas locais indexáveis.`);
+console.log(`Build validado: ${htmlFiles.length} HTML, ${referencedImages.size} imagens locais referenciadas (${generatedImageFiles.length} derivadas geradas), ${locations.cities.length} cidades e ${locations.neighborhoods.length} bairros cadastrados; ${locations.publishedPages.length} páginas locais e ${themes.published.length} páginas de tema indexáveis.`);

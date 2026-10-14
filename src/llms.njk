@@ -18,6 +18,9 @@ Lela Decorações foi criada por Letícia. O site apresenta serviços, temas rea
 - [Chá de bebê]({{ base }}/cha-de-bebe/): referências para celebrações de chegada do bebê.
 - [Chá revelação]({{ base }}/cha-revelacao/): referências para chá revelação.
 - [Portfólio]({{ base }}/portfolio/): temas e exemplos visuais de kits montados.
+- [Temas]({{ base }}/temas/): páginas com referências do acervo e consulta de disponibilidade por tema.
+{% for theme in themes.published %}- [{{ theme.name }}]({{ base }}{{ theme.path }}): imagens do acervo e informações para consultar o tema {{ theme.name }}.
+{% endfor %}
 - [Como funciona]({{ base }}/como-funciona/): passo a passo, retirada, montagem, devolução e reserva.
 - [Sobre a Lela]({{ base }}/sobre/): história e proposta da empresa.
 - [Dúvidas]({{ base }}/duvidas/): respostas sobre kits, pagamento, cancelamento e logística.

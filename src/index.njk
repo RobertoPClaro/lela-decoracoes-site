@@ -63,6 +63,7 @@ breadcrumbs:
         {% include "partials/portfolio-card.njk" %}
       {% endfor %}
     </div>
+    <p style="margin-top:1.5rem"><a class="text-link" href="{{ '/temas/' | url }}">Ver páginas com fotos e informações por tema <span aria-hidden="true">→</span></a></p>
   </div>
 </section>
 
@@ -83,10 +84,10 @@ breadcrumbs:
   <div class="container">
     {% set eyebrow = "Para cada celebração" %}{% set heading = "Um acervo para começar a imaginar." %}{% set copy = "Kits montados." %}{% include "partials/section-heading.njk" %}
     <div class="audience-grid">
-      {% for card in portfolio.categoryCards | take(5) %}
+      {% for card in portfolio.categoryCards %}
         <a class="audience-card" href="{{ '/portfolio/' | url }}#{{ card.slug }}" style="text-decoration:none">
           <p class="eyebrow">{{ card.eyebrow }}</p>
-          <h3>{{ card.folder }}</h3>
+          <h3>{{ card.label }}</h3>
           <p>{{ card.copy }}</p>
         </a>
       {% endfor %}
