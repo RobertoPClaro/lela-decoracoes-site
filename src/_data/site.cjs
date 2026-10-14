@@ -1,4 +1,6 @@
 const rawPrefix = String(process.env.PATH_PREFIX || "").trim();
+const localData = require("./locations.cjs");
+const serviceAreas = ["Joinville, SC", "Araquari, SC"];
 const pathPrefix = rawPrefix && rawPrefix !== "/"
   ? `/${rawPrefix.replace(/^\/+|\/+$/g, "")}/`
   : "/";
@@ -31,7 +33,7 @@ function absoluteUrl(urlPath = "/") {
   return `${baseUrl}${clean}`;
 }
 
-function serviceSchema(name, description, urlPath) {
+function serviceSchema(name, description, urlPath, areaServed = serviceAreas) {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Service",
@@ -42,8 +44,25 @@ function serviceSchema(name, description, urlPath) {
       ...(organizationId ? { "@id": organizationId } : {}),
       name: "Lela Decorações"
     },
-    areaServed: ["Joinville", "Araquari"],
+    areaServed,
     url: absoluteUrl(urlPath)
+  });
+}
+
+function webPageSchema(name, description, urlPath) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name,
+    description,
+    inLanguage: "pt-BR",
+    url: absoluteUrl(urlPath),
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${absoluteUrl("/")}#website`,
+      name: "Lela Decorações",
+      url: absoluteUrl("/")
+    }
   });
 }
 
@@ -89,7 +108,7 @@ const localBusinessSchema = JSON.stringify({
     addressCountry: address.country
   },
   hasMap: mapsUrl,
-  areaServed: ["Joinville, SC", "Araquari, SC"],
+  areaServed: serviceAreas,
   sameAs: [instagramUrl],
   ...(baseUrl ? { url: absoluteUrl("/") } : {})
 });
@@ -118,7 +137,9 @@ module.exports = {
   serviceSchema,
   breadcrumbSchema,
   faqSchema,
+  webPageSchema,
   serviceAreas: ["Joinville", "Araquari"],
+  serviceAreaNames: serviceAreas,
   nav: [
     { label: "Início", url: "/" },
     { label: "Serviços", url: "/servicos/" },
@@ -126,6 +147,7 @@ module.exports = {
     { label: "Como funciona", url: "/como-funciona/" },
     { label: "Sobre a Lela", url: "/sobre/" },
     { label: "Dúvidas", url: "/duvidas/" },
+    { label: "Regiões", url: "/regioes-atendidas/" },
     { label: "Contato", url: "/contato/" }
   ],
   categories: [
@@ -146,6 +168,7 @@ module.exports = {
   sitemapPaths: [
     "/", "/servicos/", "/pegue-e-monte/", "/mini-festa-na-mesa/", "/festas-infantis/",
     "/cha-de-bebe/", "/cha-revelacao/", "/portfolio/", "/como-funciona/", "/sobre/",
-    "/duvidas/", "/contato/", "/politica-de-privacidade/", "/parceiros/"
+    "/duvidas/", "/contato/", "/politica-de-privacidade/", "/parceiros/", "/regioes-atendidas/",
+    ...localData.publishedPages.map((item) => item.path)
   ]
 };

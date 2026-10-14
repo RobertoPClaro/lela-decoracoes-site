@@ -1,0 +1,78 @@
+---
+layout: layouts/base.njk
+title: "Regiões atendidas em Joinville e Araquari | Lela Decorações"
+description: "Consulte onde a Lela Decorações atende em Joinville e Araquari, como funciona a retirada dos kits e como confirmar a logística para sua festa."
+permalink: /regioes-atendidas/
+faqSchema: true
+schemaWebPageName: "Regiões atendidas pela Lela Decorações"
+schemaWebPageDescription: "Informações sobre atendimento, retirada e logística da Lela Decorações em Joinville e Araquari."
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Regiões atendidas
+    url: /regioes-atendidas/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero">
+  <div class="container page-hero__grid">
+    <div><p class="eyebrow">Atendimento local</p><h1>Decoração de festas em Joinville e Araquari</h1></div>
+    <p class="page-hero__copy">Veja os serviços disponíveis em cada cidade e consulte a logística para o endereço da sua comemoração.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% set eyebrow = "Escolha sua cidade" %}{% set heading = "Atendimento em Joinville e Araquari." %}{% set copy = "A Lela oferece Pegue e Monte, Mini Festa na Mesa e temas para diferentes comemorações. A disponibilidade é confirmada para cada data." %}
+    {% include "partials/section-heading.njk" %}
+    <div class="audience-grid">
+      {% for city in locations.cities %}
+        <article class="audience-card">
+          <p class="eyebrow">Santa Catarina</p>
+          <h2><a href="{{ city.path | url }}">{{ city.name }}</a></h2>
+          <p>{{ city.content.intro }}</p>
+          <a class="text-link" href="{{ city.path | url }}">Consultar atendimento em {{ city.name }} <span aria-hidden="true">→</span></a>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--lilac">
+  <div class="container split">
+    <div class="split__content">
+      <p class="eyebrow">Retirada e entrega</p>
+      <h2>Consulte o endereço antes de reservar.</h2>
+      <p>O endereço divulgado para retirada fica na R. Matusalém Gonçalves Pinheiro, 83, Paranaguamirim, Joinville - SC, CEP 89231-603.</p>
+      <p>No Pegue e Monte, retirada e devolução pelo cliente são a regra. Entrega e retirada no local podem ser consultadas, conforme disponibilidade e taxa. Não há uma lista pública de bairros com entrega confirmada.</p>
+      <div class="hero-actions">
+        <a class="button" href="{{ site.mapsUrl }}" target="_blank" rel="noopener">Ver endereço no mapa <span aria-hidden="true">↗</span></a>
+        <a class="button button--secondary" href="{{ '/regioes-atendidas/joinville/paranaguamirim/' | url }}">Detalhes da retirada</a>
+      </div>
+    </div>
+    <div>
+      <div class="comparison-card comparison-card--accent">
+        <p class="eyebrow">Serviços</p>
+        <h2>Uma festa no seu espaço.</h2>
+        <ul class="check-list">
+          <li><a href="{{ '/pegue-e-monte/' | url }}">Pegue e Monte</a></li>
+          <li><a href="{{ '/mini-festa-na-mesa/' | url }}">Mini Festa na Mesa</a></li>
+          <li><a href="{{ '/festas-infantis/' | url }}">Decorações e temas para festas</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:900px">
+    {% set eyebrow = "Dúvidas sobre atendimento" %}{% set heading = "Antes de escolher seu kit." %}{% set copy = "Envie cidade, bairro, data e serviço para a Lela confirmar disponibilidade e logística." %}
+    {% include "partials/section-heading.njk" %}
+    {% set faqs = regionalFaqs %}
+    {% include "partials/faq-list.njk" %}
+  </div>
+</section>
+
+{% set message = "Olá, Lela! Encontrei a página de regiões atendidas. Minha festa será em [cidade/bairro], na data [data]. Quero consultar os kits e a logística." %}
+{% set label = "Consultar minha região" %}
+{% include "partials/whatsapp-cta.njk" %}

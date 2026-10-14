@@ -29,10 +29,13 @@
       <script type="application/ld+json">{{ site.breadcrumbSchema(breadcrumbs or [{label: 'Início', url: '/'}]) | safe }}</script>
     {% endif %}
     {% if schemaServiceName %}
-      <script type="application/ld+json">{{ site.serviceSchema(schemaServiceName, schemaServiceDescription, page.url) | safe }}</script>
+      <script type="application/ld+json">{{ site.serviceSchema(schemaServiceName, schemaServiceDescription, page.url, schemaServiceAreas or site.serviceAreaNames) | safe }}</script>
+    {% endif %}
+    {% if schemaWebPageName %}
+      <script type="application/ld+json">{{ site.webPageSchema(schemaWebPageName, schemaWebPageDescription or description, page.url) | safe }}</script>
     {% endif %}
     {% if faqSchema %}
-      <script type="application/ld+json">{{ site.faqSchema(faqs, page.url) | safe }}</script>
+      <script type="application/ld+json">{{ site.faqSchema(schemaFaqs or faqs, page.url) | safe }}</script>
     {% endif %}
   </head>
   <body class="{{ bodyClass or '' }}">

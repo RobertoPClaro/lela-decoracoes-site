@@ -18,6 +18,8 @@
         <li><a href="{{ '/portfolio/' | url }}">Portfólio</a></li>
         <li><a href="{{ '/como-funciona/' | url }}">Como funciona</a></li>
         <li><a href="{{ '/duvidas/' | url }}">Dúvidas</a></li>
+        <li><a href="{{ '/regioes-atendidas/' | url }}">Regiões atendidas</a></li>
+        {% for city in locations.cities %}<li><a href="{{ city.path | url }}">{{ city.name }}</a></li>{% endfor %}
       </ul>
     </div>
     <div>
