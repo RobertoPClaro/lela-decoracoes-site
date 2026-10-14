@@ -4,6 +4,15 @@ const imageSize = require("image-size");
 
 const root = path.resolve(__dirname, "../assets/images/originals");
 const categoryFolders = ["Tema Menina", "Tema Menino", "Tema Adulto", "Tema Diversos", "Tema Futebol"];
+const categoryDefinitions = [
+  { slug: "infantil", label: "Festas infantis", folders: ["Tema Menina", "Tema Menino"], eyebrow: "Infantil", copy: "Personagens e estilos para comemorações de crianças, organizados em uma categoria única." },
+  { slug: "adulto", label: "Festas adultas", folders: ["Tema Adulto"], eyebrow: "Adulto", copy: "Referências para aniversários e encontros de adultos." },
+  { slug: "diversos", label: "Temas e ocasiões", folders: ["Tema Diversos"], eyebrow: "Outras ocasiões", copy: "Temas e referências que atendem diferentes estilos de comemoração." },
+  { slug: "futebol", label: "Futebol", folders: ["Tema Futebol"], eyebrow: "Esportivo", copy: "Referências de clubes e futebol presentes no acervo." }
+];
+const categoryByFolder = new Map(categoryDefinitions.flatMap((category) =>
+  category.folders.map((folder) => [folder, category])
+));
 const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
 
 const displayNames = {
@@ -167,15 +176,18 @@ function readImages(folder, sourceType) {
       if (!themeName) throw new Error(`Nome de exibição não cadastrado para ${displayNameKey}`);
       const sourcePath = path.join(folderPath, entry.name);
       const dimensions = imageSize(sourcePath);
+      const category = categoryByFolder.get(folder);
       return {
         id: `${slug}-${sourceType}-${index + 1}`,
         slug,
         themeName,
         title: themeName,
-        caption: themeName,
-        alt: `Decoração no tema ${themeName}`,
-        category: sourceType === "theme" ? slugify(folder) : "kits-montados",
-        categoryLabel: sourceType === "theme" ? folder : "Kits montados",
+        alt: sourceType === "theme"
+          ? `Imagem de referência no tema ${themeName}`
+          : `Exemplo de kit montado no tema ${themeName}`,
+        caption: sourceType === "theme" ? `Referência do tema ${themeName}` : `Kit montado: ${themeName}`,
+        category: sourceType === "theme" ? category.slug : "kits-montados",
+        categoryLabel: sourceType === "theme" ? category.label : "Kits montados",
         folder,
         sourceType,
         filename: entry.name,
@@ -205,16 +217,10 @@ const featured = [
   firstMatch(kits, "dinossauros")
 ].filter(Boolean);
 
-const categoryCards = categoryFolders.map((folder) => ({
-  ...({ "Tema Menina": { eyebrow: "Infantil", copy: "Personagens e universos para comemorações cheias de personalidade." },
-    "Tema Menino": { eyebrow: "Infantil", copy: "Temas de aventura, brincadeira e imaginação para celebrar." },
-    "Tema Adulto": { eyebrow: "Celebrações", copy: "Composições mais sóbrias e acolhedoras para brindar momentos especiais." },
-    "Tema Diversos": { eyebrow: "Para cada ocasião", copy: "Do chá revelação à festa junina, um acervo amplo para inspirar." },
-    "Tema Futebol": { eyebrow: "Esportivo", copy: "Para torcedores que querem levar o time para a mesa da festa." }
-  }[folder]),
-  folder,
-  slug: slugify(folder),
-  image: themes.find((item) => item.folder === folder)
+const categoryCards = categoryDefinitions.map((category) => ({
+  ...category,
+  folder: category.folders[0],
+  image: themes.find((item) => category.folders.includes(item.folder))
 }));
 
 module.exports = {
@@ -222,6 +228,7 @@ module.exports = {
   kits,
   all: [...themes, ...kits],
   featured,
+  categories: categoryDefinitions,
   categoryCards,
   counts: { themes: themes.length, kits: kits.length, total: themes.length + kits.length }
 };

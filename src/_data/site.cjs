@@ -1,5 +1,7 @@
 const rawPrefix = String(process.env.PATH_PREFIX || "").trim();
 const localData = require("./locations.cjs");
+const portfolio = require("./portfolio.cjs");
+const themePages = require("./themes.cjs");
 const serviceAreas = ["Joinville, SC", "Araquari, SC"];
 const pathPrefix = rawPrefix && rawPrefix !== "/"
   ? `/${rawPrefix.replace(/^\/+|\/+$/g, "")}/`
@@ -144,19 +146,14 @@ module.exports = {
     { label: "Início", url: "/" },
     { label: "Serviços", url: "/servicos/" },
     { label: "Portfólio", url: "/portfolio/" },
+    { label: "Temas", url: "/temas/" },
     { label: "Como funciona", url: "/como-funciona/" },
     { label: "Sobre a Lela", url: "/sobre/" },
     { label: "Dúvidas", url: "/duvidas/" },
     { label: "Regiões", url: "/regioes-atendidas/" },
     { label: "Contato", url: "/contato/" }
   ],
-  categories: [
-    { slug: "tema-menina", folder: "Tema Menina", label: "Tema Menina", description: "Personagens, universos e composições para festas infantis." },
-    { slug: "tema-menino", folder: "Tema Menino", label: "Tema Menino", description: "Temas infantis e personagens organizados nesta categoria do acervo." },
-    { slug: "tema-adulto", folder: "Tema Adulto", label: "Tema Adulto", description: "Composições para encontros e celebrações adultas." },
-    { slug: "tema-diversos", folder: "Tema Diversos", label: "Tema Diversos", description: "Temas de eventos e estilos que não dependem de uma faixa específica." },
-    { slug: "tema-futebol", folder: "Tema Futebol", label: "Tema Futebol", description: "Clubes e propostas esportivas presentes no acervo." }
-  ],
+  categories: portfolio.categories.map(({ slug, label, copy }) => ({ slug, label, description: copy })),
   facts: {
     serviceHours: "09h às 20h",
     reservationEntry: "50% de entrada para confirmar a data",
@@ -167,8 +164,9 @@ module.exports = {
   },
   sitemapPaths: [
     "/", "/servicos/", "/pegue-e-monte/", "/mini-festa-na-mesa/", "/festas-infantis/",
-    "/cha-de-bebe/", "/cha-revelacao/", "/portfolio/", "/como-funciona/", "/sobre/",
+    "/cha-de-bebe/", "/cha-revelacao/", "/portfolio/", "/temas/", "/como-funciona/", "/sobre/",
     "/duvidas/", "/contato/", "/politica-de-privacidade/", "/parceiros/", "/regioes-atendidas/",
-    ...localData.publishedPages.map((item) => item.path)
+    ...localData.publishedPages.map((item) => item.path),
+    ...themePages.published.map((item) => item.path)
   ]
 };

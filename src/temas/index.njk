@@ -1,0 +1,58 @@
+---
+layout: layouts/base.njk
+title: "Temas para festas em Joinville e Araquari | Lela Decorações"
+description: "Explore temas do acervo da Lela Decorações, veja referências de painéis e kits montados e consulte disponibilidade em Joinville e Araquari."
+permalink: /temas/
+schemaWebPageName: "Temas para festas em Joinville e Araquari | Lela Decorações"
+schemaWebPageDescription: "Páginas de temas com imagens do acervo da Lela Decorações e consulta de disponibilidade para Joinville e Araquari."
+breadcrumbs:
+  - label: Início
+    url: /
+  - label: Temas
+    url: /temas/
+---
+
+{% include "partials/breadcrumbs.njk" %}
+<section class="page-hero">
+  <div class="container page-hero__grid">
+    <div><p class="eyebrow">Temas do acervo</p><h1>Temas de decoração para festas em Joinville e Araquari.</h1></div>
+    <p class="page-hero__copy">Veja referências fotográficas dos temas selecionados e consulte a disponibilidade para sua data em Joinville ou Araquari. A composição do kit e a logística são confirmadas no atendimento.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-intro-row">
+      <div>{% set eyebrow = "Páginas de temas" %}{% set heading = "Fotos e informações para escolher com clareza." %}{% set copy = "Cada página reúne imagens já cadastradas no portfólio. Consulte quais itens estão disponíveis antes de reservar." %}{% include "partials/section-heading.njk" %}</div>
+      <a class="text-link" href="{{ '/portfolio/' | url }}">Ver todas as fotos do portfólio <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="portfolio-grid" id="temas-selecionados">
+      {% for theme in themes.published %}
+        {% set item = theme.heroImage %}
+        {% include "partials/portfolio-card.njk" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--lilac">
+  <div class="container split">
+    <div class="split__content">
+      <p class="eyebrow">Como funciona</p>
+      <h2>Consulte tema, data e logística juntos.</h2>
+      <p>Envie pelo WhatsApp o tema escolhido, a data e a cidade ou bairro. A Lela confirma disponibilidade e informa a composição e as condições de retirada ou eventual entrega.</p>
+      <div style="margin-top:1.5rem"><a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Entender o Pegue e Monte <span aria-hidden="true">→</span></a></div>
+    </div>
+    <div class="split__content">
+      <p class="eyebrow">Atendimento</p>
+      <h2>Joinville e Araquari, com logística confirmada por endereço.</h2>
+      <p>O endereço divulgado para retirada fica no Paranaguamirim, em Joinville. Entrega ou retirada no local depende da data, do endereço e da disponibilidade.</p>
+      <div class="button-row">
+        <a class="text-link" href="{{ '/regioes-atendidas/joinville/' | url }}">Atendimento em Joinville <span aria-hidden="true">→</span></a>
+        <a class="text-link" href="{{ '/regioes-atendidas/araquari/' | url }}">Atendimento em Araquari <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% set message = "Olá, Lela! Estou vendo os temas do acervo e quero consultar disponibilidade. Data: [data]. Cidade/bairro: [local]. Tema: [tema]." %}{% set label = "Consultar um tema" %}{% include "partials/whatsapp-cta.njk" %}

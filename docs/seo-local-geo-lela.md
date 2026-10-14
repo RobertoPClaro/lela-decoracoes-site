@@ -1,8 +1,12 @@
 # SEO local, GEO e AEO — Lela Decorações
 
 Registro da investigação e da implementação na branch `feat/seo-local-geo`.
-As páginas descritas aqui estão preparadas para revisão nesta branch; não houve
-push nem deploy.
+O registro operacional abaixo descreve o estado da fase na revisão original.
+
+> Atualização em 14/10/2026: o PR #1 foi integrado à `main` no merge
+> `f2a2007`. A nota acima e os registros abaixo descrevem o estado histórico da
+> implementação antes dessa integração. A auditoria e as melhorias da fase
+> seguinte estão em `docs/seo-estrategia-fase2.md`.
 
 ## Repositório e Git
 
