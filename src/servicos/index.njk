@@ -39,7 +39,10 @@ breadcrumbs:
 </section>
 
 <section class="section section--tight">
-  <div class="container"><p class="provisional-note">Consulte pelo WhatsApp os valores, itens disponíveis e a melhor opção para a sua festa.</p></div>
+  <div class="container">
+    <p class="provisional-note">Consulte pelo WhatsApp os valores, itens disponíveis e a melhor opção para a sua festa.</p>
+    {% include "partials/regions-note.njk" %}
+  </div>
 </section>
 
 {% set message = "Olá, Lela! Quero entender qual serviço combina melhor com a minha festa." %}{% set label = "Quero escolher um serviço" %}{% include "partials/whatsapp-cta.njk" %}

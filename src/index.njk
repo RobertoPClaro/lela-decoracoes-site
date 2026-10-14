@@ -113,6 +113,25 @@ breadcrumbs:
   </div>
 </section>
 
+<section class="section" id="regioes-atendidas">
+  <div class="container">
+    <div class="section-intro-row">
+      <div>{% set eyebrow = "Atendimento local" %}{% set heading = "Sua festa acontece em Joinville ou Araquari?" %}{% set copy = "Consulte os serviços por cidade e confirme a retirada ou entrega para o endereço do evento." %}{% include "partials/section-heading.njk" %}</div>
+      <a class="text-link" href="{{ '/regioes-atendidas/' | url }}">Ver regiões atendidas <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="audience-grid">
+      {% for city in locations.cities %}
+        <article class="audience-card">
+          <p class="eyebrow">Santa Catarina</p>
+          <h3><a href="{{ city.path | url }}">{{ city.name }}</a></h3>
+          <p>{{ city.content.intro }}</p>
+          <a class="text-link" href="{{ city.path | url }}">Informações de atendimento <span aria-hidden="true">→</span></a>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
 <section class="section section--tight">
   <div class="container">
     <div class="section-intro-row">
