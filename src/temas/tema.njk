@@ -1,26 +1,38 @@
 {% include "partials/breadcrumbs.njk" %}
-<section class="page-hero">
+<section class="page-hero theme-page-hero">
   <div class="container page-hero__grid">
-    <div><p class="eyebrow">Tema do acervo · {{ theme.name }}</p><h1>{{ theme.h1 }}</h1></div>
+    <div>
+      <p class="eyebrow">{{ theme.categoryLabel }} · referência do acervo</p>
+      <h1>{{ theme.h1 }}</h1>
+    </div>
     <p class="page-hero__copy">{{ theme.intro }}</p>
   </div>
 </section>
 
-<section class="section">
+<section class="section theme-detail-section">
   <div class="container split">
     <div class="split__visual theme-page__hero-image">
-      {% set item = theme.heroImage %}{% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 42vw, 92vw" %}{% set imageLoading = "eager" %}{% set imageFetchPriority = "high" %}{% set imagePreset = "hero" %}{% include "partials/image.njk" %}
-      <p class="portfolio-card__tag">{{ item.caption }}</p>
-    </div>
-    <div class="split__content">
-      <p class="eyebrow">{{ theme.galleryTitle }}</p>
-      <h2>Uma referência para começar a planejar.</h2>
-      <p>{{ theme.galleryText }}</p>
-      <p>O atendimento informado inclui <a class="text-link" href="{{ '/regioes-atendidas/joinville/' | url }}">Joinville</a> e <a class="text-link" href="{{ '/regioes-atendidas/araquari/' | url }}">Araquari</a>. O endereço divulgado para retirada fica no Paranaguamirim, em Joinville. A logística para o local da festa é confirmada por endereço e data.</p>
+      {% set item = theme.heroImage %}
       {% set topicMessage = "Olá, Lela! Vi a página do tema " + theme.name + " e quero consultar a disponibilidade para [data]. Cidade/bairro: [local]." %}
+      <button class="theme-page__hero-trigger" type="button" data-lightbox-trigger data-lightbox-group="{{ theme.catalogSlug }}" data-theme-name="{{ theme.name }}" data-lightbox-src="{{ site.pathPrefix }}assets/images/generated/{{ item.generatedBase }}-1200.jpg" data-lightbox-alt="{{ item.alt }}" data-lightbox-caption="{{ item.caption }}" data-lightbox-whatsapp="{{ site.whatsappLink(topicMessage) }}" aria-label="Ampliar foto de {{ theme.name }}">
+        {% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 42vw, 92vw" %}{% set imageLoading = "eager" %}{% set imageFetchPriority = "high" %}{% set imagePreset = "hero" %}{% include "partials/image.njk" %}
+      </button>
+      <p class="portfolio-card__tag">{{ item.caption }} · toque para ampliar</p>
+    </div>
+    <div class="split__content theme-detail-copy">
+      <p class="eyebrow">Sobre o tema</p>
+      <h2>{{ theme.name }} na decoração</h2>
+      <p>{{ theme.about }}</p>
+      {% if theme.needsNameConfirmation %}
+        <p class="provisional-note">A identificação exibida para esta referência ainda precisa ser confirmada com a Lela. Envie a imagem pelo WhatsApp para evitar confusão com o nome do tema.</p>
+      {% endif %}
+      <h3>Ideias para a comemoração</h3>
+      <p>{{ theme.use }}</p>
+      <p>{{ theme.galleryText }}</p>
+      <p>Moradores de todos os bairros de <a class="text-link" href="{{ '/regioes-atendidas/joinville/' | url }}">Joinville</a> e <a class="text-link" href="{{ '/regioes-atendidas/araquari/' | url }}">Araquari</a> podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim. A disponibilidade deste tema e a possibilidade de entrega para a data e o endereço precisam ser confirmadas com a Lela.</p>
       <div class="button-row">
-        <a class="button" href="{{ site.whatsappLink(topicMessage) }}" target="_blank" rel="noopener">Consultar {{ theme.name }} <span aria-hidden="true">↗</span></a>
-        <a class="text-link" href="{{ '/regioes-atendidas/' | url }}">Ver regiões atendidas <span aria-hidden="true">→</span></a>
+        <a class="button" href="{{ site.whatsappLink(topicMessage) }}" data-theme-context-whatsapp data-theme-name="{{ theme.name }}" target="_blank" rel="noopener">Consultar {{ theme.name }} <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="{{ ('/portfolio/#tema-' + theme.catalogSlug) | url }}">Voltar ao catálogo <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </div>
@@ -29,10 +41,10 @@
 {% if theme.images.length > 1 %}
 <section class="section section--lilac">
   <div class="container">
-    {% set eyebrow = "Galeria do acervo" %}{% set heading = theme.galleryTitle %}{% set copy = "Abra uma foto para ampliar e consultar esse tema pelo WhatsApp." %}{% include "partials/section-heading.njk" %}
-    <div class="portfolio-grid">
+    {% set eyebrow = "Galeria do tema" %}{% set heading = theme.galleryTitle %}{% set copy = "Toque em uma foto para ampliar. As imagens são referências visuais e não definem os itens de uma reserva." %}{% include "partials/section-heading.njk" %}
+    <div class="portfolio-grid theme-page__gallery">
       {% for item in theme.images %}
-        {% if not loop.first %}{% set hideThemeLink = true %}{% include "partials/portfolio-card.njk" %}{% endif %}
+        {% if not loop.first %}{% set hideThemeLink = true %}{% set lightboxGroup = theme.catalogSlug %}{% include "partials/portfolio-card.njk" %}{% endif %}
       {% endfor %}
     </div>
   </div>
@@ -40,27 +52,47 @@
 {% endif %}
 
 <section class="section">
-  <div class="container audience-grid">
+  <div class="container audience-grid theme-service-grid">
     <article class="audience-card">
-      <p class="eyebrow">Pegue e Monte</p>
-      <h2>Consulte porte, montagem e devolução.</h2>
-      <p>Veja como funciona o serviço e confirme quais itens do tema podem ser reservados para sua data.</p>
-      <a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Como funciona o Pegue e Monte <span aria-hidden="true">→</span></a>
-    </article>
-    <article class="audience-card">
-      <p class="eyebrow">Mini Festa na Mesa</p>
-      <h2>Uma opção compacta para celebrar.</h2>
-      <p>Consulte se o tema está disponível nesse formato e quais elementos fazem parte da composição.</p>
+      <p class="eyebrow">Formato da decoração</p>
+      <h2>Consulte como reservar este tema.</h2>
+      <p>O acervo não confirma em qual serviço cada referência está disponível. Pergunte se {{ theme.name }} pode ser reservado no Pegue e Monte ou na Mini Festa na Mesa.</p>
+      <a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Entender o Pegue e Monte <span aria-hidden="true">→</span></a>
       <a class="text-link" href="{{ '/mini-festa-na-mesa/' | url }}">Conhecer a Mini Festa na Mesa <span aria-hidden="true">→</span></a>
     </article>
+    <article class="audience-card">
+      <p class="eyebrow">Consulta e logística</p>
+      <h2>Data e local ajudam a confirmar.</h2>
+      <p>Informe a data e a cidade ou o endereço da comemoração. A Lela verifica disponibilidade e condições de retirada ou eventual entrega para o local.</p>
+      <a class="text-link" href="{{ '/regioes-atendidas/' | url }}">Ver regiões atendidas <span aria-hidden="true">→</span></a>
+    </article>
   </div>
 </section>
 
-<section class="section section--tight section--lilac">
-  <div class="container" style="max-width:900px">
-    {% set eyebrow = "Perguntas sobre o tema" %}{% set heading = "O que confirmar antes de reservar." %}{% set copy = "As imagens mostram referências do acervo; a disponibilidade depende da data." %}{% include "partials/section-heading.njk" %}
-    {% set faqs = theme.faqs %}{% include "partials/faq-list.njk" %}
+{% if theme.related.length %}
+<section class="section section--lilac">
+  <div class="container">
+    <div class="section-heading"><p class="eyebrow">Outras ideias</p><h2>{% if theme.editorialStatus == "REVIEWED" %}Temas relacionados{% else %}Mais opções em {{ theme.categoryLabel | lower }}{% endif %}</h2><p>Abra outra referência para comparar estilos ou consultar uma opção diferente.</p></div>
+    <ul class="related-theme-list">
+      {% for relatedName in theme.related %}
+        {% set relatedTheme = themes.byName[relatedName] %}
+        {% if relatedTheme and relatedTheme.path != theme.path %}
+          <li><a href="{{ relatedTheme.path | url }}">{{ relatedTheme.name }} <span aria-hidden="true">→</span></a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
 </section>
+{% endif %}
 
-{% set message = "Olá, Lela! Vi a página do tema " + theme.name + " e quero consultar a disponibilidade para [data]. Cidade/bairro: [local]." %}{% set label = "Consultar esse tema" %}{% include "partials/whatsapp-cta.njk" %}
+{% if theme.faqs.length %}
+<section class="section section--tight">
+  <div class="container theme-faq">
+    {% set eyebrow = "Perguntas sobre o tema" %}{% set heading = "Antes de confirmar a reserva." %}{% set copy = "Disponibilidade e composição são verificadas para a data consultada." %}{% set faqs = theme.faqs %}{% include "partials/section-heading.njk" %}{% include "partials/faq-list.njk" %}
+    <p class="provisional-note theme-rights-note">Nomes de personagens, clubes e marcas identificam referências visuais do acervo. Esta página não declara parceria, vínculo oficial ou licenciamento com terceiros.</p>
+  </div>
+</section>
+{% endif %}
+
+<script type="application/json" id="locality-context-data">{{ site.localityContext | json | safe }}</script>
+{% set message = topicMessage %}{% set label = "Consultar " + theme.name %}{% include "partials/whatsapp-cta.njk" %}

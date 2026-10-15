@@ -1,3 +1,6 @@
+const faqData = require("./faqs.cjs");
+const commercial = require("./commercial.cjs");
+
 const joinvilleSource = {
   title: "Joinville Bairro a Bairro 2026 — Prefeitura de Joinville",
   url: "https://www.joinville.sc.gov.br/publicacoes/joinville-bairro-a-bairro/",
@@ -18,6 +21,21 @@ const araquariSources = {
   municipalBoroughsJuly2026: {
     title: "Prefeitura de Araquari — SINE, bairros informados em vagas (julho de 2026)",
     url: "https://araquari.atende.net/cidadao/noticia/sine-araquari-divulga-37-vagas-de-emprego-nesta-sextafeira-1007",
+    checkedAt: "2026-10-13"
+  },
+  municipalDistrict: {
+    title: "Prefeitura de Araquari — serviços e subprefeitura no distrito de Itapocu",
+    url: "https://araquari.atende.net/cidadao/noticia/centro-de-atendimento-ao-cidadao-facilita-acesso-a-servicos-publicos-em-araquari-saiba-onde-encontrar-os-servicos",
+    checkedAt: "2026-10-13"
+  },
+  municipalCommunities: {
+    title: "Câmara de Vereadores de Araquari — proposição sobre a Subprefeitura do Itapocu (2023)",
+    url: "https://www.cvaraquari.sc.gov.br/proposicoes/Projetos-de-Lei-Complementar-Executivo/2023/1/0/12168",
+    checkedAt: "2026-10-14"
+  },
+  municipalTourism: {
+    title: "Prefeitura de Araquari — Roteiros municipais de turismo",
+    url: "https://turismo.araquari.sc.gov.br/roteiros-municipais/",
     checkedAt: "2026-10-13"
   },
 };
@@ -42,10 +60,11 @@ const araquariNames = [
   {
     name: "Barra do Itapocu",
     source: {
-      title: "IBGE, Censo 2022 — setor censitário 420130710000017",
-      url: `${araquariSources.census.url}42013071000/MSU/420130710000017/d_420130710000017.pdf`,
+      title: "Prefeitura de Araquari — Roteiros municipais de turismo, região da Barra do Itapocu",
+      url: araquariSources.municipalTourism.url,
       checkedAt: "2026-10-13"
-    }
+    },
+    geographicType: "locality"
   },
   {
     name: "Centro",
@@ -65,7 +84,8 @@ const araquariNames = [
   },
   {
     name: "Itapocu",
-    source: araquariSources.municipalBoroughs2026
+    source: araquariSources.municipalDistrict,
+    geographicType: "district"
   },
   {
     name: "Itinga",
@@ -73,7 +93,8 @@ const araquariNames = [
   },
   {
     name: "Jacu",
-    source: araquariSources.municipalBoroughs2026
+    source: araquariSources.municipalBoroughs2026,
+    geographicType: "locality"
   },
   {
     name: "Ponto Alto",
@@ -98,6 +119,15 @@ const araquariNames = [
   {
     name: "Volta Redonda",
     source: araquariSources.municipalBoroughs2026
+  },
+  {
+    name: "Guamiranga",
+    source: araquariSources.municipalTourism
+  },
+  {
+    name: "Morro Grande",
+    source: araquariSources.municipalCommunities,
+    geographicType: "locality"
   }
 ];
 
@@ -114,7 +144,7 @@ const commonServices = [
   {
     name: "Pegue e Monte",
     path: "/pegue-e-monte/",
-    description: "Escolha um tema, consulte a data, retire o kit, monte e devolva conforme combinado."
+    description: "Moradores de Joinville e Araquari podem contratar com retirada e devolução no Paranaguamirim. Consulte o tema e a data."
   },
   {
     name: "Mini Festa na Mesa",
@@ -128,6 +158,12 @@ const commonServices = [
   }
 ];
 
+function servicesForCity(cityName) {
+  return commonServices.map((service) => service.name === "Pegue e Monte"
+    ? { ...service, description: `Moradores de todos os bairros de ${cityName} podem contratar com retirada e devolução no Paranaguamirim. Consulte tema e data.` }
+    : service);
+}
+
 const cities = [
   {
     type: "city",
@@ -139,40 +175,35 @@ const cities = [
     geographyStatus: "CONFIRMED",
     geographySource: joinvilleSource,
     commercialStatus: "CONFIRMED",
-    commercialConfirmationScope: "Atendimento municipal declarado no site atual da empresa.",
+    commercialConfirmationScope: "Moradores de todos os bairros de Joinville podem contratar Pegue e Monte com retirada e devolução no ponto do Paranaguamirim; entrega depende de disponibilidade para data e endereço.",
+    commercialEvidence: [commercial.ownerConfirmation],
+    confirmedCommercialFacts: ["Moradores de todos os bairros de Joinville podem contratar o Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville."],
+    pickupEligibilityStatus: "CONFIRMED_CITYWIDE",
+    deliveryStatus: "CONDITIONAL_ON_AVAILABILITY",
     commercialSources: [
       { title: "Site da Lela Decorações", url: "https://leladecoracoes.com/", checkedAt: "2026-10-13" },
       { title: "Contato e endereço para retirada", url: "https://leladecoracoes.com/contato/", checkedAt: "2026-10-13" }
     ],
-    publicationStatus: "READY_FOR_REVIEW",
+    publicationStatus: "READY_INDEX",
     indexable: true,
     publicationBasis: "CITY_SERVICE",
     schemaServiceAreas: ["Joinville, SC"],
     content: {
-      title: "Pegue e Monte e decoração de festas em Joinville | Lela Decorações",
-      description: "Conheça o Pegue e Monte e a Mini Festa na Mesa da Lela Decorações em Joinville. Consulte temas, data e condições de retirada ou entrega.",
+      title: "Pegue e Monte em Joinville: temas e retirada | Lela Decorações",
+      description: "Moradores de Joinville podem contratar Pegue e Monte com retirada e devolução no Paranaguamirim. Consulte temas, data e possibilidade de entrega.",
       eyebrow: "Joinville · Santa Catarina",
-      h1: "Pegue e Monte e decoração de festas em Joinville",
-      intro: "A Lela Decorações oferece Pegue e Monte e Mini Festa na Mesa para comemorações em Joinville. Consulte temas do acervo, a data e o formato adequado ao espaço da sua festa.",
-      detailTitle: "Retirada e entrega em Joinville",
-      detailText: "O endereço informado para retirada fica no Paranaguamirim. No Pegue e Monte, retirada e devolução pelo cliente são a regra. Entrega e retirada no local podem ser consultadas, conforme disponibilidade e taxa.",
+      h1: "Pegue e Monte em Joinville",
+      intro: "Moradores de todos os bairros de Joinville podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim. Explore os temas e consulte a disponibilidade para sua data; a possibilidade de entrega depende de confirmação para o endereço.",
+      detailTitle: "Retirada e logística em Joinville",
+      detailText: "O ponto de retirada e devolução fica no Paranaguamirim, em Joinville. A cliente transporta, monta e desmonta o Pegue e Monte conforme as orientações combinadas. Entrega é opcional e depende da disponibilidade da Lela para a data e o endereço informados.",
       pickupNeighborhoodPath: "/regioes-atendidas/joinville/paranaguamirim/",
       pickupLabel: "Ver informações do ponto de retirada no Paranaguamirim",
-      services: commonServices,
-      schemaServiceName: "Decoração de festas em Joinville",
-      schemaServiceDescription: "Pegue e Monte, Mini Festa na Mesa e temas para comemorações em Joinville, Santa Catarina.",
+      services: servicesForCity("Joinville"),
+      schemaServiceName: "Pegue e Monte com retirada para moradores de Joinville",
+      schemaServiceDescription: "Pegue e Monte com retirada e devolução no ponto do Paranaguamirim para moradores de Joinville. Consulte a disponibilidade do tema e a possibilidade de entrega para a data e o endereço.",
       whatsappMessage: "Olá, Lela! Encontrei a página de decoração de festas em Joinville. Meu bairro/endereço é [bairro/endereço] e quero consultar a disponibilidade para [data].",
       whatsappLabel: "Consultar atendimento em Joinville",
-      faqs: [
-        {
-          question: "Onde retiro o kit da Lela Decorações em Joinville?",
-          answer: "O endereço informado para retirada fica na R. Matusalém Gonçalves Pinheiro, 83, no Paranaguamirim. Combine a disponibilidade e a retirada pelo WhatsApp."
-        },
-        {
-          question: "A Lela entrega em todos os bairros de Joinville?",
-          answer: "Não há uma lista pública de bairros com entrega confirmada. Entrega e retirada no local podem ser consultadas conforme o endereço, a disponibilidade e a taxa."
-        }
-      ]
+      faqs: faqData.regionalFor({ type: "city", name: "Joinville" })
     }
   },
   {
@@ -189,40 +220,35 @@ const cities = [
       checkedAt: "2026-10-13"
     },
     commercialStatus: "CONFIRMED",
-    commercialConfirmationScope: "Atendimento municipal declarado no site atual da empresa; condições por endereço ainda precisam de consulta.",
+    commercialConfirmationScope: "Moradores de todos os bairros de Araquari podem contratar Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville; entrega depende de disponibilidade para data e endereço.",
+    commercialEvidence: [commercial.ownerConfirmation],
+    confirmedCommercialFacts: ["Moradores de todos os bairros de Araquari podem contratar o Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville."],
+    pickupEligibilityStatus: "CONFIRMED_CITYWIDE",
+    deliveryStatus: "CONDITIONAL_ON_AVAILABILITY",
     commercialSources: [
       { title: "Site da Lela Decorações", url: "https://leladecoracoes.com/", checkedAt: "2026-10-13" },
       { title: "Contato e endereço para retirada", url: "https://leladecoracoes.com/contato/", checkedAt: "2026-10-13" }
     ],
-    publicationStatus: "READY_FOR_REVIEW",
+    publicationStatus: "READY_INDEX",
     indexable: true,
     publicationBasis: "CITY_SERVICE",
     schemaServiceAreas: ["Araquari, SC"],
     content: {
-      title: "Pegue e Monte e decoração de festas em Araquari | Lela Decorações",
-      description: "Encontre Pegue e Monte e Mini Festa na Mesa para comemorações em Araquari. Consulte temas disponíveis e confirme a logística para seu endereço.",
+      title: "Pegue e Monte em Araquari com retirada em Joinville | Lela Decorações",
+      description: "Moradores de Araquari podem contratar Pegue e Monte com retirada e devolução em Joinville. Consulte temas e a possibilidade de entrega para seu endereço.",
       eyebrow: "Araquari · Santa Catarina",
-      h1: "Decoração de festas em Araquari",
-      intro: "A Lela Decorações informa atendimento em Araquari com Pegue e Monte e Mini Festa na Mesa. Consulte o tema e a data e confirme as condições para o endereço da comemoração.",
-      detailTitle: "Consulte a logística para seu endereço",
-      detailText: "O endereço de retirada divulgado pela Lela fica no Paranaguamirim, em Joinville. Para uma festa em Araquari, confirme pelo WhatsApp se há entrega ou outra condição de retirada para o seu endereço; a disponibilidade e a taxa são verificadas caso a caso.",
+      h1: "Pegue e Monte para festas em Araquari",
+      intro: "Moradores de todos os bairros de Araquari podem contratar o Pegue e Monte da Lela. A retirada e a devolução são combinadas no ponto do Paranaguamirim, em Joinville; a possibilidade de entrega depende da disponibilidade para a data e o endereço.",
+      detailTitle: "Logística para festas em Araquari",
+      detailText: "A Lela não informa uma unidade de retirada em Araquari. Para contratar com retirada, o kit é retirado e devolvido no Paranaguamirim, em Joinville. Se preferir entrega, informe o endereço da festa e a data para a Lela verificar a disponibilidade e as condições.",
       pickupNeighborhoodPath: null,
       pickupLabel: "Ver o endereço de retirada informado em Joinville",
-      services: commonServices,
-      schemaServiceName: "Decoração de festas em Araquari",
-      schemaServiceDescription: "Pegue e Monte, Mini Festa na Mesa e temas para comemorações em Araquari, Santa Catarina.",
+      services: servicesForCity("Araquari"),
+      schemaServiceName: "Pegue e Monte com retirada para moradores de Araquari",
+      schemaServiceDescription: "Pegue e Monte para moradores de Araquari, com retirada e devolução no ponto do Paranaguamirim, em Joinville. Entrega depende de disponibilidade para a data e o endereço.",
       whatsappMessage: "Olá, Lela! Encontrei a página de decoração de festas em Araquari. Meu endereço é [bairro/endereço] e quero consultar a logística para [data].",
       whatsappLabel: "Consultar atendimento em Araquari",
-      faqs: [
-        {
-          question: "A Lela Decorações atende Araquari?",
-          answer: "Sim. O site da Lela informa atendimento em Araquari com Pegue e Monte e Mini Festa na Mesa. Consulte a disponibilidade do tema e da data pelo WhatsApp."
-        },
-        {
-          question: "Há entrega de decoração em todos os bairros de Araquari?",
-          answer: "Não há uma lista pública de bairros com entrega confirmada. Informe o endereço da festa para consultar disponibilidade, logística e eventual taxa. O endereço de retirada divulgado fica em Joinville."
-        }
-      ]
+      faqs: faqData.regionalFor({ type: "city", name: "Araquari" })
     }
   }
 ];
@@ -231,35 +257,57 @@ const neighborhoods = [
   ...joinvilleNames.map((name) => ({
     name,
     citySlug: "joinville",
-    geographySource: joinvilleSource
+    geographySource: joinvilleSource,
+    geographicType: "neighborhood"
   })),
   ...araquariNames.map((entry) => ({
     name: entry.name,
     citySlug: "araquari",
-    geographySource: entry.source
+    geographySource: entry.source,
+    geographicType: entry.geographicType || "neighborhood"
   }))
 ].map((entry) => {
   const city = cities.find((item) => item.slug === entry.citySlug);
   const slug = slugify(entry.name);
   return {
-    type: "neighborhood",
+    type: entry.geographicType,
     name: entry.name,
     slug,
     citySlug: city.slug,
     city: city.name,
     state: city.state,
     path: `${city.path}${slug}/`,
-    geographyStatus: city.slug === "joinville" ? "MUNICIPAL_LIST" : "OFFICIAL_SOURCE_REFERENCE",
+    geographyStatus: city.slug === "joinville" ? "MUNICIPAL_LIST" : "MUNICIPAL_REFERENCE",
     geographyConfirmationScope: city.slug === "joinville"
       ? "Consta na relação municipal Joinville Bairro a Bairro 2026."
-      : "Nome citado como bairro em fonte municipal ou referência geográfica do IBGE; não confirma lista municipal exaustiva nem limites legais.",
+      : entry.geographicType === "district"
+        ? "A Prefeitura identifica Itapocu como distrito; o cadastro o mantém separado de bairros e localidades."
+        : entry.geographicType === "locality"
+          ? entry.name === "Barra do Itapocu"
+            ? "O portal municipal de turismo usa ‘região da Barra do Itapocu’; esta entrada é mantida como localidade, não como bairro confirmado."
+            : entry.name === "Jacu"
+              ? "A Prefeitura lista Jacu como bairro em uma tabela de vagas; uma proposição legislativa também o chama de localidade. A classificação permanece pendente."
+              : entry.name === "Morro Grande"
+                ? "Uma proposição legislativa municipal cita Morro Grande como localidade; a vigência e a classificação territorial atual ainda precisam de confirmação."
+            : "A fonte municipal consultada menciona a área como localidade ou comunidade; o nome não é tratado aqui como bairro oficialmente delimitado."
+          : entry.name === "Guamiranga"
+            ? "O portal municipal de turismo chama Guamiranga de bairro; esta referência não confirma limites territoriais nem atendimento comercial."
+            : "A Prefeitura usa o nome como bairro em publicações de vagas ou serviços; isso não equivale a uma lista legal completa nem define limites territoriais.",
     geographySource: entry.geographySource,
-    commercialStatus: "UNCONFIRMED",
-    commercialConfirmationScope: null,
+    commercialStatus: "CONFIRMED",
+    commercialConfirmationScope: `Moradores de todos os bairros de ${city.name} podem contratar Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville; isso não confirma entrega neste endereço.`,
+    commercialEvidence: [commercial.ownerConfirmation],
+    confirmedCommercialFacts: [`Moradores de todos os bairros de ${city.name} podem contratar o Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville.`],
+    pickupEligibilityStatus: "CONFIRMED_CITYWIDE",
+    deliveryStatus: "CONDITIONAL_ON_AVAILABILITY",
+    editorialReadiness: {
+      status: "INSUFFICIENT_LOCAL_DISTINCTIVE_EVIDENCE",
+      decision: "RETAIN_DRAFT_PREVIEW",
+      reason: "A confirmação comercial é municipal e compartilhada; faltam informações, fotos ou fatos próprios verificados desta localidade que sustentem uma página individual indexável."
+    },
     serviceCoverageStatus: "UNCONFIRMED",
     serviceCoverageConditions: null,
-    confirmedCommercialFacts: [],
-    publicationStatus: "PENDING_COMMERCIAL_CONFIRMATION",
+    publicationStatus: "DRAFT_PREVIEW",
     indexable: false,
     content: null
   };
@@ -267,24 +315,28 @@ const neighborhoods = [
 
 const pickupNeighborhood = neighborhoods.find((item) => item.citySlug === "joinville" && item.slug === "paranaguamirim");
 pickupNeighborhood.commercialStatus = "CONFIRMED";
-pickupNeighborhood.commercialConfirmationScope = "Somente endereço informado para retirada; não confirma entrega no bairro.";
-pickupNeighborhood.confirmedCommercialFacts = ["O site atual informa endereço de retirada no Paranaguamirim, Joinville."];
+pickupNeighborhood.commercialConfirmationScope = "Ponto de retirada divulgado e contratação de Pegue e Monte com retirada/devolução para residentes de Joinville e Araquari; não confirma entrega neste endereço ou em outros bairros.";
+pickupNeighborhood.commercialEvidence = [commercial.ownerConfirmation];
+pickupNeighborhood.confirmedCommercialFacts = ["O ponto de retirada divulgado fica no Paranaguamirim, em Joinville.", "Moradores de todos os bairros de Joinville e Araquari podem contratar Pegue e Monte com retirada e devolução neste ponto."];
+pickupNeighborhood.pickupEligibilityStatus = "CONFIRMED_CITYWIDE";
+pickupNeighborhood.deliveryStatus = "CONDITIONAL_ON_AVAILABILITY";
+pickupNeighborhood.editorialReadiness = { status: "PICKUP_LOCATION_PAGE", decision: "KEEP_READY_INDEX", reason: "A página informa o endereço real de retirada; não é uma página de cobertura de entrega do bairro." };
 pickupNeighborhood.commercialSource = {
   title: "Contato e dúvidas da Lela Decorações",
   url: "https://leladecoracoes.com/contato/",
   checkedAt: "2026-10-13"
 };
-pickupNeighborhood.publicationStatus = "READY_FOR_REVIEW";
+pickupNeighborhood.publicationStatus = "READY_INDEX";
 pickupNeighborhood.indexable = true;
 pickupNeighborhood.publicationBasis = "PICKUP_LOCATION";
 pickupNeighborhood.content = {
-  title: "Retirada de kits Pegue e Monte no Paranaguamirim, Joinville | Lela Decorações",
-  description: "Consulte como retirar um kit Pegue e Monte da Lela Decorações no Paranaguamirim, Joinville, e confirme data, disponibilidade e logística.",
+  title: "Retirada de Pegue e Monte no Paranaguamirim, Joinville | Lela Decorações",
+  description: "Veja o endereço de retirada da Lela no Paranaguamirim, em Joinville. Moradores de Joinville e Araquari podem contratar; consulte tema e data.",
   eyebrow: "Ponto de retirada · Joinville",
   h1: "Retirada de kits Pegue e Monte no Paranaguamirim",
-  intro: "O endereço informado para retirar os kits da Lela Decorações fica no Paranaguamirim, em Joinville. Consulte a disponibilidade do tema e combine a retirada antes da festa.",
-  detailTitle: "Endereço informado para retirada",
-  detailText: "No Pegue e Monte, retirada e devolução pelo cliente são a regra. Entrega e retirada no local podem ser consultadas, conforme disponibilidade e taxa. O endereço abaixo identifica o ponto de retirada divulgado; não confirma entrega em todos os endereços do Paranaguamirim.",
+  intro: "O ponto de retirada da Lela fica no Paranaguamirim. Moradores de Joinville e Araquari podem contratar o Pegue e Monte retirando e devolvendo o kit neste endereço; combine os detalhes antes de ir.",
+  detailTitle: "O que combinar antes da retirada",
+  detailText: "No Pegue e Monte, a cliente retira, transporta, monta e devolve o kit conforme combinado. Se preferir consultar entrega, informe a data e o endereço da festa; a possibilidade e eventuais taxas dependem da disponibilidade da Lela.",
   services: [
     {
       name: "Pegue e Monte",
@@ -301,16 +353,7 @@ pickupNeighborhood.content = {
   schemaServiceDescription: null,
   whatsappMessage: "Olá, Lela! Encontrei a página do ponto de retirada no Paranaguamirim. Quero consultar um kit para [data] e informar o endereço da festa.",
   whatsappLabel: "Consultar retirada no Paranaguamirim",
-  faqs: [
-    {
-      question: "Qual é o endereço de retirada no Paranaguamirim?",
-      answer: "O endereço informado é R. Matusalém Gonçalves Pinheiro, 83, Paranaguamirim, Joinville - SC, CEP 89231-603. Combine data e horário pelo WhatsApp."
-    },
-    {
-      question: "A Lela entrega em todo o Paranaguamirim?",
-      answer: "A página confirma o endereço informado para retirada, mas não promete entrega em todo o bairro. Consulte a possibilidade de entrega ou retirada no local conforme o endereço, a disponibilidade e a taxa."
-    }
-  ]
+  faqs: faqData.regionalFor(pickupNeighborhood)
 };
 
 for (const city of cities) {
@@ -319,7 +362,9 @@ for (const city of cities) {
     { label: "Regiões atendidas", url: "/regioes-atendidas/" },
     { label: city.name, url: city.path }
   ];
-  city.neighborhoods = neighborhoods.filter((item) => item.citySlug === city.slug);
+  city.neighborhoods = neighborhoods
+    .filter((item) => item.citySlug === city.slug)
+    .sort((left, right) => left.name.localeCompare(right.name, "pt-BR", { sensitivity: "base" }));
 }
 
 for (const neighborhood of neighborhoods) {
@@ -335,33 +380,75 @@ for (const neighborhood of neighborhoods) {
 const indexFaqs = [
   {
     question: "Quais serviços a Lela Decorações oferece?",
-    answer: "A Lela oferece Pegue e Monte, Mini Festa na Mesa e temas para festas e comemorações. Consulte a disponibilidade para a sua data."
+    answer: "A Lela oferece Pegue e Monte e Mini Festa na Mesa. Moradores de Joinville e Araquari podem contratar Pegue e Monte com retirada e devolução no Paranaguamirim; a disponibilidade de temas é confirmada para cada data."
   },
   {
     question: "Como funciona a retirada da decoração?",
-    answer: "O endereço divulgado para retirada fica no Paranaguamirim, Joinville. No Pegue e Monte, retirada e devolução pelo cliente são a regra; combine os detalhes pelo WhatsApp."
+    answer: faqData.byId.get("pickup-location").answer
   },
   {
-    question: "A Lela entrega em todos os bairros de Joinville e Araquari?",
-    answer: "Não há uma lista pública de bairros com entrega confirmada. A possibilidade de entrega ou retirada no local depende do endereço, da disponibilidade e de eventual taxa."
+    question: "Como funciona a entrega em Joinville e Araquari?",
+    answer: `${commercial.copy.deliveryConditions} ${commercial.copy.pickupEligibility}`
   },
   {
     question: "Como peço um orçamento?",
-    answer: "Envie pelo WhatsApp a data da festa, a cidade e o bairro, o serviço desejado e o tema. A Lela consulta disponibilidade e condições para o endereço informado."
+    answer: "Envie pelo WhatsApp a data, a cidade e o bairro da festa, o tema e o serviço que deseja. Para Pegue e Monte, você pode escolher a retirada no Paranaguamirim; se preferir entrega, a Lela verifica a disponibilidade para o endereço informado."
   }
 ];
 
 const publishedPages = [
-  ...cities.filter((item) => item.indexable && item.publicationStatus === "READY_FOR_REVIEW"),
-  ...neighborhoods.filter((item) => item.indexable && item.publicationStatus === "READY_FOR_REVIEW")
+  ...cities.filter((item) => item.indexable && item.publicationStatus === "READY_INDEX"),
+  ...neighborhoods.filter((item) => item.indexable && item.publicationStatus === "READY_INDEX")
 ];
+
+const reviewMode = process.env.LELA_LOCAL_REVIEW === "1";
+const previewPages = reviewMode
+  ? neighborhoods.filter((item) => !item.indexable).map((place) => {
+    const city = cities.find((item) => item.slug === place.citySlug);
+    const kind = place.type === "district" ? "distrito" : place.type === "locality" ? "localidade" : "bairro";
+    return {
+      ...place,
+      previewOnly: true,
+      publicationStatus: "DRAFT_PREVIEW",
+      indexable: false,
+      content: {
+        title: `Pegue e Monte em ${place.name}, ${place.city} | Lela Decorações`,
+        description: `Moradores de ${place.name}, em ${place.city}, podem contratar Pegue e Monte com retirada no Paranaguamirim. Explore temas e consulte a possibilidade de entrega.`,
+        eyebrow: `${place.name} · ${kind} de ${place.city}`,
+        h1: `Pegue e Monte em ${place.name}, ${place.city}`,
+        intro: `Mora em ${place.name}, ${place.city}? Você pode contratar o Pegue e Monte da Lela com retirada e devolução no Paranaguamirim, em Joinville. Explore os temas e consulte a disponibilidade para sua data; a entrega depende de confirmação para o endereço.`,
+        detailTitle: "Retirada e entrega",
+        detailText: place.citySlug === "joinville"
+          ? "A retirada e a devolução do Pegue e Monte são combinadas no ponto do Paranaguamirim, em Joinville. A cliente transporta, monta e desmonta o kit conforme as orientações recebidas. Se preferir entrega, informe data e endereço para consultar a disponibilidade e as condições."
+          : "Moradores de Araquari podem contratar com retirada e devolução no ponto do Paranaguamirim, em Joinville. Se preferir entrega, informe data e endereço para a Lela consultar a disponibilidade e as condições.",
+        services: [
+          { name: "Pegue e Monte", path: "/pegue-e-monte/", description: "Moradores da cidade podem contratar com retirada e devolução no Paranaguamirim; consulte tema, data e entrega." },
+          { name: "Catálogo de decorações", path: "/portfolio/", description: "Veja os temas do catálogo e consulte as condições para sua festa." },
+          { name: `Região de ${place.city}`, path: city.path, description: `Veja como funcionam retirada, catálogo e consulta de entrega para festas em ${place.city}.` }
+        ],
+        pickupNeighborhoodPath: city.slug === "joinville" ? "/regioes-atendidas/joinville/paranaguamirim/" : null,
+        pickupLabel: "Ver o ponto de retirada no Paranaguamirim",
+        schemaServiceName: null,
+        schemaServiceDescription: null,
+        whatsappMessage: `Olá, Lela! Moro em ${place.name}, ${place.city}, e quero consultar o Pegue e Monte para [data]. Tema: [tema]. Pretendo retirar e devolver o kit no Paranaguamirim; também gostaria de consultar a possibilidade de entrega para meu endereço.`,
+        whatsappLabel: `Consultar decoração para ${place.name}`,
+        faqs: faqData.regionalFor(place)
+      }
+    };
+  })
+  : [];
+
+const buildPages = [...publishedPages, ...previewPages];
 
 module.exports = {
   sources: { joinville: joinvilleSource, araquari: araquariSources },
   geographyRegisterStatus: "PARTIAL_FOR_ARAQUARI",
-  geographyRegisterNote: "Joinville segue a relação municipal Bairro a Bairro 2026. Para Araquari, o cadastro reúne nomes usados como bairros em publicações oficiais e referências do IBGE; não foi localizada uma relação municipal única e exaustiva com limites oficiais.",
+  geographyRegisterNote: "Joinville segue os 45 bairros da publicação municipal Bairro a Bairro 2026. Araquari reúne 17 referências geográficas: bairros, localidades/comunidades e o distrito de Itapocu; o cadastro pode estar incompleto e não define limites. A contratação do Pegue e Monte com retirada no Paranaguamirim está confirmada para residentes das duas cidades; entrega para endereço específico continua sujeita à disponibilidade. A confirmação comercial não torna automaticamente cada página apta à indexação.",
   cities,
   neighborhoods,
   publishedPages,
+  previewPages,
+  buildPages,
+  reviewMode,
   indexFaqs
 };

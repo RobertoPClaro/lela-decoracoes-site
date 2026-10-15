@@ -19,10 +19,10 @@ breadcrumbs:
       <p class="hero-copy">Pegue e Monte e Mini Festa na Mesa para celebrar com praticidade, delicadeza e economia — do jeitinho que o seu momento merece.</p>
       <div class="hero-actions">
         <a class="button" href="{{ site.whatsappLink('Olá, Lela! Quero consultar a disponibilidade de uma decoração.') }}" target="_blank" rel="noopener">Consultar disponibilidade <span aria-hidden="true">↗</span></a>
-        <a class="button button--secondary" href="{{ '/portfolio/' | url }}">Ver trabalhos</a>
+        <a class="button button--secondary" href="{{ '/portfolio/' | url }}">Abrir catálogo</a>
       </div>
       <div class="hero-note" aria-label="Diferenciais">
-        <span>Temas reais do acervo</span>
+        <span>Referências do acervo</span>
         <span>Processo explicado</span>
         <span>Atendimento próximo</span>
       </div>
@@ -31,7 +31,7 @@ breadcrumbs:
       <div class="hero-visual__frame">
         {% set item = hero %}{% set imageClass = "hero-visual__image" %}{% set imageSizes = "(min-width: 900px) 45vw, 92vw" %}{% set imageLoading = "eager" %}{% set imageFetchPriority = "high" %}{% set imagePreset = "hero" %}{% include "partials/image.njk" %}
       </div>
-      <div class="hero-label"><strong>Ursinho Bebê</strong><span>kit montado</span></div>
+      <div class="hero-label"><strong>Ursinho Bebê Azul</strong><span>exemplo de montagem</span></div>
       <div class="hero-stamp">feito para<br>celebrar<br>com carinho</div>
     </div>
   </div>
@@ -55,15 +55,15 @@ breadcrumbs:
 <section class="section section--lilac" id="portfolio-home">
   <div class="container">
     <div class="section-intro-row">
-      <div>{% set eyebrow = "Portfólio real" %}{% set heading = "Ideias para você se enxergar na festa." %}{% set copy = "Use as fotos como ponto de partida e consulte o tema desejado." %}{% include "partials/section-heading.njk" %}</div>
-      <a class="text-link" href="{{ '/portfolio/' | url }}">Ver portfólio completo <span aria-hidden="true">→</span></a>
+      <div>{% set eyebrow = "Catálogo de decorações" %}{% set heading = "Encontre um tema para começar a planejar." %}{% set copy = "Cada opção reúne as fotos associadas ao mesmo tema, com painéis de referência e exemplos de montagem quando há imagens." %}{% include "partials/section-heading.njk" %}</div>
+      <a class="text-link" href="{{ '/portfolio/' | url }}">Explorar todo o catálogo <span aria-hidden="true">→</span></a>
     </div>
     <div class="portfolio-grid">
-      {% for item in portfolio.featured | take(8) %}
-        {% include "partials/portfolio-card.njk" %}
+      {% for group in portfolio.featuredCatalog | take(4) %}
+        {% include "partials/catalog-card.njk" %}
       {% endfor %}
     </div>
-    <p style="margin-top:1.5rem"><a class="text-link" href="{{ '/temas/' | url }}">Ver páginas com fotos e informações por tema <span aria-hidden="true">→</span></a></p>
+    <p style="margin-top:1.5rem"><a class="text-link" href="{{ '/temas/' | url }}">Ver páginas detalhadas dos temas <span aria-hidden="true">→</span></a></p>
   </div>
 </section>
 
@@ -82,7 +82,7 @@ breadcrumbs:
 
 <section class="section" id="temas">
   <div class="container">
-    {% set eyebrow = "Para cada celebração" %}{% set heading = "Um acervo para começar a imaginar." %}{% set copy = "Kits montados." %}{% include "partials/section-heading.njk" %}
+    {% set eyebrow = "Explore por ocasião" %}{% set heading = "Comece pela categoria que combina com a festa." %}{% set copy = "As categorias ajudam a encontrar referências; a Lela confirma o formato disponível no atendimento." %}{% include "partials/section-heading.njk" %}
     <div class="audience-grid">
       {% for card in portfolio.categoryCards %}
         <a class="audience-card" href="{{ '/portfolio/' | url }}#{{ card.slug }}" style="text-decoration:none">

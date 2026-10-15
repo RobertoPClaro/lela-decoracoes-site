@@ -36,16 +36,16 @@ breadcrumbs:
       </ul>
       <div style="margin-top:1.6rem"><a class="button" href="{{ site.whatsappLink('Olá, Lela! Quero montar uma Mini Festa na Mesa.') }}" target="_blank" rel="noopener">Quero uma Mini Festa <span aria-hidden="true">↗</span></a></div>
     </div>
-    <div class="split__visual">
+    <div class="split__visual mini-festa__visual">
       {% set image = portfolio.featured[3] %}
-      {% set item = image %}{% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
+      {% set item = image %}{% set imageClass = "mini-festa__image" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
     </div>
   </div>
 </section>
 
 <section class="section section--tight">
   <div class="container">
-    <p>Use as fotos para escolher uma ideia e consulte se o tema está disponível na Mini Festa na Mesa. <a class="text-link" href="{{ '/temas/' | url }}">Explorar temas <span aria-hidden="true">→</span></a></p>
+    <p>Use as fotos para escolher uma ideia e consulte se o tema está disponível na Mini Festa na Mesa. <a class="text-link" href="{{ '/portfolio/' | url }}">Explorar o catálogo <span aria-hidden="true">→</span></a></p>
   </div>
 </section>
 
@@ -60,6 +60,6 @@ breadcrumbs:
   </div>
 </section>
 
-<section class="section section--tight"><div class="container"><p class="provisional-note">Consulte no atendimento se bolo, doces, personalizados, mobiliário e outros itens fazem parte da composição escolhida.</p>{% include "partials/regions-note.njk" %}</div></section>
+<section class="section section--tight"><div class="container"><p class="provisional-note">Antes de reservar, confirme a composição da proposta e se ela inclui montagem no local, entrega ou retirada dos itens. Esses serviços não devem ser presumidos para todas as datas. Consulte também se bolo, doces, personalizados, mobiliário e outros itens fazem parte da composição escolhida.</p>{% include "partials/regions-note.njk" %}</div></section>
 
 {% set message = "Olá, Lela! Quero consultar uma Mini Festa na Mesa. Data: [data]. Tema/ocasião: [tema]." %}{% set label = "Planejar minha Mini Festa" %}{% include "partials/whatsapp-cta.njk" %}

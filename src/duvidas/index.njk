@@ -3,6 +3,7 @@ layout: layouts/base.njk
 title: "Dúvidas sobre decoração e Pegue e Monte | Lela Decorações"
 description: "Tire dúvidas sobre kits, reserva, retirada, montagem, devolução, pagamento e condições do Pegue e Monte da Lela Decorações."
 permalink: /duvidas/
+bodyClass: faq-page
 faqSchema: true
 breadcrumbs:
   - label: Início
@@ -14,6 +15,6 @@ breadcrumbs:
 {% include "partials/breadcrumbs.njk" %}
 <section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Perguntas honestas</p><h1>O que você precisa saber antes de reservar.</h1></div><p class="page-hero__copy">Reunimos as dúvidas que mais interferem na decisão. Se a resposta depender do tema ou da data, a Lela confirma no WhatsApp.</p></div></section>
 
-<section class="section"><div class="container" style="max-width:900px"><div class="section-heading"><p class="eyebrow">FAQ</p><h2>Clareza para decidir com tranquilidade.</h2></div>{% set openFirst = true %}{% include "partials/faq-list.njk" %}</div></section>
+<section class="section"><div class="container faq-page__content"><div class="section-heading"><p class="eyebrow">FAQ</p><h2>Clareza para decidir com tranquilidade.</h2></div>{% set openFirst = true %}{% include "partials/faq-list.njk" %}</div></section>
 
 <section class="section section--lilac"><div class="container"><div class="section-heading"><p class="eyebrow">Ainda ficou alguma dúvida?</p><h2>Leve o seu caso para a conversa.</h2><p>Tema, data, cidade, porte e logística mudam a resposta. É por isso que o próximo passo é consultar a disponibilidade.</p></div><a class="button" href="{{ site.whatsappLink('Olá, Lela! Tenho uma dúvida sobre uma decoração: ') }}" target="_blank" rel="noopener">Perguntar pelo WhatsApp <span aria-hidden="true">↗</span></a></div></section>

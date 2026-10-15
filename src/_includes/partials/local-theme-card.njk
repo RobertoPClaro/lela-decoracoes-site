@@ -1,0 +1,15 @@
+{% set themeUrl = theme.path | url %}{% set themeUrl = themeUrl + "?cidade=" + citySlug + "&servico=pegue-e-monte" %}
+{% if localityName %}{% set themeUrl = themeUrl + "&localidade=" + local.slug %}{% endif %}
+{% set placeLabel = cityName %}{% if localityName %}{% set placeLabel = localityName + ", " + cityName %}{% endif %}
+{% set message = "Olá, Lela! Vi o tema " + theme.name + " no catálogo e quero consultar se há uma opção para o Pegue e Monte em " + placeLabel + ". Poderia confirmar a disponibilidade e as condições de retirada ou eventual entrega?" %}
+<article class="local-theme-card" data-local-theme-card="{{ theme.slug }}">
+  <a class="local-theme-card__image-link" href="{{ themeUrl }}" aria-label="Ver a decoração {{ theme.name }}">
+    {% set item = theme.heroImage %}{% set imageClass = "local-theme-card__image" %}{% set imageSizes = "(min-width: 1200px) 22vw, (min-width: 700px) 42vw, 46vw" %}{% set imageLoading = "lazy" %}{% set imageFetchPriority = false %}{% set imagePreset = "card" %}
+    <span class="local-theme-card__media">{% include "partials/image.njk" %}</span>
+  </a>
+  <div class="local-theme-card__content">
+    <p class="local-theme-card__category">{{ theme.categoryLabel }}</p>
+    <h3><a href="{{ themeUrl }}">{{ theme.name }}</a></h3>
+    <a class="local-theme-card__contact" href="{{ site.whatsappLink(message) }}" target="_blank" rel="noopener">Consultar este tema <span aria-hidden="true">↗</span></a>
+  </div>
+</article>

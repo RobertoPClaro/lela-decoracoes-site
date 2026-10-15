@@ -1,10 +1,10 @@
 ---
 layout: layouts/base.njk
-title: "Temas para festas em Joinville e Araquari | Lela Decorações"
-description: "Explore temas do acervo da Lela Decorações, veja referências de painéis e kits montados e consulte disponibilidade em Joinville e Araquari."
+title: "Temas com informações detalhadas | Lela Decorações"
+description: "Veja temas com informações editoriais próprias e abra o catálogo para consultar todas as decorações do acervo em Joinville e Araquari."
 permalink: /temas/
-schemaWebPageName: "Temas para festas em Joinville e Araquari | Lela Decorações"
-schemaWebPageDescription: "Páginas de temas com imagens do acervo da Lela Decorações e consulta de disponibilidade para Joinville e Araquari."
+schemaWebPageName: "Páginas detalhadas de temas | Lela Decorações"
+schemaWebPageDescription: "Páginas com referências fotográficas, informações úteis e consulta de disponibilidade de temas."
 breadcrumbs:
   - label: Início
     url: /
@@ -15,44 +15,33 @@ breadcrumbs:
 {% include "partials/breadcrumbs.njk" %}
 <section class="page-hero">
   <div class="container page-hero__grid">
-    <div><p class="eyebrow">Temas do acervo</p><h1>Temas de decoração para festas em Joinville e Araquari.</h1></div>
-    <p class="page-hero__copy">Veja referências fotográficas dos temas selecionados e consulte a disponibilidade para sua data em Joinville ou Araquari. A composição do kit e a logística são confirmadas no atendimento.</p>
+    <div><p class="eyebrow">Páginas de temas</p><h1>Fotos e informações para planejar a decoração.</h1></div>
+    <p class="page-hero__copy">Este diretório reúne temas com informações editoriais próprias. No catálogo, os {{ portfolio.catalog.length }} grupos abrem páginas individuais com fotos e formas de consultar disponibilidade.</p>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
     <div class="section-intro-row">
-      <div>{% set eyebrow = "Páginas de temas" %}{% set heading = "Fotos e informações para escolher com clareza." %}{% set copy = "Cada página reúne imagens já cadastradas no portfólio. Consulte quais itens estão disponíveis antes de reservar." %}{% include "partials/section-heading.njk" %}</div>
-      <a class="text-link" href="{{ '/portfolio/' | url }}">Ver todas as fotos do portfólio <span aria-hidden="true">→</span></a>
+      <div><p class="eyebrow">{{ themes.published.length }} temas com conteúdo ampliado</p><h2>Veja o que cada referência mostra.</h2><p>As fotos distinguem artes de painel e exemplos de montagem. A Lela confirma disponibilidade, formato e composição para a data consultada.</p></div>
+      <a class="text-link" href="{{ '/portfolio/' | url }}">Abrir catálogo completo <span aria-hidden="true">→</span></a>
     </div>
-    <div class="portfolio-grid" id="temas-selecionados">
+    <div class="portfolio-grid catalog-grid" id="temas-selecionados">
       {% for theme in themes.published %}
-        {% set item = theme.heroImage %}
-        {% include "partials/portfolio-card.njk" %}
+        {% set group = portfolio.catalogByName[theme.name] %}
+        {% include "partials/catalog-card.njk" %}
       {% endfor %}
     </div>
+    <p class="provisional-note theme-rights-note">Nomes de personagens, clubes e marcas identificam referências visuais do acervo. Esta página não declara parceria, vínculo oficial ou licenciamento com terceiros.</p>
   </div>
 </section>
 
 <section class="section section--lilac">
-  <div class="container split">
-    <div class="split__content">
-      <p class="eyebrow">Como funciona</p>
-      <h2>Consulte tema, data e logística juntos.</h2>
-      <p>Envie pelo WhatsApp o tema escolhido, a data e a cidade ou bairro. A Lela confirma disponibilidade e informa a composição e as condições de retirada ou eventual entrega.</p>
-      <div style="margin-top:1.5rem"><a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Entender o Pegue e Monte <span aria-hidden="true">→</span></a></div>
-    </div>
-    <div class="split__content">
-      <p class="eyebrow">Atendimento</p>
-      <h2>Joinville e Araquari, com logística confirmada por endereço.</h2>
-      <p>O endereço divulgado para retirada fica no Paranaguamirim, em Joinville. Entrega ou retirada no local depende da data, do endereço e da disponibilidade.</p>
-      <div class="button-row">
-        <a class="text-link" href="{{ '/regioes-atendidas/joinville/' | url }}">Atendimento em Joinville <span aria-hidden="true">→</span></a>
-        <a class="text-link" href="{{ '/regioes-atendidas/araquari/' | url }}">Atendimento em Araquari <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
+  <div class="container audience-grid">
+    <article class="audience-card"><p class="eyebrow">Pegue e Monte</p><h2>Consulte a data e o formato.</h2><p>Moradores de Joinville e Araquari podem contratar com retirada e devolução no Paranaguamirim. Entrega depende da disponibilidade para a data e o endereço.</p><a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Como funciona o Pegue e Monte <span aria-hidden="true">→</span></a></article>
+    <article class="audience-card"><p class="eyebrow">Mini Festa na Mesa</p><h2>Veja outra forma de celebrar.</h2><p>Consulte se a referência escolhida pode ser preparada nesse formato e quais elementos estarão disponíveis.</p><a class="text-link" href="{{ '/mini-festa-na-mesa/' | url }}">Conhecer a Mini Festa na Mesa <span aria-hidden="true">→</span></a></article>
+    <article class="audience-card"><p class="eyebrow">Atendimento local</p><h2>Joinville e Araquari.</h2><p>O endereço divulgado para retirada fica no Paranaguamirim, em Joinville. A logística para o evento é consultada por endereço e data.</p><div class="button-row"><a class="text-link" href="{{ '/regioes-atendidas/joinville/' | url }}">Joinville <span aria-hidden="true">→</span></a><a class="text-link" href="{{ '/regioes-atendidas/araquari/' | url }}">Araquari <span aria-hidden="true">→</span></a></div></article>
   </div>
 </section>
 
-{% set message = "Olá, Lela! Estou vendo os temas do acervo e quero consultar disponibilidade. Data: [data]. Cidade/bairro: [local]. Tema: [tema]." %}{% set label = "Consultar um tema" %}{% include "partials/whatsapp-cta.njk" %}
+{% set message = "Olá, Lela! Encontrei uma página de tema e quero consultar disponibilidade. Tema: [tema]. Data: [data]. Cidade/bairro: [local]." %}{% set label = "Consultar este tema" %}{% include "partials/whatsapp-cta.njk" %}

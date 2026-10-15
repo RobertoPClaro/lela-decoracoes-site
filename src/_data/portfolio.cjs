@@ -5,10 +5,11 @@ const imageSize = require("image-size");
 const root = path.resolve(__dirname, "../assets/images/originals");
 const categoryFolders = ["Tema Menina", "Tema Menino", "Tema Adulto", "Tema Diversos", "Tema Futebol"];
 const categoryDefinitions = [
-  { slug: "infantil", label: "Festas infantis", folders: ["Tema Menina", "Tema Menino"], eyebrow: "Infantil", copy: "Personagens e estilos para comemorações de crianças, organizados em uma categoria única." },
-  { slug: "adulto", label: "Festas adultas", folders: ["Tema Adulto"], eyebrow: "Adulto", copy: "Referências para aniversários e encontros de adultos." },
-  { slug: "diversos", label: "Temas e ocasiões", folders: ["Tema Diversos"], eyebrow: "Outras ocasiões", copy: "Temas e referências que atendem diferentes estilos de comemoração." },
-  { slug: "futebol", label: "Futebol", folders: ["Tema Futebol"], eyebrow: "Esportivo", copy: "Referências de clubes e futebol presentes no acervo." }
+  { slug: "infantil", label: "Infantil e personagens", folders: ["Tema Menina", "Tema Menino"], eyebrow: "Infantil", copy: "Personagens, animais e estilos que aparecem nas referências do acervo." },
+  { slug: "adulto", label: "Adultos e comemorações", folders: ["Tema Adulto"], eyebrow: "Comemorações", copy: "Ideias para aniversários, encontros e outras celebrações." },
+  { slug: "celebracoes", label: "Chás e ocasiões especiais", folders: [], eyebrow: "Ocasiões", copy: "Referências para chás, encontros e celebrações especiais." },
+  { slug: "futebol", label: "Futebol", folders: ["Tema Futebol"], eyebrow: "Futebol", copy: "Referências de futebol e clubes que aparecem no acervo." },
+  { slug: "diversos", label: "Outros temas", folders: ["Tema Diversos"], eyebrow: "Outros estilos", copy: "Outras referências visuais, incluindo música, cultura pop, jogos e natureza." }
 ];
 const categoryByFolder = new Map(categoryDefinitions.flatMap((category) =>
   category.folders.map((folder) => [folder, category])
@@ -27,7 +28,7 @@ const displayNames = {
   "Tema Menina/tema-frozen-01.jpeg": "Frozen",
   "Tema Menina/tema-gabbys-dollhouse-01.jpeg": "A Casa Mágica da Gabby",
   "Tema Menina/tema-grupo-pop-01.jpeg": "Tropa dos Rosa",
-  "Tema Menina/tema-hamster-fofo-01.jpeg": "Capivara Fofa",
+  "Tema Menina/tema-hamster-fofo-01.jpeg": "Roedor fofo",
   "Tema Menina/tema-lol-surprise-01.jpeg": "Guerreiras do K-Pop – HUNTR/X",
   "Tema Menina/tema-magali-01.jpeg": "Magali – Turma da Mônica",
   "Tema Menina/tema-minnie-01.jpeg": "Minnie Mouse",
@@ -85,7 +86,7 @@ const displayNames = {
   "Tema Diversos/tema-menino-ou-menina-01.jpeg": "Chá Revelação – Menino ou Menina",
   "Tema Diversos/tema-pool-party-01.jpeg": "Pool Party",
   "Tema Diversos/tema-primeira-comunhao-01.jpeg": "Primeira Comunhão",
-  "Tema Diversos/tema-safari-animais-01.jpeg": "Safari Baby",
+  "Tema Diversos/tema-safari-animais-01.jpeg": "Animais da floresta",
   "Tema Diversos/tema-tardezinha-01.jpeg": "Tardezinha",
   "Tema Diversos/tema-video-game-01.jpeg": "Videogame / Gamer",
   "Tema Futebol/tema-brasil-futebol-01.jpeg": "Brasil Futebol",
@@ -96,7 +97,7 @@ const displayNames = {
   "kits/kit-aniversario-adulto-01.png": "Happy Birthday",
   "kits/kit-bluey-01.png": "Bluey",
   "kits/kit-borboletas-01.jpeg": "Borboletas e Flores",
-  "kits/kit-brasil-futebol-01.jpeg": "Seleção Brasileira",
+  "kits/kit-brasil-futebol-01.jpeg": "Brasil Futebol",
   "kits/kit-corinthians-01.jpeg": "Corinthians",
   "kits/kit-crisma-01.jpeg": "Crisma",
   "kits/kit-dinossauros-01.png": "Dinossauros",
@@ -113,37 +114,6 @@ const displayNames = {
   "kits/kit-ursinho-bebe-01.jpeg": "Ursinho Bebê Azul"
 };
 
-const replacements = {
-  "cha": "Chá",
-  "bebê": "bebê",
-  "bebe": "bebê",
-  "reve": "revelação",
-  "pix": "Pix",
-  "happy": "Happy",
-  "birthday": "Birthday",
-  "eu": "Eu",
-  "amo": "Amo",
-  "tete": "Tetê",
-  "faz": "Faz",
-  "um": "um",
-  "pais": "País",
-  "das": "das",
-  "maravilhas": "Maravilhas",
-  "sa": "S.A.",
-  "mickey": "Mickey",
-  "minnie": "Minnie",
-  "corinthians": "Corinthians",
-  "flamengo": "Flamengo",
-  "vasco": "Vasco",
-  "naruto": "Naruto",
-  "barbie": "Barbie",
-  "frozen": "Frozen",
-  "bluey": "Bluey",
-  "skye": "Skye",
-  "minecraft": "Minecraft",
-  "fortnite": "Fortnite"
-};
-
 function slugify(value) {
   return String(value)
     .normalize("NFD")
@@ -153,13 +123,35 @@ function slugify(value) {
     .replace(/^-|-$/g, "");
 }
 
-function humanize(file) {
-  const base = file.replace(/\.[^.]+$/, "").replace(/^(tema|kit)-/, "").replace(/-\d+$/, "");
-  return base.split("-").map((word, index) => {
-    const mapped = replacements[word] || word;
-    if (index === 0 && !replacements[word]) return mapped.charAt(0).toUpperCase() + mapped.slice(1);
-    return mapped;
-  }).join(" ");
+const categoryOverrides = new Map([
+  ["A Casa Mágica da Gabby", "infantil"], ["Arca de Noé", "infantil"],
+  ["Bolofofos", "infantil"], ["Chá de Cozinha", "celebracoes"],
+  ["Chá Revelação – Menino ou Menina", "celebracoes"], ["Crisma", "celebracoes"],
+  ["Dinossauros Baby", "infantil"], ["Fazendinha", "infantil"],
+  ["Fundo do Mar", "infantil"], ["Galinha Pintadinha", "infantil"],
+  ["Primeira Comunhão", "celebracoes"], ["Roedor fofo", "diversos"],
+  ["Animais da floresta", "diversos"], ["Ursinho Bebê Azul", "infantil"],
+  ["Happy Birthday", "adulto"], ["Dia dos Namorados", "adulto"],
+  ["Faz um Pix Pra Mim", "adulto"], ["Festa Junina", "adulto"],
+  ["Gratidão", "adulto"], ["Pool Party", "adulto"], ["Tardezinha", "adulto"],
+  ["Videogame / Gamer", "diversos"], ["Música", "diversos"],
+  ["Ana Castela – A Boiadeira", "diversos"], ["Apaixonada por Dorama", "diversos"],
+  ["Tropa dos Rosa", "diversos"]
+]);
+const categoryBySlug = new Map(categoryDefinitions.map((category) => [category.slug, category]));
+const categoryByName = new Map();
+const extraSearchTerms = new Map([
+  ["Brasil Futebol", ["Seleção Brasileira"]],
+  ["Guerreiras do K-Pop – HUNTR/X", ["HUNTR/X", "K-pop", "Kpop"]]
+]);
+const needsNameConfirmation = new Set(["Roedor fofo", "Animais da floresta"]);
+const needsImageAssociationConfirmation = new Set(["Brasil Futebol", "Tropa dos Rosa"]);
+
+function categoryFor(themeName, folder) {
+  const override = categoryOverrides.get(themeName);
+  if (override) return categoryBySlug.get(override);
+  if (categoryByName.has(themeName)) return categoryByName.get(themeName);
+  return categoryByFolder.get(folder) || categoryBySlug.get("diversos");
 }
 
 function readImages(folder, sourceType) {
@@ -168,30 +160,29 @@ function readImages(folder, sourceType) {
   return fs.readdirSync(folderPath, { withFileTypes: true })
     .filter((entry) => entry.isFile() && imageExtensions.has(path.extname(entry.name).toLowerCase()))
     .sort((a, b) => a.name.localeCompare(b.name, "pt-BR", { numeric: true }))
-    .map((entry, index) => {
-      const technicalName = humanize(entry.name);
-      const slug = slugify(technicalName);
+    .map((entry) => {
       const displayNameKey = `${folder}/${entry.name}`;
       const themeName = displayNames[displayNameKey];
       if (!themeName) throw new Error(`Nome de exibição não cadastrado para ${displayNameKey}`);
       const sourcePath = path.join(folderPath, entry.name);
       const dimensions = imageSize(sourcePath);
-      const category = categoryByFolder.get(folder);
+      const category = categoryFor(themeName, folder);
+      const generatedBase = entry.name.replace(/\.[^.]+$/, "").toLowerCase();
       return {
-        id: `${slug}-${sourceType}-${index + 1}`,
-        slug,
+        id: slugify(`${folder}-${entry.name}`),
+        slug: slugify(themeName),
         themeName,
         title: themeName,
         alt: sourceType === "theme"
-          ? `Imagem de referência no tema ${themeName}`
-          : `Exemplo de kit montado no tema ${themeName}`,
-        caption: sourceType === "theme" ? `Referência do tema ${themeName}` : `Kit montado: ${themeName}`,
-        category: sourceType === "theme" ? category.slug : "kits-montados",
-        categoryLabel: sourceType === "theme" ? category.label : "Kits montados",
+          ? `Painel de referência do tema ${themeName}.`
+          : `Exemplo de mesa montada no tema ${themeName}.`,
+        caption: sourceType === "theme" ? `Painel de referência · ${themeName}` : `Exemplo de montagem · ${themeName}`,
+        category: category.slug,
+        categoryLabel: category.label,
         folder,
         sourceType,
         filename: entry.name,
-        generatedBase: entry.name.replace(/\.[^.]+$/, "").toLowerCase(),
+        generatedBase,
         width: dimensions.width,
         height: dimensions.height,
         sourcePath
@@ -200,7 +191,41 @@ function readImages(folder, sourceType) {
 }
 
 const themes = categoryFolders.flatMap((folder) => readImages(folder, "theme"));
+for (const item of themes) categoryByName.set(item.themeName, categoryBySlug.get(item.category));
 const kits = readImages("kits", "kit-example");
+const all = [...themes, ...kits];
+
+const groupsByName = new Map();
+for (const item of all) {
+  if (!groupsByName.has(item.themeName)) groupsByName.set(item.themeName, []);
+  groupsByName.get(item.themeName).push(item);
+}
+
+const catalog = [...groupsByName.entries()].map(([themeName, images]) => {
+  const orderedImages = [...images].sort((left, right) => {
+    if (left.sourceType !== right.sourceType) return left.sourceType === "theme" ? -1 : 1;
+    return left.filename.localeCompare(right.filename, "pt-BR", { numeric: true });
+  });
+  const category = categoryFor(themeName, orderedImages[0]?.folder);
+  return {
+    slug: slugify(themeName),
+    themeName,
+    category: category.slug,
+    categoryLabel: category.label,
+    images: orderedImages,
+    previewImage: orderedImages[0],
+    hasThemeReference: orderedImages.some((item) => item.sourceType === "theme"),
+    hasMountedExample: orderedImages.some((item) => item.sourceType === "kit-example"),
+    nameNeedsConfirmation: needsNameConfirmation.has(themeName),
+    imageAssociationNeedsConfirmation: needsImageAssociationConfirmation.has(themeName),
+    searchAliases: extraSearchTerms.get(themeName) || [],
+    searchText: [themeName, category.label, ...orderedImages.map((item) => item.sourceType), ...(extraSearchTerms.get(themeName) || [])].join(" ")
+  };
+}).sort((left, right) => left.themeName.localeCompare(right.themeName, "pt-BR", { sensitivity: "base" }));
+const catalogByName = Object.fromEntries(catalog.map((item) => [item.themeName, item]));
+const featuredCatalog = [
+  "Bluey", "Safari Baby", "Chá Revelação – Menino ou Menina", "Corinthians"
+].map((name) => catalogByName[name]).filter(Boolean);
 
 function firstMatch(list, needle) {
   return list.find((item) => item.filename.includes(needle)) || list[0];
@@ -219,14 +244,16 @@ const featured = [
 
 const categoryCards = categoryDefinitions.map((category) => ({
   ...category,
-  folder: category.folders[0],
-  image: themes.find((item) => category.folders.includes(item.folder))
+  image: catalog.find((item) => item.category === category.slug)?.previewImage
 }));
 
 module.exports = {
   themes,
   kits,
-  all: [...themes, ...kits],
+  all,
+  catalog,
+  catalogByName,
+  featuredCatalog,
   featured,
   categories: categoryDefinitions,
   categoryCards,

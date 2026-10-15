@@ -7,6 +7,7 @@
     <meta name="format-detection" content="telephone=no">
     <title>{{ title }}</title>
     <meta name="description" content="{{ description }}">
+    {% if robots %}<meta name="robots" content="{{ robots }}">{% endif %}
     {% if site.baseUrl %}
       <link rel="canonical" href="{{ site.baseUrl }}{{ page.url }}">
       <meta property="og:url" content="{{ site.baseUrl }}{{ page.url }}">
@@ -28,7 +29,7 @@
       <script type="application/ld+json">{{ site.localBusinessSchema | safe }}</script>
       <script type="application/ld+json">{{ site.breadcrumbSchema(breadcrumbs or [{label: 'Início', url: '/'}]) | safe }}</script>
     {% endif %}
-    {% if schemaServiceName %}
+    {% if schemaServiceName and (not theme or theme.indexable) %}
       <script type="application/ld+json">{{ site.serviceSchema(schemaServiceName, schemaServiceDescription, page.url, schemaServiceAreas or site.serviceAreaNames) | safe }}</script>
     {% endif %}
     {% if schemaWebPageName %}

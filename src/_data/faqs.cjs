@@ -1,12 +1,159 @@
-module.exports = [
-  { question: "O que é o Pegue e Monte?", answer: "É o formato em que você escolhe o tema, agenda a retirada, leva o kit ao evento, monta com orientação, desmonta e devolve na data combinada." },
-  { question: "O que vem em cada kit?", answer: "A composição varia conforme o tema e o porte. O Kit Minimalista é apresentado com painel de 50 × 50 cm, balões e outros elementos; o Kit Grande, com painéis de 1,50 × 1,50 m, cilindros P/M/G e outros elementos. Confirme a lista exata antes de reservar." },
-  { question: "Qual é a diferença entre Minimalista e Grande?", answer: "O Minimalista é mais compacto e indicado para espaços menores. O Grande cria mais presença e exige atenção ao espaço e ao transporte. A escolha final depende da composição disponível para a sua data." },
-  { question: "Como faço para reservar?", answer: "Envie pelo WhatsApp a data, cidade/bairro, tema e porte desejado. A reserva é confirmada após o pagamento da entrada de 50%." },
-  { question: "A Lela entrega e monta no local?", answer: "Retirada e devolução pelo cliente são a regra do Pegue e Monte. Entrega e retirada no local podem ser consultadas, conforme disponibilidade e taxa de deslocamento." },
-  { question: "Por quanto tempo fico com a decoração?", answer: "A decoração deve ser devolvida em até 24 horas. Após esse prazo, é cobrada uma taxa diária de 30% do valor total da festa. Se precisar de mais tempo, solicite com antecedência." },
-  { question: "Quais formas de pagamento são aceitas?", answer: "O pagamento pode ser feito por Pix, dinheiro ou cartão de crédito. No cartão, a taxa da maquininha fica por conta do cliente, conforme a operadora." },
-  { question: "O que acontece se eu precisar cancelar?", answer: "A entrada de 50% não é reembolsável. O valor pode ficar como crédito por até três meses para uma nova reserva, sujeito à disponibilidade." },
-  { question: "E se alguma peça for danificada?", answer: "Em caso de perda, avaria ou dano, será cobrado o valor do item. Siga as orientações de cuidado recebidas na retirada." },
-  { question: "Onde fica a retirada?", answer: "A retirada fica na R. Matusalém Gonçalves Pinheiro, 83, Paranaguamirim, Joinville - SC, CEP 89231-603." }
+const commercial = require("./commercial.cjs");
+
+const items = [
+  {
+    id: "pegue-monte-definition",
+    question: "O que é o Pegue e Monte?",
+    answer: "É o formato em que você escolhe o tema, agenda a retirada, leva o kit ao evento, monta com orientação, desmonta e devolve na data combinada.",
+    category: "service",
+    source: ["/pegue-e-monte/", "/como-funciona/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "kit-composition",
+    question: "O que vem em cada kit?",
+    answer: "A composição varia conforme o tema e o porte. O Kit Minimalista é apresentado com painel de 50 × 50 cm, balões e outros elementos; o Kit Grande, com painéis de 1,50 × 1,50 m, cilindros P/M/G e outros elementos. Confirme a lista exata antes de reservar.",
+    category: "kit",
+    source: ["/pegue-e-monte/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "kit-size",
+    question: "Qual é a diferença entre Minimalista e Grande?",
+    answer: "O Minimalista é mais compacto e indicado para espaços menores. O Grande cria mais presença e exige atenção ao espaço e ao transporte. A escolha final depende da composição disponível para a sua data.",
+    category: "kit",
+    source: ["/pegue-e-monte/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "reservation",
+    question: "Como faço para reservar?",
+    answer: "Envie pelo WhatsApp a data, cidade/bairro, tema e porte desejado. A reserva é confirmada após o pagamento da entrada de 50%.",
+    category: "booking",
+    source: ["/como-funciona/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+  },
+  {
+    id: "delivery",
+    question: "Como consulto a possibilidade de entrega?",
+    answer: `${commercial.copy.deliveryConditions} ${commercial.copy.pickupEligibility}`,
+    category: "logistics",
+    source: ["/pegue-e-monte/", "/contato/", "/duvidas/"],
+    confirmationStatus: "OWNER_CONFIRMATION_AND_PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "pickup-eligibility",
+    question: "Quem mora em Joinville ou Araquari pode contratar o Pegue e Monte?",
+    answer: `${commercial.copy.pickupEligibility} A entrega no endereço da festa depende de disponibilidade para a data e o local informados. Combine os detalhes diretamente com a Lela.`,
+    category: "coverage",
+    source: ["/regioes-atendidas/", "/pegue-e-monte/"],
+    confirmationStatus: "OWNER_CONFIRMATION",
+    confirmedAt: commercial.ownerConfirmation.checkedAt,
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "mini-festa-logistics",
+    question: "A Mini Festa na Mesa inclui montagem no local?",
+    answer: "A forma de montagem, entrega e retirada depende da proposta consultada. Confirme com a Lela o que está incluído para o tema e a data antes de reservar.",
+    category: "service",
+    source: ["/mini-festa-na-mesa/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["mini-festa-na-mesa"]
+  },
+  {
+    id: "return-period",
+    question: "Por quanto tempo fico com a decoração?",
+    answer: "A decoração deve ser devolvida em até 24 horas. Após esse prazo, é cobrada uma taxa diária de 30% do valor total da festa. Se precisar de mais tempo, solicite com antecedência.",
+    category: "logistics",
+    source: ["/como-funciona/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "payment-methods",
+    question: "Quais formas de pagamento são aceitas?",
+    answer: "O pagamento pode ser feito por Pix, dinheiro ou cartão de crédito. No cartão, a taxa da maquininha fica por conta do cliente, conforme a operadora.",
+    category: "payment",
+    source: ["/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+  },
+  {
+    id: "cancellation",
+    question: "O que acontece se eu precisar cancelar?",
+    answer: "A entrada de 50% não é reembolsável. O valor pode ficar como crédito por até três meses para uma nova reserva, sujeito à disponibilidade.",
+    category: "booking",
+    source: ["/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+  },
+  {
+    id: "damaged-item",
+    question: "E se alguma peça for danificada?",
+    answer: "Em caso de perda, avaria ou dano, será cobrado o valor do item. Siga as orientações de cuidado recebidas na retirada.",
+    category: "care",
+    source: ["/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "pickup-location",
+    question: "Onde fica a retirada?",
+    answer: `O ponto de retirada fica em ${commercial.pickupPoint.display}. ${commercial.services.pegueEMonte.pickup.scheduling}`,
+    category: "logistics",
+    source: ["/contato/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "catalog-theme-choice",
+    question: "Posso escolher um tema do catálogo?",
+    answer: "Você pode indicar uma das opções exibidas no catálogo. A presença de um tema no acervo não confirma disponibilidade para a data nem a composição do kit; a Lela verifica esses detalhes antes da reserva.",
+    category: "themes",
+    source: ["/portfolio/", "/duvidas/"],
+    confirmationStatus: "CATALOG_AND_PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+  }
 ];
+
+const byId = new Map(items.map((item) => [item.id, item]));
+const cityQuestionIds = [
+  "pegue-monte-definition", "pickup-eligibility", "kit-composition", "kit-size", "reservation", "delivery",
+  "mini-festa-logistics", "return-period", "payment-methods", "cancellation",
+  "pickup-location", "catalog-theme-choice"
+];
+const localityQuestionIds = [
+  "pegue-monte-definition", "pickup-eligibility", "kit-composition", "kit-size", "reservation", "delivery",
+  "mini-festa-logistics", "return-period", "pickup-location", "catalog-theme-choice"
+];
+
+function regionalFor(location) {
+  const isCity = location.type === "city";
+  const cityName = isCity ? location.name : location.city;
+  const placePhrase = isCity ? `em ${cityName}` : `em ${location.name}, em ${cityName}`;
+  const questionOverrides = {
+    "pickup-eligibility": isCity
+      ? `Quem mora em ${cityName} pode contratar o Pegue e Monte?`
+      : `Quem mora em ${location.name}, em ${cityName}, pode contratar o Pegue e Monte?`,
+    reservation: `Como faço para reservar uma decoração para uma festa ${placePhrase}?`,
+    delivery: `Como consulto a possibilidade de entrega para uma festa ${placePhrase}?`,
+    "pickup-location": `Onde fica o ponto de retirada para uma festa ${placePhrase}?`,
+    "catalog-theme-choice": `Posso consultar um tema do catálogo para uma festa ${placePhrase}?`
+  };
+  const ids = isCity ? cityQuestionIds : localityQuestionIds;
+
+  return ids.map((id) => ({
+    ...byId.get(id),
+    question: questionOverrides[id] || byId.get(id).question
+  }));
+}
+
+module.exports = items;
+module.exports.byId = byId;
+module.exports.regionalFor = regionalFor;
+module.exports.regionalQuestionIds = { city: cityQuestionIds, locality: localityQuestionIds };
