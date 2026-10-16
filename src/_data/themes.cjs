@@ -328,7 +328,7 @@ function definitionFromReview(name, group, review) {
     h1: `${name}: decoração para sua festa`,
     intro: `Confira a referência ${name} no catálogo da Lela. A disponibilidade e o formato precisam ser confirmados para a data da festa.`,
     about: review.editorial,
-    use: `${review.selection} Informe à Lela a data, a cidade e o serviço desejado; ela confirma disponibilidade, composição e logística.`,
+    use: review.selection,
     galleryTitle: `Como é a referência ${name}`,
     galleryText: `${mounted ? "A foto mostra um exemplo de montagem" : "A foto mostra um painel de referência"} com ${review.visual}. Ela ajuda a identificar a arte, mas não confirma composição, formato ou disponibilidade para uma data.`,
     related: review.related,
