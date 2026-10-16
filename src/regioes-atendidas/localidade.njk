@@ -68,6 +68,12 @@ permalink: "{{ local.path }}"
   </section>
 {% endif %}
 
+{% if local.type == "city" %}
+  {% set citySlug = local.slug %}{% set cityName = local.name %}{% set localityName = "" %}
+{% else %}
+  {% set citySlug = local.citySlug %}{% set cityName = local.city %}{% set localityName = local.name %}
+{% endif %}
+
 <section class="section section--tight local-process" aria-labelledby="local-process-heading">
   <div class="container">
     <div class="section-heading">
@@ -85,11 +91,6 @@ permalink: "{{ local.path }}"
   </div>
 </section>
 
-{% if local.type == "city" %}
-  {% set citySlug = local.slug %}{% set cityName = local.name %}{% set localityName = "" %}
-{% else %}
-  {% set citySlug = local.citySlug %}{% set cityName = local.city %}{% set localityName = local.name %}
-{% endif %}
 {% include "partials/local-theme-selection.njk" %}
 
 <section class="section section--lilac">
