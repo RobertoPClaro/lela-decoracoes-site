@@ -16,7 +16,7 @@
   {% set message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar se há disponibilidade para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
 {% endif %}
 <article class="catalog-card{% if localCatalogContext %} catalog-card--regional{% endif %}" id="tema-{{ group.slug }}" data-catalog-group="{{ group.slug }}"{% if localCatalogContext %} data-local-theme-card="{{ group.slug }}"{% endif %} data-filter-item data-category="{{ group.category }}" data-has-montage="{{ 'true' if group.hasMountedExample else 'false' }}" data-search="{{ group.searchText }}">
-  <a class="catalog-card__image-link" href="{{ themeUrl }}" aria-label="Ver detalhes de {{ group.themeName }}">
+  <a class="catalog-card__image-link" href="{{ themeUrl }}" aria-label="Ver decoração: {{ group.themeName }}">
     <span class="catalog-card__media{% if image.width / image.height < 0.68 %} catalog-card__media--portrait{% elif image.width / image.height > 1.15 %} catalog-card__media--landscape{% else %} catalog-card__media--square{% endif %}">
       {% set imageClass = "catalog-card__image" %}{% set imageSizes = "(min-width: 1100px) 24vw, (min-width: 700px) 32vw, 46vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
       <span class="catalog-card__image-label">Ver decoração <span aria-hidden="true">↗</span></span>

@@ -3,7 +3,7 @@
 <article class="portfolio-card" data-filter-item data-category="{{ item.category }}" data-source="{{ item.sourceType }}" data-theme="{{ item.slug }}" data-search="{{ item.themeName }} {{ item.categoryLabel }} {{ item.sourceType }}">
   {% if themePage and not hideThemeLink %}
     <div class="portfolio-card__media-wrap">
-      <a class="portfolio-card__image-link" href="{{ themePage.path | url }}" aria-label="Ver detalhes de {{ item.themeName }}">
+      <a class="portfolio-card__image-link" href="{{ themePage.path | url }}" aria-label="Ver tema: {{ item.themeName }}">
         <span class="portfolio-card__media">{% set imageClass = "portfolio-card__image" %}{% set imageSizes = "(min-width: 1100px) 25vw, (min-width: 700px) 33vw, 50vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}<span class="portfolio-card__zoom-hint" aria-hidden="true">Ver tema ↗</span></span>
       </a>
       <button class="portfolio-card__zoom-button" type="button" data-lightbox-trigger data-lightbox-group="{{ lightboxGroup or item.slug }}" data-theme-name="{{ item.themeName }}" data-lightbox-src="{{ site.pathPrefix }}assets/images/generated/{{ item.generatedBase }}-1200.jpg" data-lightbox-alt="{{ item.alt }}" data-lightbox-caption="{{ item.caption }}" data-lightbox-whatsapp="{{ site.whatsappLink(lightboxMessage) }}" aria-label="Ampliar foto de {{ item.themeName }}"><span aria-hidden="true">⤢</span></button>

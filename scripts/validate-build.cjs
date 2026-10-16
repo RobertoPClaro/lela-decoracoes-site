@@ -667,6 +667,24 @@ function assertLocalReference(rawUrl, file, kind) {
 for (const file of htmlFiles) {
   const content = readOutput(file);
   const visibleText = visibleTextFromHtml(content);
+  const brandLinks = [...content.matchAll(/<a\b[^>]*class="[^"]*\bbrand\b[^"]*"[^>]*>/gi)];
+  if (brandLinks.some((match) => getAttribute(match[0], "aria-label"))) {
+    fail(`link da marca substitui o nome visível por aria-label em ${file}`);
+  }
+  const imageLinks = [...content.matchAll(/<a\b[^>]*class="[^"]*(?:catalog-card__image-link|portfolio-card__image-link)[^"]*"[^>]*>[\s\S]*?<\/a>/gi)];
+  for (const match of imageLinks) {
+    const openingTag = match[0].match(/^<a\b[^>]*>/i)?.[0] || "";
+    const className = getAttribute(openingTag, "class") || "";
+    const expectedVisibleName = className.includes("catalog-card__image-link") ? "Ver decoração" : "Ver tema";
+    const accessibleName = getAttribute(openingTag, "aria-label") || "";
+    if (!visibleTextFromHtml(match[0]).includes(expectedVisibleName) || !accessibleName.startsWith(expectedVisibleName)) {
+      fail(`nome acessível do link de imagem não corresponde ao texto visível em ${file}`);
+    }
+  }
+  if (/class="whatsapp-float"/.test(content)) {
+    const contactLandmark = content.match(/<nav\b(?=[^>]*aria-label="Contato pelo WhatsApp")[\s\S]*?<\/nav>/i)?.[0] || "";
+    if (!contactLandmark.includes('class="whatsapp-float"')) fail(`WhatsApp flutuante fora de região nomeada em ${file}`);
+  }
   const unrenderedTextPatterns = [
     [/\bMoradores de\s+podem\b/i, "frase de moradores sem cidade"],
     [/\bundefined\b/i, "valor undefined"],
@@ -1092,6 +1110,24 @@ if (productionOrigin) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) fail("sitemap não corresponde exatamente às URLs registradas");
   if (!robots.includes(`Sitemap: ${productionBase}/sitemap.xml`)) fail(`robots.txt aponta para sitemap incorreto: ${productionBase}`);
   if (forbidden.test(`${sitemap}\n${robots}`)) fail("sitemap/robots contêm origem pública antiga ou insegura");
+}
+
+const notFoundHtml = readOutput("404.html");
+const notFoundRobotsTag = notFoundHtml.match(/<meta\b[^>]*\bname="robots"[^>]*>/i)?.[0];
+if (getAttribute(notFoundRobotsTag || "", "content") !== "noindex,follow" || site.sitemapPaths.includes("/404.html")) {
+  fail("página utilitária 404 deve permanecer noindex e fora do sitemap");
+}
+
+const builtCss = readOutput("assets/css/styles.css");
+if (!/\.service-card__number\s*\{[^}]*color:\s*var\(--purple-700\)/.test(builtCss) ||
+    !/\.portfolio-card__tag\s*\{[^}]*color:\s*var\(--purple-700\)/.test(builtCss) ||
+    !/\.section--dark\s+\.eyebrow\s*\{\s*color:\s*var\(--lilac\)/.test(builtCss)) {
+  fail("contraste de textos decorativos não preserva as cores aprovadas");
+}
+if (!builtCss.includes("@media (max-width: 360px)") ||
+    !builtCss.includes(".audience-grid, .comparison, .policy-grid { grid-template-columns: minmax(0, 1fr); }") ||
+    !builtCss.includes(".faq-page .whatsapp-float { display: none; }")) {
+  fail("correções responsivas para 320 px ou FAQ mobile ausentes");
 }
 
 const prefix = String(process.env.PATH_PREFIX || "").replace(/\/+$/, "");
