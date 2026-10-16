@@ -1,5 +1,5 @@
 {% set themePage = themes.byName[item.themeName] %}
-{% set lightboxMessage = "Olá, Lela! Vi a foto do tema " + item.themeName + " no catálogo e quero consultar a disponibilidade para [data]." %}
+{% set lightboxMessage = "Olá, Lela! Vi a foto do tema " + item.themeName + " no catálogo e quero consultar se há disponibilidade para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
 <article class="portfolio-card" data-filter-item data-category="{{ item.category }}" data-source="{{ item.sourceType }}" data-theme="{{ item.slug }}" data-search="{{ item.themeName }} {{ item.categoryLabel }} {{ item.sourceType }}">
   {% if themePage and not hideThemeLink %}
     <div class="portfolio-card__media-wrap">

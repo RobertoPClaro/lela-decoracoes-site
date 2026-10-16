@@ -69,6 +69,9 @@ permalink: "{{ local.path }}"
             </ul>
           </details>
           <p class="locality-directory__notice">{{ local.localityDirectoryNotice }}</p>
+          {% if local.content.geographyReference %}
+            <p class="locality-directory__source">{{ local.content.geographyReference.text }} <a href="{{ local.content.geographyReference.url }}" target="_blank" rel="noopener">{{ local.content.geographyReference.label }} <span aria-hidden="true">↗</span></a></p>
+          {% endif %}
         </div>
       {% endif %}
     </div>

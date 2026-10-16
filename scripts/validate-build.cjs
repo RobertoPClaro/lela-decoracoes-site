@@ -677,6 +677,16 @@ for (const file of htmlFiles) {
   for (const [pattern, label] of unrenderedTextPatterns) {
     if (pattern.test(visibleText)) fail(`texto visível inválido (${label}): ${file}`);
   }
+  const whatsappUrls = [...content.matchAll(/\b(?:href|data-lightbox-whatsapp)="([^"]*wa\.me[^"]*)"/gi)]
+    .map((match) => match[1].replace(/&amp;/g, "&"));
+  for (const rawUrl of whatsappUrls) {
+    try {
+      const whatsappMessage = new URL(rawUrl).searchParams.get("text") || "";
+      if (/\[[^\]]+\]/.test(whatsappMessage)) fail(`CTA do WhatsApp contém placeholder literal: ${file}`);
+    } catch {
+      fail(`URL do WhatsApp inválida: ${file}`);
+    }
+  }
   const localPage = locations.buildPages.find((local) => local.path === routeForHtml(file));
   if (localPage) {
     const hasEligibilityText = localPage.type === "city"
@@ -844,6 +854,11 @@ for (const route of regionalPaths) {
           (page.slug === "araquari" && !visibleText.includes("a lista pode estar incompleta"))) {
         fail(`lista geográfica ou informação de retirada/entrega incompleta em ${route}`);
       }
+      if (page.content.geographyReference &&
+          (!html.includes(`href="${page.content.geographyReference.url}"`) ||
+            !visibleText.includes(page.content.geographyReference.label.toLocaleLowerCase("pt-BR")))) {
+        fail(`fonte geográfica municipal ausente em ${route}`);
+      }
       const sortedPlaces = [...page.neighborhoods].sort((a, b) => a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" }));
       const listedSlugs = [...html.matchAll(/<li\b[^>]*data-locality-reference-item="([^"]+)"/gi)].map((match) => match[1]);
       const actualTypeLabels = [...html.matchAll(/<span\b[^>]*class="locality-directory__type"[^>]*>([\s\S]*?)<\/span>/gi)]
@@ -1002,7 +1017,7 @@ for (const page of themes.details) {
   if (crumbs.length !== expectedBreadcrumbs.length || crumbs.some((crumb, index) => crumb.name !== expectedBreadcrumbs[index].label ||
       (productionOrigin && crumb.item !== `${fullSiteBase}${expectedBreadcrumbs[index].url}`))) fail(`BreadcrumbList não corresponde à página: ${page.path}`);
 
-  const message = `Olá, Lela! Vi a página do tema ${page.name} e quero consultar a disponibilidade para [data]. Cidade/bairro: [local].`;
+  const message = `Olá, Lela! Tenho interesse na decoração ${page.name}. Gostaria de consultar a disponibilidade e os formatos possíveis para minha data. Posso informar a data e a cidade ou o bairro da festa.`;
   if (!html.replace(/&amp;/g, "&").includes(site.whatsappLink(message))) fail(`CTA do WhatsApp não identifica o tema em ${page.path}`);
   for (const relatedRoute of ["/portfolio/", "/pegue-e-monte/", "/mini-festa-na-mesa/", "/regioes-atendidas/joinville/", "/regioes-atendidas/araquari/"]) {
     if (!html.includes(`href="${site.pathPrefix}${relatedRoute.replace(/^\//, "")}`)) fail(`página de tema sem link para ${relatedRoute}: ${page.path}`);
@@ -1057,7 +1072,7 @@ for (const group of portfolio.catalog) {
   for (const image of detail.images) {
     if (!detailHtml.includes(image.alt) || !detailHtml.includes(image.generatedBase + "-1200.jpg")) fail(`foto do grupo não aparece na página individual de ${group.themeName}: ${image.generatedBase}`);
   }
-  const message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar a disponibilidade para [data]. Cidade/bairro: [local].";
+  const message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar se há disponibilidade para minha data. Posso informar a data e a cidade ou o bairro da festa.";
   if (!catalogHtml.replace(/&amp;/g, "&").includes(site.whatsappLink(message))) {
     fail("CTA do catálogo não identifica o tema: " + group.themeName);
   }

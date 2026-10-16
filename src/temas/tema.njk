@@ -13,7 +13,7 @@
   <div class="container split">
     <div class="split__visual theme-page__hero-image">
       {% set item = theme.heroImage %}
-      {% set topicMessage = "Olá, Lela! Vi a página do tema " + theme.name + " e quero consultar a disponibilidade para [data]. Cidade/bairro: [local]." %}
+      {% set topicMessage = "Olá, Lela! Tenho interesse na decoração " + theme.name + ". Gostaria de consultar a disponibilidade e os formatos possíveis para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
       <button class="theme-page__hero-trigger" type="button" data-lightbox-trigger data-lightbox-group="{{ theme.catalogSlug }}" data-theme-name="{{ theme.name }}" data-lightbox-src="{{ site.pathPrefix }}assets/images/generated/{{ item.generatedBase }}-1200.jpg" data-lightbox-alt="{{ item.alt }}" data-lightbox-caption="{{ item.caption }}" data-lightbox-whatsapp="{{ site.whatsappLink(topicMessage) }}" aria-label="Ampliar foto de {{ theme.name }}">
         {% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 42vw, 92vw" %}{% set imageLoading = "eager" %}{% set imageFetchPriority = "high" %}{% set imagePreset = "hero" %}{% include "partials/image.njk" %}
       </button>

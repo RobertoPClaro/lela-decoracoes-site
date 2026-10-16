@@ -4,7 +4,7 @@ const commercial = require("./commercial.cjs");
 const joinvilleSource = {
   title: "Joinville Bairro a Bairro 2026 — Prefeitura de Joinville",
   url: "https://www.joinville.sc.gov.br/publicacoes/joinville-bairro-a-bairro/",
-  checkedAt: "2026-10-13"
+  checkedAt: "2026-10-16"
 };
 
 const araquariSources = {
@@ -16,17 +16,17 @@ const araquariSources = {
   municipalBoroughs2026: {
     title: "Prefeitura de Araquari — SINE, bairros informados em vagas (fevereiro de 2026)",
     url: "https://araquari.atende.net/cidadao/noticia/sine-araquari-divulga-novas-vagas-de-emprego-nesta-sexta-feira",
-    checkedAt: "2026-10-13"
+    checkedAt: "2026-10-16"
   },
   municipalBoroughsJuly2026: {
     title: "Prefeitura de Araquari — SINE, bairros informados em vagas (julho de 2026)",
     url: "https://araquari.atende.net/cidadao/noticia/sine-araquari-divulga-37-vagas-de-emprego-nesta-sextafeira-1007",
-    checkedAt: "2026-10-13"
+    checkedAt: "2026-10-16"
   },
   municipalDistrict: {
-    title: "Prefeitura de Araquari — serviços e subprefeitura no distrito de Itapocu",
-    url: "https://araquari.atende.net/cidadao/noticia/centro-de-atendimento-ao-cidadao-facilita-acesso-a-servicos-publicos-em-araquari-saiba-onde-encontrar-os-servicos",
-    checkedAt: "2026-10-13"
+    title: "Prefeitura de Araquari — Subprefeitura do Itapocu e bairros atendidos",
+    url: "https://araquari.atende.net/cidadao/pagina/subprefeitura-do-itapocu",
+    checkedAt: "2026-10-16"
   },
   municipalCommunities: {
     title: "Câmara de Vereadores de Araquari — proposição sobre a Subprefeitura do Itapocu (2023)",
@@ -36,7 +36,7 @@ const araquariSources = {
   municipalTourism: {
     title: "Prefeitura de Araquari — Roteiros municipais de turismo",
     url: "https://turismo.araquari.sc.gov.br/roteiros-municipais/",
-    checkedAt: "2026-10-13"
+    checkedAt: "2026-10-16"
   },
 };
 
@@ -62,7 +62,7 @@ const araquariNames = [
     source: {
       title: "Prefeitura de Araquari — Roteiros municipais de turismo, região da Barra do Itapocu",
       url: araquariSources.municipalTourism.url,
-      checkedAt: "2026-10-13"
+      checkedAt: "2026-10-16"
     },
     geographicType: "locality"
   },
@@ -93,8 +93,7 @@ const araquariNames = [
   },
   {
     name: "Jacu",
-    source: araquariSources.municipalBoroughs2026,
-    geographicType: "locality"
+    source: araquariSources.municipalDistrict
   },
   {
     name: "Ponto Alto",
@@ -200,9 +199,14 @@ const cities = [
       pickupLabel: "Ver informações do ponto de retirada no Paranaguamirim",
       services: servicesForCity("Joinville"),
       localityDirectoryNotice: "Os 45 bairros abaixo seguem a relação do guia municipal Joinville Bairro a Bairro (2026).",
+      geographyReference: {
+        text: "Para conferir a relação e informações territoriais dos bairros, consulte a publicação municipal.",
+        label: "Joinville Bairro a Bairro (2026)",
+        url: joinvilleSource.url
+      },
       schemaServiceName: "Pegue e Monte com retirada para moradores de Joinville",
       schemaServiceDescription: "Pegue e Monte com retirada e devolução no ponto do Paranaguamirim para moradores de Joinville. Consulte a disponibilidade do tema e a possibilidade de entrega para a data e o endereço.",
-      whatsappMessage: "Olá, Lela! Encontrei a página de decoração de festas em Joinville. Meu bairro/endereço é [bairro/endereço] e quero consultar a disponibilidade para [data].",
+      whatsappMessage: "Olá, Lela! Quero consultar o Pegue e Monte em Joinville. Posso informar o bairro, a data e o tema da festa. Se preferir entrega, gostaria de consultar a disponibilidade para o endereço do evento.",
       whatsappLabel: "Consultar atendimento em Joinville",
       faqs: faqData.regionalFor({ type: "city", name: "Joinville" })
     }
@@ -246,9 +250,14 @@ const cities = [
       pickupLabel: "Ver o endereço de retirada informado em Joinville",
       services: servicesForCity("Araquari"),
       localityDirectoryNotice: "A lista pode estar incompleta e reúne registros de fontes públicas; bairros, localidades e o distrito de Itapocu aparecem identificados separadamente.",
+      geographyReference: {
+        text: "A Prefeitura descreve o distrito de Itapocu e as áreas atendidas pela subprefeitura.",
+        label: "Subprefeitura do Itapocu",
+        url: araquariSources.municipalDistrict.url
+      },
       schemaServiceName: "Pegue e Monte com retirada para moradores de Araquari",
       schemaServiceDescription: "Pegue e Monte para moradores de Araquari, com retirada e devolução no ponto do Paranaguamirim, em Joinville. Entrega depende de disponibilidade para a data e o endereço.",
-      whatsappMessage: "Olá, Lela! Encontrei a página de decoração de festas em Araquari. Meu endereço é [bairro/endereço] e quero consultar a logística para [data].",
+      whatsappMessage: "Olá, Lela! Quero consultar o Pegue e Monte em Araquari. Posso informar o bairro, a data e o tema da festa. Também gostaria de consultar se há entrega disponível para o endereço do evento.",
       whatsappLabel: "Consultar atendimento em Araquari",
       faqs: faqData.regionalFor({ type: "city", name: "Araquari" })
     }
@@ -303,7 +312,7 @@ const neighborhoods = [
     pickupLabel: "Ver o ponto de retirada no Paranaguamirim",
     schemaServiceName: null,
     schemaServiceDescription: null,
-    whatsappMessage: `Olá, Lela! Moro ${placePhrase}. Quero consultar o Pegue e Monte para [data]. Tema: [tema]. Vou retirar e devolver o kit no Paranaguamirim; também gostaria de consultar a possibilidade de entrega para meu endereço.`,
+    whatsappMessage: `Olá, Lela! Moro ${placePhrase} e quero consultar o Pegue e Monte. Posso informar a data e o tema da festa. Vou retirar e devolver o kit no Paranaguamirim; também gostaria de consultar a possibilidade de entrega para o endereço do evento.`,
     whatsappLabel: `Consultar Pegue e Monte em ${entry.name}`,
     faqs: faqData.regionalFor({ type: placeKind, name: entry.name, city: city.name })
   };
@@ -328,6 +337,8 @@ const neighborhoods = [
               : entry.name === "Morro Grande"
                 ? "Uma proposição legislativa municipal cita Morro Grande como localidade; a vigência e a classificação territorial atual ainda precisam de confirmação."
             : "A fonte municipal consultada menciona a área como localidade ou comunidade; o nome não é tratado aqui como bairro oficialmente delimitado."
+          : entry.name === "Jacu"
+            ? "A Prefeitura inclui Jacu entre os bairros atendidos pela Subprefeitura do Itapocu e registra o nome em publicação municipal de vagas; essas referências não definem limites territoriais nem constituem lista legal completa."
           : entry.name === "Guamiranga"
             ? "O portal municipal de turismo chama Guamiranga de bairro; esta referência não confirma limites territoriais nem atendimento comercial."
             : "A Prefeitura usa o nome como bairro em publicações de vagas ou serviços; isso não equivale a uma lista legal completa nem define limites territoriais.",
@@ -392,7 +403,7 @@ pickupNeighborhood.content = {
   ],
   schemaServiceName: null,
   schemaServiceDescription: null,
-  whatsappMessage: "Olá, Lela! Encontrei a página do ponto de retirada no Paranaguamirim. Quero consultar um kit para [data] e informar o endereço da festa.",
+  whatsappMessage: "Olá, Lela! Quero consultar o Pegue e Monte com retirada e devolução no Paranaguamirim. Posso informar a data e o tema para verificar a disponibilidade.",
   whatsappLabel: "Consultar retirada no Paranaguamirim",
   faqs: faqData.regionalFor(pickupNeighborhood)
 };
