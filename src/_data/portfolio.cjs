@@ -144,8 +144,11 @@ const extraSearchTerms = new Map([
   ["Brasil Futebol", ["Seleção Brasileira"]],
   ["Guerreiras do K-Pop – HUNTR/X", ["HUNTR/X", "K-pop", "Kpop"]]
 ]);
-const needsNameConfirmation = new Set(["Roedor fofo", "Animais da floresta"]);
-const needsImageAssociationConfirmation = new Set(["Brasil Futebol", "Tropa dos Rosa"]);
+// Os nomes genéricos abaixo correspondem às imagens observadas. Brasil Futebol
+// tem painel e montagem visualmente coerentes. Mantêm-se somente pendências
+// que não podem ser resolvidas pelas imagens do acervo.
+const needsNameConfirmation = new Set(["Ana Castela – A Boiadeira"]);
+const needsImageAssociationConfirmation = new Set(["Maria Clara e JP", "Tropa dos Rosa"]);
 
 function categoryFor(themeName, folder) {
   const override = categoryOverrides.get(themeName);

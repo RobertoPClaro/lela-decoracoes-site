@@ -8,6 +8,11 @@ permalink: "{{ local.path }}"
 ---
 
 {% include "partials/breadcrumbs.njk" %}
+{% if local.type == "city" %}
+  {% set citySlug = local.slug %}{% set cityName = local.name %}{% set localityName = "" %}
+{% else %}
+  {% set citySlug = local.citySlug %}{% set cityName = local.city %}{% set localityName = local.name %}
+{% endif %}
 {% if local.previewOnly %}
   <aside class="locality-preview-banner" role="status">
     <div class="container"><strong>Prévia local em revisão.</strong> Esta página aparece somente neste preview; não integra o site público nem o sitemap.</div>
@@ -25,6 +30,8 @@ permalink: "{{ local.path }}"
     </div>
   </div>
 </section>
+
+{% include "partials/local-theme-selection.njk" %}
 
 {% if local.type == "city" %}
   <section class="section">
@@ -55,23 +62,17 @@ permalink: "{{ local.path }}"
             <ul class="locality-directory__list">
               {% for place in local.neighborhoods %}
                 <li data-locality-reference-item="{{ place.slug }}">
-                  {% if place.indexable or locations.reviewMode %}<a href="{{ place.path | url }}">{{ place.name }}{% if place.previewOnly %}<span class="sr-only"> (prévia em revisão)</span>{% endif %}</a>{% else %}<span class="locality-directory__name">{{ place.name }}</span>{% endif %}
+                  {% if place.publicationStatus == "PUBLIC_INDEX" or place.publicationStatus == "PUBLIC_NOINDEX" or locations.reviewMode %}<a href="{{ place.path | url }}">{{ place.name }}{% if place.previewOnly %}<span class="sr-only"> (prévia em revisão)</span>{% endif %}</a>{% else %}<span class="locality-directory__name">{{ place.name }}</span>{% endif %}
                   {% if place.type != "neighborhood" %}<span class="locality-directory__type">{{ "Distrito" if place.type == "district" else "Localidade" }}</span>{% endif %}
                 </li>
               {% endfor %}
             </ul>
           </details>
-          <p class="locality-directory__notice">Moradores de todos os bairros da cidade podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim. A entrega depende de consulta para a data e o endereço da festa.</p>
+          <p class="locality-directory__notice">{{ local.localityDirectoryNotice }}</p>
         </div>
       {% endif %}
     </div>
   </section>
-{% endif %}
-
-{% if local.type == "city" %}
-  {% set citySlug = local.slug %}{% set cityName = local.name %}{% set localityName = "" %}
-{% else %}
-  {% set citySlug = local.citySlug %}{% set cityName = local.city %}{% set localityName = local.name %}
 {% endif %}
 
 <section class="section section--tight local-process" aria-labelledby="local-process-heading">
@@ -82,16 +83,14 @@ permalink: "{{ local.path }}"
       <p>Informe o tema, a data e o local da festa. A disponibilidade e a composição são confirmadas antes da reserva.</p>
     </div>
     <ol class="local-process__steps">
-      <li><span>01</span><h3>Escolha uma decoração</h3><p>Explore o catálogo e indique o tema e o porte que quer consultar.</p></li>
+      <li><span>01</span><h3>Escolha uma decoração</h3><p>Indique à Lela o tema e o formato que quer consultar.</p></li>
       <li><span>02</span><h3>Confirme a data e os itens</h3><p>Informe a data e a localidade. A Lela confirma disponibilidade, composição e condições.</p></li>
-      <li><span>03</span><h3>Retire e monte</h3><p>Moradores de {{ cityName }} podem retirar e devolver o kit no Paranaguamirim. A cliente transporta, monta e desmonta conforme as orientações recebidas.</p></li>
-      <li><span>04</span><h3>Devolva conforme combinado</h3><p>Respeite o prazo e as condições acertadas no atendimento.</p></li>
+      <li><span>03</span><h3>Retire e monte</h3><p>Combine o horário da retirada. No Pegue e Monte, a cliente transporta, monta e desmonta conforme as orientações recebidas.</p></li>
+      <li><span>04</span><h3>Devolva o kit</h3><p>Faça a devolução no ponto e no prazo combinados com a Lela.</p></li>
     </ol>
     <p class="local-process__links"><a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Entenda o Pegue e Monte <span aria-hidden="true">→</span></a><a class="text-link" href="{{ '/mini-festa-na-mesa/' | url }}">Conheça a Mini Festa na Mesa <span aria-hidden="true">→</span></a></p>
   </div>
 </section>
-
-{% include "partials/local-theme-selection.njk" %}
 
 <section class="section section--lilac">
   <div class="container split">
@@ -99,12 +98,12 @@ permalink: "{{ local.path }}"
       <p class="eyebrow">Informações confirmadas</p>
       <h2>{{ local.content.detailTitle }}</h2>
       <p>{{ local.content.detailText }}</p>
-      {% if local.citySlug == "joinville" %}
-        <address><a href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ site.address.display }}</a></address>
+      {% if citySlug == "joinville" %}
+        <p>O ponto divulgado para retirada e devolução fica no Paranaguamirim, em Joinville.</p>
       {% else %}
-        <p>O endereço de retirada divulgado fica em Joinville, no bairro Paranaguamirim.</p>
-        <address><a href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ site.address.display }}</a></address>
+        <p>O ponto divulgado para retirada e devolução fica em Joinville, no Paranaguamirim. A página não indica uma unidade de retirada em Araquari.</p>
       {% endif %}
+      <address><a href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ site.address.display }}</a></address>
       {% if local.content.pickupNeighborhoodPath %}
         <p><a class="text-link" href="{{ local.content.pickupNeighborhoodPath | url }}">{{ local.content.pickupLabel }} <span aria-hidden="true">→</span></a></p>
       {% elif local.type == "city" %}

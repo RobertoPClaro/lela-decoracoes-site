@@ -144,7 +144,7 @@ const commonServices = [
   {
     name: "Pegue e Monte",
     path: "/pegue-e-monte/",
-    description: "Moradores de Joinville e Araquari podem contratar com retirada e devolução no Paranaguamirim. Consulte o tema e a data."
+    description: `${commercial.copy.pickupEligibility} ${commercial.copy.themeAvailability}`
   },
   {
     name: "Mini Festa na Mesa",
@@ -160,7 +160,7 @@ const commonServices = [
 
 function servicesForCity(cityName) {
   return commonServices.map((service) => service.name === "Pegue e Monte"
-    ? { ...service, description: `Moradores de todos os bairros de ${cityName} podem contratar com retirada e devolução no Paranaguamirim. Consulte tema e data.` }
+    ? { ...service, description: `Retirada e devolução do kit no Paranaguamirim. Consulte tema e data; a possibilidade de entrega depende da disponibilidade.` }
     : service);
 }
 
@@ -184,7 +184,7 @@ const cities = [
       { title: "Site da Lela Decorações", url: "https://leladecoracoes.com/", checkedAt: "2026-10-13" },
       { title: "Contato e endereço para retirada", url: "https://leladecoracoes.com/contato/", checkedAt: "2026-10-13" }
     ],
-    publicationStatus: "READY_INDEX",
+    publicationStatus: "PUBLIC_INDEX",
     indexable: true,
     publicationBasis: "CITY_SERVICE",
     schemaServiceAreas: ["Joinville, SC"],
@@ -193,12 +193,13 @@ const cities = [
       description: "Moradores de Joinville podem contratar Pegue e Monte com retirada e devolução no Paranaguamirim. Consulte temas, data e possibilidade de entrega.",
       eyebrow: "Joinville · Santa Catarina",
       h1: "Pegue e Monte em Joinville",
-      intro: "Moradores de todos os bairros de Joinville podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim. Explore os temas e consulte a disponibilidade para sua data; a possibilidade de entrega depende de confirmação para o endereço.",
+      intro: `Moradores de todos os bairros de Joinville podem contratar o Pegue e Monte. ${commercial.copy.pickupOption} Explore os temas e consulte a disponibilidade para sua data.`,
       detailTitle: "Retirada e logística em Joinville",
-      detailText: "O ponto de retirada e devolução fica no Paranaguamirim, em Joinville. A cliente transporta, monta e desmonta o Pegue e Monte conforme as orientações combinadas. Entrega é opcional e depende da disponibilidade da Lela para a data e o endereço informados.",
+      detailText: `${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions}`,
       pickupNeighborhoodPath: "/regioes-atendidas/joinville/paranaguamirim/",
       pickupLabel: "Ver informações do ponto de retirada no Paranaguamirim",
       services: servicesForCity("Joinville"),
+      localityDirectoryNotice: "Os 45 bairros abaixo seguem a relação do guia municipal Joinville Bairro a Bairro (2026).",
       schemaServiceName: "Pegue e Monte com retirada para moradores de Joinville",
       schemaServiceDescription: "Pegue e Monte com retirada e devolução no ponto do Paranaguamirim para moradores de Joinville. Consulte a disponibilidade do tema e a possibilidade de entrega para a data e o endereço.",
       whatsappMessage: "Olá, Lela! Encontrei a página de decoração de festas em Joinville. Meu bairro/endereço é [bairro/endereço] e quero consultar a disponibilidade para [data].",
@@ -229,7 +230,7 @@ const cities = [
       { title: "Site da Lela Decorações", url: "https://leladecoracoes.com/", checkedAt: "2026-10-13" },
       { title: "Contato e endereço para retirada", url: "https://leladecoracoes.com/contato/", checkedAt: "2026-10-13" }
     ],
-    publicationStatus: "READY_INDEX",
+    publicationStatus: "PUBLIC_INDEX",
     indexable: true,
     publicationBasis: "CITY_SERVICE",
     schemaServiceAreas: ["Araquari, SC"],
@@ -238,12 +239,13 @@ const cities = [
       description: "Moradores de Araquari podem contratar Pegue e Monte com retirada e devolução em Joinville. Consulte temas e a possibilidade de entrega para seu endereço.",
       eyebrow: "Araquari · Santa Catarina",
       h1: "Pegue e Monte para festas em Araquari",
-      intro: "Moradores de todos os bairros de Araquari podem contratar o Pegue e Monte da Lela. A retirada e a devolução são combinadas no ponto do Paranaguamirim, em Joinville; a possibilidade de entrega depende da disponibilidade para a data e o endereço.",
+      intro: `Moradores de todos os bairros de Araquari podem contratar o Pegue e Monte. ${commercial.copy.pickupOption} Explore os temas e consulte a data desejada.`,
       detailTitle: "Logística para festas em Araquari",
-      detailText: "A Lela não informa uma unidade de retirada em Araquari. Para contratar com retirada, o kit é retirado e devolvido no Paranaguamirim, em Joinville. Se preferir entrega, informe o endereço da festa e a data para a Lela verificar a disponibilidade e as condições.",
+      detailText: `${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions} A lista abaixo reúne referências geográficas citadas em fontes públicas; pode estar incompleta e distingue bairros, localidades e o distrito de Itapocu.`,
       pickupNeighborhoodPath: null,
       pickupLabel: "Ver o endereço de retirada informado em Joinville",
       services: servicesForCity("Araquari"),
+      localityDirectoryNotice: "A lista pode estar incompleta e reúne registros de fontes públicas; bairros, localidades e o distrito de Itapocu aparecem identificados separadamente.",
       schemaServiceName: "Pegue e Monte com retirada para moradores de Araquari",
       schemaServiceDescription: "Pegue e Monte para moradores de Araquari, com retirada e devolução no ponto do Paranaguamirim, em Joinville. Entrega depende de disponibilidade para a data e o endereço.",
       whatsappMessage: "Olá, Lela! Encontrei a página de decoração de festas em Araquari. Meu endereço é [bairro/endereço] e quero consultar a logística para [data].",
@@ -269,8 +271,44 @@ const neighborhoods = [
 ].map((entry) => {
   const city = cities.find((item) => item.slug === entry.citySlug);
   const slug = slugify(entry.name);
+  const placeKind = entry.geographicType || "neighborhood";
+  const kindLabel = placeKind === "district" ? "distrito" : placeKind === "locality" ? "localidade" : "bairro";
+  const placePhrase = placeKind === "neighborhood"
+    ? `no bairro ${entry.name}, em ${city.name}`
+    : placeKind === "district"
+      ? `no distrito de ${entry.name}, em ${city.name}`
+      : `na localidade de ${entry.name}, em ${city.name}`;
+  const localIntro = placeKind === "neighborhood"
+    ? `Moradores do bairro ${entry.name}, em ${city.name}, podem contratar o Pegue e Monte.`
+    : `Para festas ${placePhrase}, consulte com a Lela as condições do Pegue e Monte.`;
+  const localityContent = {
+    title: `Pegue e Monte em ${entry.name}, ${city.name} | Lela Decorações`,
+    description: `Veja como contratar Pegue e Monte em ${entry.name}, ${city.name}, com retirada no Paranaguamirim e devolução combinada. Consulte a possibilidade de entrega para sua data.`,
+    eyebrow: `${entry.name} · ${kindLabel} de ${city.name}`,
+    h1: placeKind === "neighborhood"
+      ? `Pegue e Monte no bairro ${entry.name}, em ${city.name}`
+      : `Pegue e Monte em ${entry.name}, ${city.name}`,
+    intro: `${localIntro} ${commercial.copy.pickupOption} Explore os temas e consulte a disponibilidade para sua data.`,
+    detailTitle: city.slug === "joinville" ? "Retirada no Paranaguamirim" : "Retirada em Joinville",
+    detailText: `${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions}`,
+    services: [
+      { name: "Pegue e Monte", path: "/pegue-e-monte/", description: "Veja o funcionamento e consulte tema, data e condições de retirada ou entrega." },
+      { name: "Catálogo de decorações", path: "/portfolio/", description: "Pesquise os 76 temas cadastrados e confirme disponibilidade para a data." },
+      { name: `Região de ${city.name}`, path: city.path, description: `Confira as informações de retirada e logística para festas em ${city.name}.` },
+      { name: "Mini Festa na Mesa", path: "/mini-festa-na-mesa/", description: "Conheça o formato e confirme diretamente com a Lela a composição e a logística." }
+    ],
+    pickupNeighborhoodPath: city.slug === "joinville" && slug !== "paranaguamirim"
+      ? "/regioes-atendidas/joinville/paranaguamirim/"
+      : null,
+    pickupLabel: "Ver o ponto de retirada no Paranaguamirim",
+    schemaServiceName: null,
+    schemaServiceDescription: null,
+    whatsappMessage: `Olá, Lela! Moro ${placePhrase}. Quero consultar o Pegue e Monte para [data]. Tema: [tema]. Vou retirar e devolver o kit no Paranaguamirim; também gostaria de consultar a possibilidade de entrega para meu endereço.`,
+    whatsappLabel: `Consultar Pegue e Monte em ${entry.name}`,
+    faqs: faqData.regionalFor({ type: placeKind, name: entry.name, city: city.name })
+  };
   return {
-    type: entry.geographicType,
+    type: placeKind,
     name: entry.name,
     slug,
     citySlug: city.slug,
@@ -295,21 +333,24 @@ const neighborhoods = [
             : "A Prefeitura usa o nome como bairro em publicações de vagas ou serviços; isso não equivale a uma lista legal completa nem define limites territoriais.",
     geographySource: entry.geographySource,
     commercialStatus: "CONFIRMED",
-    commercialConfirmationScope: `Moradores de todos os bairros de ${city.name} podem contratar Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville; isso não confirma entrega neste endereço.`,
+    commercialConfirmationScope: `Moradores de ${city.name} podem contratar o Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville; entrega depende da disponibilidade para data e endereço.`,
     commercialEvidence: [commercial.ownerConfirmation],
     confirmedCommercialFacts: [`Moradores de todos os bairros de ${city.name} podem contratar o Pegue e Monte com retirada e devolução no ponto do Paranaguamirim, em Joinville.`],
     pickupEligibilityStatus: "CONFIRMED_CITYWIDE",
     deliveryStatus: "CONDITIONAL_ON_AVAILABILITY",
     editorialReadiness: {
-      status: "INSUFFICIENT_LOCAL_DISTINCTIVE_EVIDENCE",
-      decision: "RETAIN_DRAFT_PREVIEW",
-      reason: "A confirmação comercial é municipal e compartilhada; faltam informações, fotos ou fatos próprios verificados desta localidade que sustentem uma página individual indexável."
+      status: "PUBLIC_EXPERIENCE_NO_LOCAL_DISTINCTIVE_EVIDENCE",
+      decision: "PUBLIC_NOINDEX",
+      reason: `A rota de ${entry.name} está cadastrada como ${kindLabel} em ${city.name} para orientar a navegação. Ela oferece as condições municipais confirmadas, o catálogo e a retirada, mas não há fato comercial ou editorial local verificado que sustente indexação individual.`,
+      localDistinctiveEvidence: [],
+      recheckWhen: "Reavaliar se forem confirmadas informações, fotos autorizadas ou condições próprias desta localidade."
     },
-    serviceCoverageStatus: "UNCONFIRMED",
+    serviceCoverageStatus: "CONFIRMED_WITH_PICKUP",
     serviceCoverageConditions: null,
-    publicationStatus: "DRAFT_PREVIEW",
+    publicationStatus: "PUBLIC_NOINDEX",
     indexable: false,
-    content: null
+    publicationBasis: "CITYWIDE_PICKUP_NO_LOCAL_INDEXING_BASIS",
+    content: localityContent
   };
 });
 
@@ -320,13 +361,13 @@ pickupNeighborhood.commercialEvidence = [commercial.ownerConfirmation];
 pickupNeighborhood.confirmedCommercialFacts = ["O ponto de retirada divulgado fica no Paranaguamirim, em Joinville.", "Moradores de todos os bairros de Joinville e Araquari podem contratar Pegue e Monte com retirada e devolução neste ponto."];
 pickupNeighborhood.pickupEligibilityStatus = "CONFIRMED_CITYWIDE";
 pickupNeighborhood.deliveryStatus = "CONDITIONAL_ON_AVAILABILITY";
-pickupNeighborhood.editorialReadiness = { status: "PICKUP_LOCATION_PAGE", decision: "KEEP_READY_INDEX", reason: "A página informa o endereço real de retirada; não é uma página de cobertura de entrega do bairro." };
+pickupNeighborhood.editorialReadiness = { status: "PICKUP_LOCATION_PAGE", decision: "PUBLIC_INDEX", reason: "A página identifica o ponto real de retirada e explica sua função para a contratação do Pegue e Monte; não declara entrega garantida no bairro." };
 pickupNeighborhood.commercialSource = {
   title: "Contato e dúvidas da Lela Decorações",
   url: "https://leladecoracoes.com/contato/",
   checkedAt: "2026-10-13"
 };
-pickupNeighborhood.publicationStatus = "READY_INDEX";
+pickupNeighborhood.publicationStatus = "PUBLIC_INDEX";
 pickupNeighborhood.indexable = true;
 pickupNeighborhood.publicationBasis = "PICKUP_LOCATION";
 pickupNeighborhood.content = {
@@ -336,7 +377,7 @@ pickupNeighborhood.content = {
   h1: "Retirada de kits Pegue e Monte no Paranaguamirim",
   intro: "O ponto de retirada da Lela fica no Paranaguamirim. Moradores de Joinville e Araquari podem contratar o Pegue e Monte retirando e devolvendo o kit neste endereço; combine os detalhes antes de ir.",
   detailTitle: "O que combinar antes da retirada",
-  detailText: "No Pegue e Monte, a cliente retira, transporta, monta e devolve o kit conforme combinado. Se preferir consultar entrega, informe a data e o endereço da festa; a possibilidade e eventuais taxas dependem da disponibilidade da Lela.",
+  detailText: `${commercial.copy.pickupOption} ${commercial.copy.customerAssembly} ${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions}`,
   services: [
     {
       name: "Pegue e Monte",
@@ -396,49 +437,27 @@ const indexFaqs = [
   }
 ];
 
-const publishedPages = [
-  ...cities.filter((item) => item.indexable && item.publicationStatus === "READY_INDEX"),
-  ...neighborhoods.filter((item) => item.indexable && item.publicationStatus === "READY_INDEX")
+const publicPages = [
+  ...cities.filter((item) => ["PUBLIC_INDEX", "PUBLIC_NOINDEX"].includes(item.publicationStatus)),
+  ...neighborhoods.filter((item) => ["PUBLIC_INDEX", "PUBLIC_NOINDEX"].includes(item.publicationStatus))
 ];
+
+const publishedPages = publicPages.filter((item) => item.indexable && item.publicationStatus === "PUBLIC_INDEX");
 
 const reviewMode = process.env.LELA_LOCAL_REVIEW === "1";
 const previewPages = reviewMode
-  ? neighborhoods.filter((item) => !item.indexable).map((place) => {
-    const city = cities.find((item) => item.slug === place.citySlug);
-    const kind = place.type === "district" ? "distrito" : place.type === "locality" ? "localidade" : "bairro";
+  ? neighborhoods.filter((item) => item.publicationStatus === "DRAFT_PREVIEW").map((place) => {
     return {
       ...place,
       previewOnly: true,
       publicationStatus: "DRAFT_PREVIEW",
       indexable: false,
-      content: {
-        title: `Pegue e Monte em ${place.name}, ${place.city} | Lela Decorações`,
-        description: `Moradores de ${place.name}, em ${place.city}, podem contratar Pegue e Monte com retirada no Paranaguamirim. Explore temas e consulte a possibilidade de entrega.`,
-        eyebrow: `${place.name} · ${kind} de ${place.city}`,
-        h1: `Pegue e Monte em ${place.name}, ${place.city}`,
-        intro: `Mora em ${place.name}, ${place.city}? Você pode contratar o Pegue e Monte da Lela com retirada e devolução no Paranaguamirim, em Joinville. Explore os temas e consulte a disponibilidade para sua data; a entrega depende de confirmação para o endereço.`,
-        detailTitle: "Retirada e entrega",
-        detailText: place.citySlug === "joinville"
-          ? "A retirada e a devolução do Pegue e Monte são combinadas no ponto do Paranaguamirim, em Joinville. A cliente transporta, monta e desmonta o kit conforme as orientações recebidas. Se preferir entrega, informe data e endereço para consultar a disponibilidade e as condições."
-          : "Moradores de Araquari podem contratar com retirada e devolução no ponto do Paranaguamirim, em Joinville. Se preferir entrega, informe data e endereço para a Lela consultar a disponibilidade e as condições.",
-        services: [
-          { name: "Pegue e Monte", path: "/pegue-e-monte/", description: "Moradores da cidade podem contratar com retirada e devolução no Paranaguamirim; consulte tema, data e entrega." },
-          { name: "Catálogo de decorações", path: "/portfolio/", description: "Veja os temas do catálogo e consulte as condições para sua festa." },
-          { name: `Região de ${place.city}`, path: city.path, description: `Veja como funcionam retirada, catálogo e consulta de entrega para festas em ${place.city}.` }
-        ],
-        pickupNeighborhoodPath: city.slug === "joinville" ? "/regioes-atendidas/joinville/paranaguamirim/" : null,
-        pickupLabel: "Ver o ponto de retirada no Paranaguamirim",
-        schemaServiceName: null,
-        schemaServiceDescription: null,
-        whatsappMessage: `Olá, Lela! Moro em ${place.name}, ${place.city}, e quero consultar o Pegue e Monte para [data]. Tema: [tema]. Pretendo retirar e devolver o kit no Paranaguamirim; também gostaria de consultar a possibilidade de entrega para meu endereço.`,
-        whatsappLabel: `Consultar decoração para ${place.name}`,
-        faqs: faqData.regionalFor(place)
-      }
+      content: place.content
     };
   })
   : [];
 
-const buildPages = [...publishedPages, ...previewPages];
+const buildPages = [...publicPages, ...previewPages];
 
 module.exports = {
   sources: { joinville: joinvilleSource, araquari: araquariSources },
@@ -446,6 +465,7 @@ module.exports = {
   geographyRegisterNote: "Joinville segue os 45 bairros da publicação municipal Bairro a Bairro 2026. Araquari reúne 17 referências geográficas: bairros, localidades/comunidades e o distrito de Itapocu; o cadastro pode estar incompleto e não define limites. A contratação do Pegue e Monte com retirada no Paranaguamirim está confirmada para residentes das duas cidades; entrega para endereço específico continua sujeita à disponibilidade. A confirmação comercial não torna automaticamente cada página apta à indexação.",
   cities,
   neighborhoods,
+  publicPages,
   publishedPages,
   previewPages,
   buildPages,

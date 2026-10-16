@@ -4,10 +4,20 @@ const items = [
   {
     id: "pegue-monte-definition",
     question: "O que é o Pegue e Monte?",
-    answer: "É o formato em que você escolhe o tema, agenda a retirada, leva o kit ao evento, monta com orientação, desmonta e devolve na data combinada.",
+    answer: `É o formato em que você escolhe o tema, consulta a data e confirma a composição antes de reservar. ${commercial.copy.pickupOption} ${commercial.copy.customerAssembly} Combine com a Lela os detalhes da devolução.`,
     category: "service",
     source: ["/pegue-e-monte/", "/como-funciona/"],
     confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte"]
+  },
+  {
+    id: "customer-assembly",
+    question: "Quem monta e desmonta o kit Pegue e Monte?",
+    answer: commercial.copy.customerAssembly,
+    category: "assembly",
+    source: ["/pegue-e-monte/", "/como-funciona/"],
+    confirmationStatus: "OWNER_CONFIRMATION_AND_PUBLISHED_SITE_COPY",
+    confirmedAt: commercial.ownerConfirmation.checkedAt,
     services: ["pegue-e-monte"]
   },
   {
@@ -123,23 +133,31 @@ const items = [
 
 const byId = new Map(items.map((item) => [item.id, item]));
 const cityQuestionIds = [
-  "pegue-monte-definition", "pickup-eligibility", "kit-composition", "kit-size", "reservation", "delivery",
+  "pegue-monte-definition", "pickup-eligibility", "kit-composition", "customer-assembly", "reservation", "delivery",
   "mini-festa-logistics", "return-period", "payment-methods", "cancellation",
   "pickup-location", "catalog-theme-choice"
 ];
 const localityQuestionIds = [
-  "pegue-monte-definition", "pickup-eligibility", "kit-composition", "kit-size", "reservation", "delivery",
+  "pegue-monte-definition", "pickup-eligibility", "kit-composition", "customer-assembly", "reservation", "delivery",
   "mini-festa-logistics", "return-period", "pickup-location", "catalog-theme-choice"
 ];
 
 function regionalFor(location) {
   const isCity = location.type === "city";
   const cityName = isCity ? location.name : location.city;
-  const placePhrase = isCity ? `em ${cityName}` : `em ${location.name}, em ${cityName}`;
+  const placePhrase = isCity
+    ? `em ${cityName}`
+    : location.type === "district"
+      ? `no distrito de ${location.name}, em ${cityName}`
+      : location.type === "locality"
+        ? `na localidade de ${location.name}, em ${cityName}`
+        : `no bairro ${location.name}, em ${cityName}`;
   const questionOverrides = {
     "pickup-eligibility": isCity
       ? `Quem mora em ${cityName} pode contratar o Pegue e Monte?`
-      : `Quem mora em ${location.name}, em ${cityName}, pode contratar o Pegue e Monte?`,
+      : location.type === "neighborhood"
+        ? `Moradores do bairro ${location.name}, em ${cityName}, podem contratar o Pegue e Monte?`
+        : `Como consultar o Pegue e Monte para uma festa ${placePhrase}?`,
     reservation: `Como faço para reservar uma decoração para uma festa ${placePhrase}?`,
     delivery: `Como consulto a possibilidade de entrega para uma festa ${placePhrase}?`,
     "pickup-location": `Onde fica o ponto de retirada para uma festa ${placePhrase}?`,

@@ -5,6 +5,7 @@ const faqs = require("../src/_data/faqs.cjs");
 const locations = require("../src/_data/locations.cjs");
 const portfolio = require("../src/_data/portfolio.cjs");
 const themes = require("../src/_data/themes.cjs");
+const themeEditorialReviews = require("../src/_data/themeEditorialReviews.cjs").reviews;
 const localCatalog = require("../src/_data/localCatalog.cjs");
 const commercial = require("../src/_data/commercial.cjs");
 
@@ -16,8 +17,9 @@ const required = [
   "regioes-atendidas/index.html", "temas/index.html", "404.html", "robots.txt", "sitemap.xml", "llms.txt",
   "favicon.svg", "assets/css/styles.css", "assets/js/main.js"
 ];
-const allowedCoverageStatuses = new Set(["UNCONFIRMED", "CONFIRMED", "CONDITIONAL", "NOT_OFFERED"]);
-const publishableStatus = "READY_INDEX";
+const allowedCoverageStatuses = new Set(["UNCONFIRMED", "CONFIRMED", "CONDITIONAL", "NOT_OFFERED", "CONFIRMED_WITH_PICKUP"]);
+const publishableStatus = "PUBLIC_INDEX";
+const publicStatuses = new Set(["PUBLIC_INDEX", "PUBLIC_NOINDEX"]);
 const stopWords = new Set([
   "a", "ao", "aos", "as", "com", "como", "da", "das", "de", "do", "dos", "e", "em", "entre",
   "essa", "esse", "esta", "este", "para", "pela", "pelas", "pelo", "pelos", "por", "que", "se",
@@ -315,6 +317,16 @@ function validateThemeRegistry() {
   const uniqueCopy = new Map(["intro", "about", "use", "galleryTitle", "galleryText"].map((field) => [field, new Set()]));
   const publishedContentTokens = [];
 
+  for (const [name, review] of Object.entries(themeEditorialReviews)) {
+    const group = portfolio.catalogByName[name];
+    if (!group || !review.visual || !review.editorial || !review.selection || !review.meta || !review.inspectedAt) {
+      fail(`revisão editorial sem tema/imagem ou conteúdo verificável: ${name}`);
+    }
+    if (review.indexDecision === "PUBLIC_INDEX" && (group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation)) {
+      fail(`tema com pendência de nome/imagem foi marcado para indexação: ${name}`);
+    }
+  }
+
   for (const page of themes.details) {
     const group = portfolio.catalogByName[page.name];
     if (!group || group.slug !== page.catalogSlug || page.id !== group.slug) fail(`detalhe sem grupo de catálogo correspondente: ${page.name}`);
@@ -340,7 +352,11 @@ function validateThemeRegistry() {
       imageFiles.add(file);
     }
     if (group.images.some((image) => !imageFiles.has(`${image.folder}/${image.filename}`))) fail(`imagem original ausente do detalhe: ${page.name}`);
-    if (page.indexable !== (page.editorialStatus === "REVIEWED") ||
+    const confirmationPending = group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation;
+    if (page.indexable !== (page.editorialDecision === "PUBLIC_INDEX") ||
+        (page.indexable && page.editorialStatus !== "REVIEWED") ||
+        (confirmationPending && page.editorialDecision !== "CONFIRMATION_REQUIRED") ||
+        (!confirmationPending && page.editorialDecision === "CONFIRMATION_REQUIRED") ||
         page.needsNameConfirmation !== group.nameNeedsConfirmation ||
         page.needsAssociationConfirmation !== group.imageAssociationNeedsConfirmation ||
         (page.indexable && (group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation))) {
@@ -354,9 +370,13 @@ function validateThemeRegistry() {
     if (requiredText.some((field) => typeof page[field] !== "string" || !page[field].trim())) fail(`conteúdo de detalhe incompleto: ${page.name}`);
     if (!Array.isArray(page.faqs)) fail(`FAQ de detalhe precisa ser uma lista: ${page.name}`);
     if (page.indexable) {
-      if (page.publicationStatus !== "PUBLISHED" || page.publicationBasis !== "CURATED_CATALOG_REFERENCE" || group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation) fail(`página indexável sem identificação editorial e visual confirmada: ${page.name}`);
-      if (page.title.length < 35 || page.description.length < 80 || page.intro.length < 80 || page.about.length < 80 || page.use.length < 70) fail(`conteúdo indexável curto para página própria: ${page.name}`);
-      if (!page.title.includes("Joinville") || !page.title.includes("Araquari") || !page.description.includes("Joinville") || !page.description.includes("Araquari")) fail(`title/description não identificam área atendida: ${page.name}`);
+      if (page.publicationStatus !== "PUBLIC_INDEX" || page.publicationBasis !== "CURATED_CATALOG_REFERENCE" || group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation) fail(`página indexável sem identificação editorial e visual confirmada: ${page.name}`);
+      if (page.title.length < 30 || page.title.length > 65 || page.description.length < 80 || page.intro.length < 80 || page.about.length < 80 || page.use.length < 70) fail(`conteúdo indexável curto ou title extenso para página própria: ${page.name}`);
+      if (!page.title.includes("Joinville") || !page.title.includes("Lela") || !page.description.includes("Joinville") || !page.description.includes("Araquari")) fail(`title/description não identificam área atendida: ${page.name}`);
+      if (page.contentReviewEvidence?.type === "LOCAL_ORIGINAL_IMAGE_VISUAL_REVIEW") {
+        const reviewedFiles = new Set(page.contentReviewEvidence.imageFiles || []);
+        if (!page.images.every((image) => reviewedFiles.has(`${image.folder}/${image.filename}`))) fail(`evidência editorial não cobre todas as imagens revisadas: ${page.name}`);
+      }
       if (!page.h1.toLocaleLowerCase("pt-BR").includes(page.name.split(/[ –—]/)[0].toLocaleLowerCase("pt-BR"))) fail(`H1 não identifica a opção: ${page.name}`);
       if (!page.faqs.length || page.faqs.some((faq) => !faq.question || faq.question.length < 18 || !faq.answer || faq.answer.length < 50)) fail(`FAQ editorial incompleto: ${page.name}`);
       for (const faq of page.faqs) {
@@ -375,7 +395,8 @@ function validateThemeRegistry() {
       if (!site.sitemapPaths.includes(page.path)) fail(`página indexável ausente do sitemap: ${page.path}`);
       publishedContentTokens.push({ page, tokens: themeContentTokens(page) });
     } else {
-      if (page.publicationStatus === "PUBLISHED" || page.publicationBasis !== "CUSTOMER_DETAIL_ONLY") fail(`detalhe não revisado marcado como publicado: ${page.name}`);
+      const expectedBasis = page.editorialDecision === "CONFIRMATION_REQUIRED" ? "CONFIRMATION_REQUIRED" : "EDITORIAL_NOINDEX";
+      if (page.publicationStatus !== "PUBLIC_NOINDEX" || page.publicationBasis !== expectedBasis) fail(`detalhe noindex sem justificativa editorial coerente: ${page.name}`);
       if (site.sitemapPaths.includes(page.path)) fail(`detalhe noindex entrou no sitemap: ${page.path}`);
     }
   }
@@ -399,8 +420,8 @@ function validateThemeRegistry() {
 }
 
 function validateRegistry() {
-  const { cities, neighborhoods, publishedPages, previewPages, buildPages } = locations;
-  if (![cities, neighborhoods, publishedPages, previewPages, buildPages].every(Array.isArray)) fail("cadastro de localidades incompleto");
+  const { cities, neighborhoods, publicPages, publishedPages, previewPages, buildPages } = locations;
+  if (![cities, neighborhoods, publicPages, publishedPages, previewPages, buildPages].every(Array.isArray)) fail("cadastro de localidades incompleto");
   if (locations.reviewMode !== (process.env.LELA_LOCAL_REVIEW === "1")) fail("modo de revisão regional incompatível com a configuração do build");
   for (const requiredCity of ["joinville", "araquari"]) {
     if (!cities.some((city) => city.slug === requiredCity)) fail(`cidade principal ausente: ${requiredCity}`);
@@ -520,13 +541,8 @@ function validateRegistry() {
         neighborhood.pickupEligibilityStatus !== "CONFIRMED_CITYWIDE" ||
         neighborhood.deliveryStatus !== "CONDITIONAL_ON_AVAILABILITY" ||
         !neighborhood.commercialEvidence.some((evidence) => evidence.checkedAt === commercial.ownerConfirmation.checkedAt) ||
-        neighborhood.serviceCoverageStatus !== "UNCONFIRMED") {
+        neighborhood.serviceCoverageStatus !== "CONFIRMED_WITH_PICKUP") {
       fail(`elegibilidade com retirada ou condição de entrega inconsistente: ${neighborhood.name}`);
-    }
-    if (!neighborhood.indexable && (!neighborhood.editorialReadiness ||
-        neighborhood.editorialReadiness.decision !== "RETAIN_DRAFT_PREVIEW" ||
-        neighborhood.editorialReadiness.status !== "INSUFFICIENT_LOCAL_DISTINCTIVE_EVIDENCE")) {
-      fail(`rascunho regional sem avaliação editorial explícita: ${neighborhood.name}`);
     }
     if (neighborhood.indexable) {
       if (neighborhood.publicationStatus !== publishableStatus) fail(`bairro indexável sem status de publicação pronto: ${neighborhood.name}`);
@@ -537,20 +553,41 @@ function validateRegistry() {
       if (coverageConfirmed && neighborhood.publicationBasis !== "SERVICE_COVERAGE") {
         fail(`página de cobertura sem base de publicação explícita: ${neighborhood.name}`);
       }
-      if (!coverageConfirmed && (neighborhood.serviceCoverageStatus !== "UNCONFIRMED" || neighborhood.publicationBasis !== "PICKUP_LOCATION")) {
-        fail(`bairro sem cobertura confirmada só pode publicar fato pontual de retirada: ${neighborhood.name}`);
+      if (!coverageConfirmed && neighborhood.publicationBasis !== "PICKUP_LOCATION") {
+        fail(`página indexável sem cobertura de serviço deve se limitar ao ponto real de retirada: ${neighborhood.name}`);
       }
-    } else if (neighborhood.publicationStatus !== "DRAFT_PREVIEW") {
-      fail(`localidade não indexável deve ficar em DRAFT_PREVIEW: ${neighborhood.name}`);
+    } else if (neighborhood.publicationStatus === "PUBLIC_NOINDEX") {
+      if (!neighborhood.editorialReadiness ||
+          neighborhood.editorialReadiness.decision !== "PUBLIC_NOINDEX" ||
+          neighborhood.editorialReadiness.status !== "PUBLIC_EXPERIENCE_NO_LOCAL_DISTINCTIVE_EVIDENCE" ||
+          neighborhood.publicationBasis !== "CITYWIDE_PICKUP_NO_LOCAL_INDEXING_BASIS") {
+        fail(`página pública noindex sem justificativa editorial individual: ${neighborhood.name}`);
+      }
+      validateContent(neighborhood);
+      if (site.sitemapPaths.includes(neighborhood.path)) fail(`página PUBLIC_NOINDEX entrou no sitemap: ${neighborhood.path}`);
+    } else if (neighborhood.publicationStatus === "DRAFT_PREVIEW") {
+      if (!neighborhood.editorialReadiness?.decision || !neighborhood.editorialReadiness?.reason) {
+        fail(`DRAFT_PREVIEW sem impedimento específico documentado: ${neighborhood.name}`);
+      }
+    } else {
+      fail(`estado de publicação inválido para localidade não indexável: ${neighborhood.name}`);
     }
   }
 
-  const draftRecords = neighborhoods.filter((item) => !item.indexable);
+  const expectedPublicPages = [...cities, ...neighborhoods].filter((item) => publicStatuses.has(item.publicationStatus));
+  if (publicPages.length !== expectedPublicPages.length ||
+      expectedPublicPages.some((page) => !publicPages.some((candidate) => candidate.path === page.path)) ||
+      new Set(publicPages.map((page) => page.path)).size !== publicPages.length) {
+    fail("publicPages deve conter somente uma vez cada rota PUBLIC_INDEX e PUBLIC_NOINDEX");
+  }
+  for (const page of publicPages) validateContent(page);
+
+  const draftRecords = neighborhoods.filter((item) => item.publicationStatus === "DRAFT_PREVIEW");
   if (locations.reviewMode) {
     if (previewPages.length !== draftRecords.length || previewPages.some((page) =>
       !page.previewOnly || page.indexable || page.publicationStatus !== "DRAFT_PREVIEW" ||
-      page.serviceCoverageStatus !== "UNCONFIRMED" || !draftRecords.some((record) => record.path === page.path)
-    )) fail("páginas DRAFT_PREVIEW não correspondem às localidades pendentes e sem cobertura confirmada");
+      !draftRecords.some((record) => record.path === page.path)
+    )) fail("páginas DRAFT_PREVIEW não correspondem às localidades com impedimentos documentados");
     for (const page of previewPages) validateContent(page);
   } else if (previewPages.length || buildPages.some((page) => page.previewOnly)) {
     fail("páginas DRAFT_PREVIEW não podem ser geradas no build público padrão");
@@ -572,7 +609,7 @@ function validateRegistry() {
   }
   for (const pathInSitemap of site.sitemapPaths) {
     if (neighborhoodPaths.has(pathInSitemap) && !candidatePaths.includes(pathInSitemap)) {
-      fail(`bairro sem publicação indexável incluído no sitemap: ${pathInSitemap}`);
+      fail(`localidade não indexável incluída no sitemap: ${pathInSitemap}`);
     }
   }
 }
@@ -642,10 +679,16 @@ for (const file of htmlFiles) {
   }
   const localPage = locations.buildPages.find((local) => local.path === routeForHtml(file));
   if (localPage) {
-    const cityName = localPage.type === "city" ? localPage.name : localPage.city;
-    const expectedPickupText = `Moradores de ${cityName} podem retirar e devolver o kit no Paranaguamirim.`;
-    if (!visibleText.includes(expectedPickupText)) {
-      fail(`texto de retirada sem cidade correta em ${localPage.path}: esperado “${expectedPickupText}”`);
+    const hasEligibilityText = localPage.type === "city"
+      ? visibleText.includes(`Moradores de todos os bairros de ${localPage.name} podem contratar o Pegue e Monte`)
+      : localPage.slug === "paranaguamirim"
+        ? visibleText.includes(commercial.copy.pickupEligibility)
+      : localPage.type === "neighborhood"
+        ? visibleText.includes(localPage.content.intro) && visibleText.includes("podem contratar o Pegue e Monte")
+        : visibleText.includes(localPage.content.intro) && visibleText.includes("consulte com a Lela as condições do Pegue e Monte");
+    if (!hasEligibilityText || !visibleText.includes(commercial.copy.pickupOption) ||
+        !visibleText.includes(commercial.copy.deliveryConditions)) {
+      fail(`texto de contratação, retirada ou entrega não corresponde à regra comercial em ${localPage.path}`);
     }
   }
   const title = content.match(/<title>(.*?)<\/title>/i)?.[1];
@@ -814,7 +857,7 @@ for (const route of regionalPaths) {
       }
       const listedLinks = [...html.matchAll(/<li\b[^>]*data-locality-reference-item=[^>]*>[\s\S]*?<\/li>/gi)]
         .flatMap((match) => [...match[0].matchAll(/<a\b[^>]*href="([^"]+)"/gi)].map((link) => link[1]));
-      const expectedListed = page.neighborhoods.filter((place) => place.indexable || locations.reviewMode);
+      const expectedListed = page.neighborhoods.filter((place) => publicStatuses.has(place.publicationStatus) || locations.reviewMode);
       if (listedLinks.length !== expectedListed.length || expectedListed.some((place) => !listedLinks.includes(`${site.pathPrefix}${place.path.replace(/^\//, "")}`))) {
         fail(`links de localidades não correspondem ao estado de revisão em ${route}`);
       }
@@ -827,6 +870,11 @@ for (const route of regionalPaths) {
         fail(`Service/areaServed sem confirmação correspondente em ${route}`);
       }
       if (!coverageConfirmed && service) fail(`bairro sem cobertura confirmada declara Service em ${route}`);
+      if (page.publicationStatus === "PUBLIC_NOINDEX" &&
+          (page.previewOnly || html.includes("Prévia local em revisão") || service ||
+            site.sitemapPaths.includes(route) || robots !== "noindex,follow")) {
+        fail(`página PUBLIC_NOINDEX deve ser pública sem aviso de preview, schema Service ou sitemap: ${route}`);
+      }
       if (page.previewOnly) {
         const robotsTag = html.match(/<meta\b[^>]*\bname="robots"[^>]*>/i)?.[0];
         const whatsappTag = [...html.matchAll(/<a\b[^>]*href="([^"]*wa\.me[^"]*)"[^>]*>/gi)]
@@ -1039,4 +1087,4 @@ if (prefix && prefix !== "/") {
   }
 }
 
-console.log(`Build validado: ${htmlFiles.length} HTML, ${referencedImages.size} imagens locais referenciadas (${generatedImageFiles.length} derivadas geradas), ${locations.cities.length} cidades e ${locations.neighborhoods.length} registros geográficos; ${locations.publishedPages.length} páginas locais indexáveis, ${locations.previewPages.length} prévias DRAFT_PREVIEW e ${themes.published.length} páginas de tema indexáveis.`);
+console.log(`Build validado: ${htmlFiles.length} HTML, ${referencedImages.size} imagens locais referenciadas (${generatedImageFiles.length} derivadas geradas), ${locations.cities.length} cidades e ${locations.neighborhoods.length} registros geográficos; ${locations.publicPages.length - locations.publishedPages.length} páginas locais públicas noindex, ${locations.publishedPages.length} páginas locais indexáveis, ${locations.previewPages.length} DRAFT_PREVIEW, ${themes.published.length} temas indexáveis e ${themes.details.length - themes.published.length} temas noindex.`);

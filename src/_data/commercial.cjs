@@ -24,7 +24,8 @@ module.exports = {
     pickupEligibility: "Moradores de todos os bairros de Joinville e Araquari podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim, em Joinville.",
     pickupOption: "A retirada e a devolução são combinadas no ponto do Paranaguamirim, em Joinville.",
     deliveryConditions: "A entrega depende da disponibilidade da Lela para a data e o endereço informados. Consulte também eventuais taxas; a opção de retirada continua disponível.",
-    themeAvailability: "A presença de um tema no catálogo não garante disponibilidade para uma data específica; a Lela confirma a composição e as condições antes da reserva."
+    themeAvailability: "A presença de um tema no catálogo não garante disponibilidade para uma data específica; a Lela confirma a composição e as condições antes da reserva.",
+    customerAssembly: "No formato Pegue e Monte, a cliente transporta, monta e desmonta o kit conforme as orientações combinadas."
   },
   services: {
     pegueEMonte: {
