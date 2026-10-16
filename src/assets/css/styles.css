@@ -460,6 +460,7 @@ button { color: inherit; }
   .locality-page .section-heading { margin-bottom: 1.15rem; }
   .locality-page .audience-grid { grid-template-columns: minmax(0, 1fr); }
   .locality-page .whatsapp-float { display: none; }
+  .theme-detail-page .whatsapp-float { display: none; }
   .locality-hero-actions { align-items: flex-start; gap: .75rem; }
   .locality-hero-actions .button { width: auto; }
   .theme-service-grid { grid-template-columns: 1fr; }

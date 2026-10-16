@@ -13,7 +13,7 @@
   {% if localityName %}{% set themeUrl = themeUrl + "&localidade=" + local.slug %}{% endif %}
   {% set message = "Olá, Lela! Estou procurando uma decoração " + group.themeName + " para o Pegue e Monte " + placeLabel + ". Gostaria de consultar a disponibilidade e as condições de retirada ou entrega." %}
 {% else %}
-  {% set message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar a disponibilidade para [data]. Cidade/bairro: [local]." %}
+  {% set message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar se há disponibilidade para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
 {% endif %}
 <article class="catalog-card{% if localCatalogContext %} catalog-card--regional{% endif %}" id="tema-{{ group.slug }}" data-catalog-group="{{ group.slug }}"{% if localCatalogContext %} data-local-theme-card="{{ group.slug }}"{% endif %} data-filter-item data-category="{{ group.category }}" data-has-montage="{{ 'true' if group.hasMountedExample else 'false' }}" data-search="{{ group.searchText }}">
   <a class="catalog-card__image-link" href="{{ themeUrl }}" aria-label="Ver detalhes de {{ group.themeName }}">
