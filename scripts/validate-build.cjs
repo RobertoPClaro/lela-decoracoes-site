@@ -52,6 +52,14 @@ function normalizeText(value) {
     .trim();
 }
 
+function visibleTextFromHtml(value) {
+  return normalizeText(String(value)
+    .replace(/<head\b[^>]*>[\s\S]*?<\/head>/gi, " ")
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " "));
+}
+
 function slugify(value) {
   return String(value || "")
     .normalize("NFD")
@@ -621,6 +629,25 @@ function assertLocalReference(rawUrl, file, kind) {
 
 for (const file of htmlFiles) {
   const content = readOutput(file);
+  const visibleText = visibleTextFromHtml(content);
+  const unrenderedTextPatterns = [
+    [/\bMoradores de\s+podem\b/i, "frase de moradores sem cidade"],
+    [/\bundefined\b/i, "valor undefined"],
+    [/\bNaN\b/i, "valor NaN"],
+    [/\[object Object\]/i, "objeto convertido em texto"],
+    [/\{\{[\s\S]*?\}\}|\{%[\s\S]*?%\}/, "interpolação Nunjucks não renderizada"]
+  ];
+  for (const [pattern, label] of unrenderedTextPatterns) {
+    if (pattern.test(visibleText)) fail(`texto visível inválido (${label}): ${file}`);
+  }
+  const localPage = locations.buildPages.find((local) => local.path === routeForHtml(file));
+  if (localPage) {
+    const cityName = localPage.type === "city" ? localPage.name : localPage.city;
+    const expectedPickupText = `Moradores de ${cityName} podem retirar e devolver o kit no Paranaguamirim.`;
+    if (!visibleText.includes(expectedPickupText)) {
+      fail(`texto de retirada sem cidade correta em ${localPage.path}: esperado “${expectedPickupText}”`);
+    }
+  }
   const title = content.match(/<title>(.*?)<\/title>/i)?.[1];
   const descriptionTag = content.match(/<meta\b[^>]*\bname="description"[^>]*>/i)?.[0];
   const description = descriptionTag?.match(/\bcontent="([^"]*)"/i)?.[1];
