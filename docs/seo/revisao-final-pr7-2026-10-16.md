@@ -61,4 +61,4 @@ Exemplo: no Homem-Aranha, a instrução agora se limita à referência específi
 
 - Confirmar com a proprietária a identificação comercial de Ana Castela – A Boiadeira, a associação de Maria Clara e JP e a composição de imagens de Tropa dos Rosa antes de considerar indexação.
 - Conteúdo hiperlocal distintivo verificável ainda não foi identificado para as outras 60 páginas regionais individuais além de Paranaguamirim; mantidas públicas em noindex até evidência editorial real.
-- O estado dos checks remotos e a atualização do corpo do PR dependem de conectividade/autenticação GitHub no ambiente. Não houve merge nem deploy nesta revisão.
+- O PR #7 permanece aberto como draft na branch `feat/seo-local-completo`; seu corpo foi atualizado com este resumo e as evidências. Não houve merge nem deploy nesta revisão.
