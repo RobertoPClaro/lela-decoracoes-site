@@ -26,6 +26,9 @@
       {% if theme.needsNameConfirmation %}
         <p class="provisional-note">A identificação exibida para esta referência ainda precisa ser confirmada com a Lela. Envie a imagem pelo WhatsApp para evitar confusão com o nome do tema.</p>
       {% endif %}
+      {% if theme.needsAssociationConfirmation %}
+        <p class="provisional-note">A associação de uma ou mais imagens ao nome deste tema ainda precisa ser confirmada com a Lela. Envie a foto que deseja consultar para evitar confusão.</p>
+      {% endif %}
       <h3>Ideias para a comemoração</h3>
       <p>{{ theme.use }}</p>
       <p>{{ theme.galleryText }}</p>

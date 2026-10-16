@@ -1,25 +1,35 @@
-# Backlog de SEO e mensuração — 15/10/2026
+# SEO: estado e próximas ações — 16/10/2026
 
-> Snapshot histórico. Atualização em 16/10/2026: o fluxo de publicação local foi implementado na branch `feat/seo-local-completo`; consulte [`seo-local-completo-2026-10-16.md`](seo-local-completo-2026-10-16.md) para o estado candidato. As 61 localidades ficam públicas em `noindex` por falta de evidência editorial própria para indexação. GSC, GA4 e Perfil da Empresa no Google não fazem parte desta fase.
+Este relatório acompanha a branch `feat/seo-local-completo` e o PR #7. É um snapshot do build candidato, não indica merge, deploy nem indexação no Google.
 
-| Prioridade | Item | Estado | Ação concreta | Evidência que falta | Dependência |
-|---|---|---|---|---|---|
-| P1 | PR principal da branch `feat/catalogo-regioes` | Aguardando credencial | Autorizar GitHub CLI, enviar branch e abrir PR para `main`; não fazer merge | Token GH atual inválido; autenticação web pendente | Proprietário concluir OAuth |
-| P1 | Confirmar Google Business Profile | BLOQUEADO | Acessar a conta da empresa, conferir ficha, telefone, endereço e tipo de operação antes de qualquer ajuste | Ficha oficial e elegibilidade/endereço de atendimento não verificados | Acesso da proprietária e confirmação se clientes são recebidos no endereço |
-| P2 | Search Console | BLOQUEADO | Conceder acesso de leitura; conferir propriedade, sitemap, consultas, cobertura, páginas excluídas e URLs prioritárias | Dados de conta e relatórios reais | Acesso do proprietário |
-| P2 | Palavras-chave e concorrentes | PARCIAL | Usar consultas/impressões do GSC para validar hipóteses; atualizar comparação de páginas de Joinville/Araquari | Volume, impressões, cliques e SERP local observada | Acesso ao GSC; sem isso manter como pesquisa qualitativa |
-| P2 | Indexação individual de bairros | PARCIAL | Manter 61 drafts até existir informação local útil e verificável; revisar piloto um a um, ou consolidar na cidade | Fotos autorizadas, fatos próprios ou logística local específica; tráfego/consultas | Proprietária para fatos/fotos; GSC para evidência de procura |
-| P2 | Nomes/associações de temas pendentes | PARCIAL | Confirmar Animais da Floresta, Roedor Fofo, Seleção Brasileira/Brasil Futebol e arquivo antigo associado a Tropa dos Rosa | Confirmação comercial e/ou autorização/identificação da arte | Proprietária |
-| P2 | GA4 e conversões | BLOQUEADO | Confirmar propriedade e ID; aprovar consentimento; configurar eventos de WhatsApp, busca e filtro sem PII | ID, propriedade e política de consentimento | Acesso/decisão da proprietária; não instalado |
-| P2 | Core Web Vitals de campo | NÃO INICIADO | Verificar CrUX/GSC/PageSpeed com URLs e datas; separar LCP, INP e CLS de laboratório | Dados de campo disponíveis e baseline | Acesso Search Console ou URL pública/CrUX; laboratório não substitui campo |
-| P2 | Auditoria de acessibilidade | PARCIAL | Rodar scanner WCAG e fazer teste de leitor de tela/teclado com roteiro | Resultado axe/WAVE e leitor de tela | Não depende da proprietária; pode ser executado na próxima rodada |
-| P3 | Visibilidade em mecanismos de IA | NÃO INICIADO | Registrar consultas reproduzíveis, data, sistema, resposta e citações; repetir em cadência definida | Resultados observados e histórico comparável | Acesso público aos sistemas; nenhuma promessa de citação |
-| P3 | Revisão de Mini Festa na Mesa | PARCIAL | Confirmar montagem, entrega, retirada, devolução e composição antes de detalhar páginas | Regras atuais do serviço | Proprietária |
-| P3 | Rotina de atualização | PRONTA PARA PLANEJAR | Definir revisão trimestral de cobertura, catálogo, perfil, sitemap e consultas | Responsável e cadência | Proprietária |
+## Concluído nesta etapa
+
+- Revisadas individualmente as 55 páginas de tema que estavam `PENDING_EDITORIAL_REVIEW`, com texto visual específico, alt text, metadados, FAQ contextual e decisão editorial por registro.
+- Estado consolidado do catálogo: 73 `PUBLIC_INDEX` e 3 `PUBLIC_NOINDEX`. As três páginas fora do sitemap são Ana Castela – A Boiadeira (identidade na imagem), Maria Clara e JP (associação da imagem) e Tropa dos Rosa (associação das duas artes); ver evidências no inventário editorial.
+- Resolvidas pela inspeção visual três pendências antigas: nome genérico de Animais da floresta, nome genérico de Roedor fofo e correspondência das fotos de Brasil Futebol. Não há alegação de afiliação oficial.
+- Resultado dos temas: 73 `PUBLIC_INDEX`, 3 `PUBLIC_NOINDEX`; veja o [inventário editorial individual](temas-editorial-2026-10-16.md).
+- As 61 páginas regionais continuam acessíveis no build público em `PUBLIC_NOINDEX`; não há `DRAFT_PREVIEW`. O piloto avaliou oito localidades e manteve noindex onde não existe evidência editorial própria da operação. Veja a [matriz regional](seo-local-completo-2026-10-16.md).
+- O catálogo local e os 76 temas permanecem completos. As páginas municipais e regionais foram ajustadas para reduzir repetição sem alterar as regras comerciais.
+
+## Pendências
+
+| Prioridade | Item | Estado | Próxima ação concreta | Dependência |
+|---|---|---|---|---|
+| P1 | Nome de Ana Castela – A Boiadeira | CONFIRMAÇÃO NECESSÁRIA | Confirmar com a proprietária que a pessoa retratada é Ana Castela; manter noindex até lá. | Proprietária do projeto |
+| P1 | Associação de Maria Clara e JP | CONFIRMAÇÃO NECESSÁRIA | Validar a identificação, pois o arquivo original menciona Turma da Mônica e a arte não contém nomes legíveis. | Proprietária do projeto |
+| P1 | Associação das imagens de Tropa dos Rosa | CONFIRMAÇÃO NECESSÁRIA | Confirmar se as duas artes pertencem ao mesmo tema ou corrigir o agrupamento em outra etapa. | Proprietária do projeto |
+| P2 | Indexação individual de bairros | AVALIADO; MANTER NOINDEX | Reavaliar somente quando houver informação comercial ou editorial local real, como logística própria confirmada ou fotos autorizadas de montagens naquela localidade. | Evidência da operação; dados de busca podem complementar, não substituir, valor editorial |
+| P2 | Search Console | FORA DESTA MISSÃO | Conceder acesso de leitura para analisar consultas, cobertura e canonical selecionada depois da revisão do site. | Acesso do proprietário |
+| P2 | Acessibilidade com leitor de tela | PARCIAL | Complementar scanner e teclado com leitor de tela em uma próxima rodada. | Ferramenta/sistema de leitura disponível |
+| P2 | Core Web Vitals de campo | NÃO MEDIDO | Depois da publicação, consultar dados reais de CrUX/Search Console e separá-los das métricas de laboratório. | Acesso externo ou dados públicos de CrUX |
+| P2 | GA4 e conversões | FORA DESTA MISSÃO | Não instalar até receber propriedade/ID e aprovação de consentimento; evitar PII nos eventos. | Acesso e decisão da proprietária |
+| P3 | Mini Festa na Mesa | REGRAS OPERACIONAIS NÃO GENERALIZADAS | Confirmar montagem, entrega, retirada, devolução e composição específicas antes de ampliar o conteúdo. | Proprietária do projeto |
+| P3 | Perfil da Empresa no Google | FORA DESTA MISSÃO | Não criar ou alterar perfil sem confirmar elegibilidade, titularidade e endereço apropriado. | Acesso e confirmação da proprietária |
 
 ## Guardrails
 
-- Não promover páginas `DRAFT_PREVIEW` ou temas `noindex` em lote.
-- A contratação do Pegue e Monte com retirada, a disponibilidade de tema e a entrega são fatos distintos.
-- O endereço do Paranaguamirim é o ponto divulgado para retirada; não implica endereço de atendimento público ou elegibilidade automática no Google Maps.
-- Nenhuma métrica de tráfego, volume de busca, posição, conversão ou Core Web Vitals de campo foi inventada ou presumida.
+- A contratação do Pegue e Monte com retirada, a disponibilidade de um tema e a possibilidade de entrega são fatos distintos.
+- O ponto divulgado em Paranaguamirim não implica que clientes sejam recebidos sem agendamento nem que exista uma unidade nos bairros.
+- A inclusão de URL no sitemap não garante indexação.
+- Não há métricas de tráfego, volume de busca, posição, conversão ou Core Web Vitals de campo nesta execução.
+- Nenhuma regra do Pegue e Monte foi extrapolada à Mini Festa na Mesa.

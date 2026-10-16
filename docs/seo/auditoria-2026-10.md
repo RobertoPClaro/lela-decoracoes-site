@@ -1,5 +1,7 @@
 # Auditoria de SEO, conteúdo e experiência — 15/10/2026
 
+> Baseline histórico do PR #5. O estado atual desta branch é posterior e está registrado em [`temas-editorial-2026-10-16.md`](temas-editorial-2026-10-16.md), [`seo-local-completo-2026-10-16.md`](seo-local-completo-2026-10-16.md) e [`backlog-priorizado.md`](backlog-priorizado.md). As contagens e pendências descritas abaixo pertencem à auditoria de 15/10/2026 e não devem ser usadas como resultado do build candidato atual.
+
 ## Escopo e base
 
 Auditoria local da branch `feat/seo-audit-optimization`, baseada no commit `287b702` da branch `feat/catalogo-regioes`. O estado remoto verificado por `git fetch origin` permanece em `origin/main` `2453d0c`; a entrega principal ainda depende do PR dessa branch. A validação cobre o build estático e jornadas Playwright. Não comprova indexação, tráfego ou desempenho de campo.

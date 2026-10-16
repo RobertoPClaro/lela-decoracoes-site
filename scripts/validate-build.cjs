@@ -5,6 +5,7 @@ const faqs = require("../src/_data/faqs.cjs");
 const locations = require("../src/_data/locations.cjs");
 const portfolio = require("../src/_data/portfolio.cjs");
 const themes = require("../src/_data/themes.cjs");
+const themeEditorialReviews = require("../src/_data/themeEditorialReviews.cjs").reviews;
 const localCatalog = require("../src/_data/localCatalog.cjs");
 const commercial = require("../src/_data/commercial.cjs");
 
@@ -316,6 +317,16 @@ function validateThemeRegistry() {
   const uniqueCopy = new Map(["intro", "about", "use", "galleryTitle", "galleryText"].map((field) => [field, new Set()]));
   const publishedContentTokens = [];
 
+  for (const [name, review] of Object.entries(themeEditorialReviews)) {
+    const group = portfolio.catalogByName[name];
+    if (!group || !review.visual || !review.editorial || !review.selection || !review.meta || !review.inspectedAt) {
+      fail(`revisão editorial sem tema/imagem ou conteúdo verificável: ${name}`);
+    }
+    if (review.indexDecision === "PUBLIC_INDEX" && (group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation)) {
+      fail(`tema com pendência de nome/imagem foi marcado para indexação: ${name}`);
+    }
+  }
+
   for (const page of themes.details) {
     const group = portfolio.catalogByName[page.name];
     if (!group || group.slug !== page.catalogSlug || page.id !== group.slug) fail(`detalhe sem grupo de catálogo correspondente: ${page.name}`);
@@ -341,7 +352,11 @@ function validateThemeRegistry() {
       imageFiles.add(file);
     }
     if (group.images.some((image) => !imageFiles.has(`${image.folder}/${image.filename}`))) fail(`imagem original ausente do detalhe: ${page.name}`);
-    if (page.indexable !== (page.editorialStatus === "REVIEWED") ||
+    const confirmationPending = group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation;
+    if (page.indexable !== (page.editorialDecision === "PUBLIC_INDEX") ||
+        (page.indexable && page.editorialStatus !== "REVIEWED") ||
+        (confirmationPending && page.editorialDecision !== "CONFIRMATION_REQUIRED") ||
+        (!confirmationPending && page.editorialDecision === "CONFIRMATION_REQUIRED") ||
         page.needsNameConfirmation !== group.nameNeedsConfirmation ||
         page.needsAssociationConfirmation !== group.imageAssociationNeedsConfirmation ||
         (page.indexable && (group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation))) {
@@ -356,8 +371,12 @@ function validateThemeRegistry() {
     if (!Array.isArray(page.faqs)) fail(`FAQ de detalhe precisa ser uma lista: ${page.name}`);
     if (page.indexable) {
       if (page.publicationStatus !== "PUBLIC_INDEX" || page.publicationBasis !== "CURATED_CATALOG_REFERENCE" || group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation) fail(`página indexável sem identificação editorial e visual confirmada: ${page.name}`);
-      if (page.title.length < 35 || page.description.length < 80 || page.intro.length < 80 || page.about.length < 80 || page.use.length < 70) fail(`conteúdo indexável curto para página própria: ${page.name}`);
-      if (!page.title.includes("Joinville") || !page.title.includes("Araquari") || !page.description.includes("Joinville") || !page.description.includes("Araquari")) fail(`title/description não identificam área atendida: ${page.name}`);
+      if (page.title.length < 30 || page.title.length > 65 || page.description.length < 80 || page.intro.length < 80 || page.about.length < 80 || page.use.length < 70) fail(`conteúdo indexável curto ou title extenso para página própria: ${page.name}`);
+      if (!page.title.includes("Joinville") || !page.title.includes("Lela") || !page.description.includes("Joinville") || !page.description.includes("Araquari")) fail(`title/description não identificam área atendida: ${page.name}`);
+      if (page.contentReviewEvidence?.type === "LOCAL_ORIGINAL_IMAGE_VISUAL_REVIEW") {
+        const reviewedFiles = new Set(page.contentReviewEvidence.imageFiles || []);
+        if (!page.images.every((image) => reviewedFiles.has(`${image.folder}/${image.filename}`))) fail(`evidência editorial não cobre todas as imagens revisadas: ${page.name}`);
+      }
       if (!page.h1.toLocaleLowerCase("pt-BR").includes(page.name.split(/[ –—]/)[0].toLocaleLowerCase("pt-BR"))) fail(`H1 não identifica a opção: ${page.name}`);
       if (!page.faqs.length || page.faqs.some((faq) => !faq.question || faq.question.length < 18 || !faq.answer || faq.answer.length < 50)) fail(`FAQ editorial incompleto: ${page.name}`);
       for (const faq of page.faqs) {
@@ -376,7 +395,8 @@ function validateThemeRegistry() {
       if (!site.sitemapPaths.includes(page.path)) fail(`página indexável ausente do sitemap: ${page.path}`);
       publishedContentTokens.push({ page, tokens: themeContentTokens(page) });
     } else {
-      if (page.publicationStatus !== "PUBLIC_NOINDEX" || page.publicationBasis !== "CUSTOMER_DETAIL_ONLY") fail(`detalhe sem revisão editorial precisa ser público noindex: ${page.name}`);
+      const expectedBasis = page.editorialDecision === "CONFIRMATION_REQUIRED" ? "CONFIRMATION_REQUIRED" : "EDITORIAL_NOINDEX";
+      if (page.publicationStatus !== "PUBLIC_NOINDEX" || page.publicationBasis !== expectedBasis) fail(`detalhe noindex sem justificativa editorial coerente: ${page.name}`);
       if (site.sitemapPaths.includes(page.path)) fail(`detalhe noindex entrou no sitemap: ${page.path}`);
     }
   }
@@ -663,7 +683,9 @@ for (const file of htmlFiles) {
       ? visibleText.includes(`Moradores de todos os bairros de ${localPage.name} podem contratar o Pegue e Monte`)
       : localPage.slug === "paranaguamirim"
         ? visibleText.includes(commercial.copy.pickupEligibility)
-        : visibleText.includes(localPage.content.intro) && visibleText.includes("pode contratar o Pegue e Monte");
+      : localPage.type === "neighborhood"
+        ? visibleText.includes(localPage.content.intro) && visibleText.includes("podem contratar o Pegue e Monte")
+        : visibleText.includes(localPage.content.intro) && visibleText.includes("consulte com a Lela as condições do Pegue e Monte");
     if (!hasEligibilityText || !visibleText.includes(commercial.copy.pickupOption) ||
         !visibleText.includes(commercial.copy.deliveryConditions)) {
       fail(`texto de contratação, retirada ou entrega não corresponde à regra comercial em ${localPage.path}`);

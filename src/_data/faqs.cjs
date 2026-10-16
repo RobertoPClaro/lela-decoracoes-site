@@ -155,7 +155,9 @@ function regionalFor(location) {
   const questionOverrides = {
     "pickup-eligibility": isCity
       ? `Quem mora em ${cityName} pode contratar o Pegue e Monte?`
-      : `Quem mora ${placePhrase}, pode contratar o Pegue e Monte?`,
+      : location.type === "neighborhood"
+        ? `Moradores do bairro ${location.name}, em ${cityName}, podem contratar o Pegue e Monte?`
+        : `Como consultar o Pegue e Monte para uma festa ${placePhrase}?`,
     reservation: `Como faço para reservar uma decoração para uma festa ${placePhrase}?`,
     delivery: `Como consulto a possibilidade de entrega para uma festa ${placePhrase}?`,
     "pickup-location": `Onde fica o ponto de retirada para uma festa ${placePhrase}?`,
