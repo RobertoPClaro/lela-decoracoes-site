@@ -1,5 +1,7 @@
 # Confirmação comercial e prontidão do SEO hiperlocal
 
+> **Registro histórico de 14–15/10/2026.** O estado posterior está em [`docs/seo/seo-local-completo-2026-10-16.md`](seo/seo-local-completo-2026-10-16.md): nesta branch, as 61 rotas antes DRAFT_PREVIEW tornam-se páginas públicas `PUBLIC_NOINDEX`; não foram promovidas à indexação.
+
 **Data da confirmação:** 2026-10-14.
 **Estado do registro:** fotografia da confirmação em 14/10/2026, antes da preparação de release. O estado atual de Git e publicação está no adendo de 15/10/2026.
 

@@ -1,5 +1,7 @@
 # Backlog de SEO e mensuração — 15/10/2026
 
+> Snapshot histórico. Atualização em 16/10/2026: o fluxo de publicação local foi implementado na branch `feat/seo-local-completo`; consulte [`seo-local-completo-2026-10-16.md`](seo-local-completo-2026-10-16.md) para o estado candidato. As 61 localidades ficam públicas em `noindex` por falta de evidência editorial própria para indexação. GSC, GA4 e Perfil da Empresa no Google não fazem parte desta fase.
+
 | Prioridade | Item | Estado | Ação concreta | Evidência que falta | Dependência |
 |---|---|---|---|---|---|
 | P1 | PR principal da branch `feat/catalogo-regioes` | Aguardando credencial | Autorizar GitHub CLI, enviar branch e abrir PR para `main`; não fazer merge | Token GH atual inválido; autenticação web pendente | Proprietário concluir OAuth |

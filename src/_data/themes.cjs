@@ -65,17 +65,17 @@ const pageDefinitions = [
   {
     slug: "skye-patrulha-canina", name: "Skye – Patrulha Canina",
     title: "Skye da Patrulha Canina em Joinville e Araquari | Lela Decorações",
-    description: "Confira o painel rosa da Skye e um exemplo de mesa montada. Consulte a disponibilidade e a logística para sua festa em Joinville ou Araquari.",
+    description: "Confira o painel rosa da Skye e duas fotos de montagem. Consulte a disponibilidade e a logística para sua festa em Joinville ou Araquari.",
     h1: "Referências de decoração com Skye para festa",
-    intro: "A referência da Skye combina painel rosa ilustrado com uma mesa decorada em tons próximos. O acervo também tem duas fotos de montagem muito parecidas; esta página mostra uma delas para evitar repetição.",
+    intro: "A referência da Skye combina um painel rosa ilustrado com duas fotos de montagem visualmente parecidas. A galeria mantém as três imagens para que você possa comparar o painel e os exemplos.",
     galleryTitle: "Painel e exemplo de montagem com Skye",
-    galleryText: "O painel apresenta a personagem em destaque e a foto de montagem acrescenta balões e peças sobre a mesa. A segunda foto semelhante permanece agrupada no catálogo, mas não é repetida nesta galeria.",
+    galleryText: "O painel apresenta a personagem em destaque. As duas fotos de montagem mostram exemplos visualmente parecidos, com balões e peças sobre a mesa; elas não definem a composição de uma reserva.",
     related: ["Patrulha Canina", "A Casa Mágica da Gabby", "Minnie Mouse"],
     images: [
       { file: "Tema Menina/tema-skye-patrulha-canina-01.jpeg", alt: "Painel de referência rosa ilustrado com Skye, da Patrulha Canina.", caption: "Painel rosa com Skye" },
       { file: "kits/kit-skye-patrulha-canina-01.png", alt: "Exemplo de mesa montada com painel e decoração rosa da Skye.", caption: "Exemplo de montagem com Skye" }
     ],
-    faqs: [{ question: "Por que há outra foto da Skye no catálogo?", answer: "O catálogo mantém duas fotos de montagem visualmente muito parecidas para consulta. Nesta página, uma delas foi selecionada para apresentar a ideia sem repetir a mesma composição." }]
+    faqs: [{ question: "Por que a galeria da Skye tem duas fotos de montagem parecidas?", answer: "O acervo mantém dois exemplos visuais semelhantes junto ao painel de referência. As imagens permitem comparar o estilo, mas não confirmam a composição disponível para a data; consulte a Lela antes de reservar." }]
   },
   {
     slug: "toy-story", name: "Toy Story",
@@ -330,12 +330,14 @@ const pages = portfolio.catalog.map((group) => {
   const indexable = editorialStatus === "REVIEWED";
   const observedTypes = [group.hasThemeReference ? "painel de referência" : "", group.hasMountedExample ? "exemplo de montagem" : ""].filter(Boolean);
   const visualDetails = images.map((image) => image.alt.replace(/[.]$/, "")).filter(Boolean).join(" ");
+  const imageCountSentence = images.length === 1 ? "O acervo reúne uma foto." : `O acervo reúne ${images.length} fotos.`;
+  const visualTypes = observedTypes.length ? observedTypes.join(" e ") : "referência visual";
   const about = editorialCopy[group.themeName]?.about || (namePending
-    ? `O acervo possui ${images.length} imagem(ns) associada(s) a esta referência, mas o nome comercial ainda precisa ser confirmado. A página permite conferir as fotos e enviar a identificação correta à Lela.`
-    : `O acervo reúne ${images.length} imagem(ns) de ${observedTypes.join(" e ") || "uma referência fotográfica"} cadastradas como “${group.themeName}”. ${visualDetails} Use a descrição e as fotos para identificar o estilo que procura antes de consultar a disponibilidade para sua data.`);
+    ? `${imageCountSentence} O nome comercial associado a esta referência ainda precisa ser confirmado. Confira a imagem e envie a identificação correta à Lela antes de considerar uma reserva.`
+    : `As fotos do acervo estão cadastradas como “${group.themeName}” e incluem ${visualTypes}. ${visualDetails} ${imageCountSentence} Use as imagens para avaliar o estilo e consulte disponibilidade e composição para a data.`);
   const use = editorialCopy[group.themeName]?.use || (namePending
     ? "Antes de considerar esta referência como uma oferta, confirme o nome e a associação das imagens com a Lela. A consulta pode ser feita pelo WhatsApp nesta página."
-    : "Escolha a foto que mais se aproxima da decoração que você procura e informe à Lela a data, a cidade e o serviço desejado. A equipe confirma se esta referência pode ser reservada e quais itens fazem parte da opção disponível; as imagens não definem uma composição fixa.");
+    : "Use as imagens para indicar à Lela a referência visual que procura. Informe a data, a cidade e o serviço desejado; a equipe confirma a disponibilidade e os itens que podem compor a opção. As fotos não definem uma composição fixa.");
   return {
     ...(definition || {}),
     id: group.slug,
@@ -347,20 +349,20 @@ const pages = portfolio.catalog.map((group) => {
     categoryLabel: group.categoryLabel,
     editorialStatus,
     indexable,
-    publicationStatus: indexable ? "PUBLISHED" : "DRAFT",
+    publicationStatus: indexable ? "PUBLIC_INDEX" : "PUBLIC_NOINDEX",
     publicationBasis: indexable ? "CURATED_CATALOG_REFERENCE" : "CUSTOMER_DETAIL_ONLY",
     availabilityStatus: "VERIFY_BY_DATE",
     needsNameConfirmation: namePending,
     needsAssociationConfirmation: associationPending,
-    title: definition?.title || `Referência de ${group.themeName} no catálogo | Lela Decorações`,
-    description: definition?.description || `Veja ${images.length} imagem(ns) da referência ${group.themeName} no catálogo da Lela e consulte formato e disponibilidade para sua data em Joinville ou Araquari.`,
+    title: definition?.title || `Fotos do tema ${group.themeName} | Lela Decorações`,
+    description: definition?.description || `Veja as fotos associadas a ${group.themeName} no catálogo da Lela. Consulte disponibilidade e composição para sua data em Joinville ou Araquari.`,
     h1: definition?.h1 || `Referência de ${group.themeName} para sua comemoração`,
-    intro: definition?.intro || `Confira as imagens cadastradas como ${group.themeName} e use os detalhes visuais para decidir se combinam com sua comemoração. A página reúne ${observedTypes.join(" e ") || "uma referência do acervo"}; disponibilidade, formato e composição devem ser confirmados para a data.`,
+    intro: definition?.intro || `Confira as fotos cadastradas como ${group.themeName}. ${group.hasThemeReference ? "O acervo inclui um painel de referência." : "O acervo inclui uma referência visual."}${group.hasMountedExample ? " Também há exemplo de montagem." : ""} A Lela confirma disponibilidade, formato e composição para a data solicitada.`,
     about,
     use,
     visualDescription: definition?.galleryText || images.map((image) => image.alt).join(" "),
-    galleryTitle: definition?.galleryTitle || `Imagens da referência ${group.themeName}`,
-    galleryText: definition?.galleryText || `As ${images.length} imagem(ns) associada(s) ajudam a identificar esta referência visual. As fotografias não confirmam preço, itens incluídos ou disponibilidade.`,
+    galleryTitle: definition?.galleryTitle || `Fotos do tema ${group.themeName}`,
+    galleryText: definition?.galleryText || `${imageCountSentence} As imagens cadastradas como ${group.themeName} servem como referência visual; não confirmam preço, itens incluídos ou disponibilidade para uma data.`,
     related: (definition?.related || portfolio.catalog.filter((candidate) => candidate.slug !== group.slug && candidate.category === group.category).slice(0, 3).map((candidate) => candidate.themeName)),
     faqs: definition?.faqs || [],
     images,

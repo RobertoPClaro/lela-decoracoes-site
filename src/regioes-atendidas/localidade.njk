@@ -55,13 +55,13 @@ permalink: "{{ local.path }}"
             <ul class="locality-directory__list">
               {% for place in local.neighborhoods %}
                 <li data-locality-reference-item="{{ place.slug }}">
-                  {% if place.indexable or locations.reviewMode %}<a href="{{ place.path | url }}">{{ place.name }}{% if place.previewOnly %}<span class="sr-only"> (prévia em revisão)</span>{% endif %}</a>{% else %}<span class="locality-directory__name">{{ place.name }}</span>{% endif %}
+                  {% if place.publicationStatus == "PUBLIC_INDEX" or place.publicationStatus == "PUBLIC_NOINDEX" or locations.reviewMode %}<a href="{{ place.path | url }}">{{ place.name }}{% if place.previewOnly %}<span class="sr-only"> (prévia em revisão)</span>{% endif %}</a>{% else %}<span class="locality-directory__name">{{ place.name }}</span>{% endif %}
                   {% if place.type != "neighborhood" %}<span class="locality-directory__type">{{ "Distrito" if place.type == "district" else "Localidade" }}</span>{% endif %}
                 </li>
               {% endfor %}
             </ul>
           </details>
-          <p class="locality-directory__notice">Moradores de todos os bairros da cidade podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim. A entrega depende de consulta para a data e o endereço da festa.</p>
+          <p class="locality-directory__notice">{{ local.localityDirectoryNotice }}</p>
         </div>
       {% endif %}
     </div>
@@ -72,6 +72,10 @@ permalink: "{{ local.path }}"
   {% set citySlug = local.slug %}{% set cityName = local.name %}{% set localityName = "" %}
 {% else %}
   {% set citySlug = local.citySlug %}{% set cityName = local.city %}{% set localityName = local.name %}
+{% endif %}
+
+{% if local.type != "city" %}
+  {% include "partials/local-theme-selection.njk" %}
 {% endif %}
 
 <section class="section section--tight local-process" aria-labelledby="local-process-heading">
@@ -91,7 +95,9 @@ permalink: "{{ local.path }}"
   </div>
 </section>
 
-{% include "partials/local-theme-selection.njk" %}
+{% if local.type == "city" %}
+  {% include "partials/local-theme-selection.njk" %}
+{% endif %}
 
 <section class="section section--lilac">
   <div class="container split">
