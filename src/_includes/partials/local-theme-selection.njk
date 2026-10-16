@@ -1,0 +1,35 @@
+<section class="section local-theme-selection" aria-labelledby="local-theme-heading" data-local-catalog data-catalog-limit="12">
+  <div class="container">
+    <div class="section-heading">
+      <p class="eyebrow">Catálogo de decorações</p>
+      <h2 id="local-theme-heading">Escolha uma decoração para sua festa</h2>
+      <p>Explore os {{ localCatalog.catalogCount }} temas e consulte a opção para sua data. Moradores de {{ cityName }} podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim, em Joinville. A entrega depende da disponibilidade da Lela para a data e o endereço.</p>
+    </div>
+
+    <div class="local-catalog-controls" data-local-catalog-controls hidden>
+      <div class="portfolio-search-wrap">
+        <label for="regional-catalog-search">Qual decoração você procura?</label>
+        <input id="regional-catalog-search" class="portfolio-search" type="search" data-portfolio-search placeholder="Ex.: Bluey, Safari, Barbie ou Minecraft" autocomplete="off">
+        <p class="portfolio-results" data-portfolio-results aria-live="polite">{{ localCatalog.catalogCount }} temas no catálogo.</p>
+      </div>
+      <div class="filter-bar" role="group" aria-label="Filtrar decorações por categoria">
+        <button class="filter-button" type="button" data-filter-button data-filter="all" aria-pressed="true">Todas</button>
+        {% for category in site.categories %}
+          <button class="filter-button" id="regional-filter-{{ category.slug }}" type="button" data-filter-button data-filter="{{ category.slug }}" aria-pressed="false">{{ category.label }}</button>
+        {% endfor %}
+        {% if localCatalog.hasMountedExamples %}<button class="filter-button" id="regional-filter-montagem" type="button" data-filter-button data-filter="montagem" aria-pressed="false">Com exemplo de montagem</button>{% endif %}
+      </div>
+    </div>
+
+    <noscript><p class="local-catalog__no-script">A busca e os filtros precisam de JavaScript. Todos os temas aparecem na lista abaixo.</p></noscript>
+    <p class="empty-state local-catalog__empty" data-portfolio-empty hidden>Não encontramos esse tema no catálogo. Tente outra pesquisa ou fale com a Lela para consultar outras possibilidades.</p>
+    <div class="portfolio-grid catalog-grid local-catalog-grid" id="catalogo-local" data-filter-group data-progressive-catalog>
+      {% set localGroups = localCatalog.catalogGroupsFor(citySlug, local.type == "city") %}
+      {% set localCatalogContext = true %}
+      {% set catalogCardHeadingLevel = 3 %}
+      {% for group in localGroups %}{% include "partials/catalog-card.njk" %}{% endfor %}
+    </div>
+    <button class="button button--secondary local-catalog__more" type="button" data-catalog-more aria-controls="catalogo-local" aria-expanded="false" hidden>Ver mais decorações</button>
+    <p class="local-theme-selection__more"><a class="text-link" href="{{ '/portfolio/' | url }}">Abrir o catálogo completo em outra página <span aria-hidden="true">→</span></a></p>
+  </div>
+</section>

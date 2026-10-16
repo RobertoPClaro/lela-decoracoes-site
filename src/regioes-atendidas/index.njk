@@ -4,6 +4,7 @@ title: "Regiões atendidas em Joinville e Araquari | Lela Decorações"
 description: "Consulte onde a Lela Decorações atende em Joinville e Araquari, como funciona a retirada dos kits e como confirmar a logística para sua festa."
 permalink: /regioes-atendidas/
 faqSchema: true
+robots: index,follow
 schemaWebPageName: "Regiões atendidas pela Lela Decorações"
 schemaWebPageDescription: "Informações sobre atendimento, retirada e logística da Lela Decorações em Joinville e Araquari."
 breadcrumbs:
@@ -23,7 +24,7 @@ breadcrumbs:
 
 <section class="section">
   <div class="container">
-    {% set eyebrow = "Escolha sua cidade" %}{% set heading = "Atendimento em Joinville e Araquari." %}{% set copy = "A Lela oferece Pegue e Monte, Mini Festa na Mesa e temas para diferentes comemorações. A disponibilidade é confirmada para cada data." %}
+    {% set eyebrow = "Escolha sua cidade" %}{% set heading = "Pegue e Monte em Joinville e Araquari." %}{% set copy = "Moradores de todos os bairros das duas cidades podem contratar com retirada e devolução no Paranaguamirim, em Joinville. A disponibilidade do tema é confirmada para cada data; entrega depende de consulta." %}
     {% include "partials/section-heading.njk" %}
     <div class="audience-grid">
       {% for city in locations.cities %}
@@ -42,9 +43,9 @@ breadcrumbs:
   <div class="container split">
     <div class="split__content">
       <p class="eyebrow">Retirada e entrega</p>
-      <h2>Consulte o endereço antes de reservar.</h2>
-      <p>O endereço divulgado para retirada fica na R. Matusalém Gonçalves Pinheiro, 83, Paranaguamirim, Joinville - SC, CEP 89231-603.</p>
-      <p>No Pegue e Monte, retirada e devolução pelo cliente são a regra. Entrega e retirada no local podem ser consultadas, conforme disponibilidade e taxa. Não há uma lista pública de bairros com entrega confirmada.</p>
+      <h2>Retirada combinada no Paranaguamirim.</h2>
+      <p>Moradores de qualquer bairro de Joinville e Araquari podem contratar o Pegue e Monte retirando e devolvendo o kit no endereço divulgado: {{ site.address.display }}.</p>
+      <p>Se preferir entrega, informe a data e o endereço da festa. A possibilidade e eventuais taxas dependem da disponibilidade da Lela; a consulta de entrega não altera a opção de retirada.</p>
       <div class="hero-actions">
         <a class="button" href="{{ site.mapsUrl }}" target="_blank" rel="noopener">Ver endereço no mapa <span aria-hidden="true">↗</span></a>
         <a class="button button--secondary" href="{{ '/regioes-atendidas/joinville/paranaguamirim/' | url }}">Detalhes da retirada</a>

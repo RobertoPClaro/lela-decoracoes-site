@@ -9,6 +9,7 @@
     "build": "npm run clean && node scripts/generate-images.cjs && eleventy && node scripts/validate-build.cjs",
     "start": "eleventy --serve",
     "test": "npm run build",
+    "build:review": "LELA_LOCAL_REVIEW=1 npm run build",
     "build:pages": "npm run build"
   },
   "devDependencies": {

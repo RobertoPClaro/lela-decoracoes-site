@@ -1,5 +1,11 @@
 # Estratégia SEO, portfólio e temas — Fase 2
 
+> **Atualização em 14/10/2026:** o documento abaixo preserva o registro da
+> implementação inicial da Fase 2 e seus números são históricos. A reorganização
+> posterior elevou o catálogo a 76 grupos e as páginas detalhadas a 15. Consulte
+> o relatório [Reorganização do catálogo e SEO local](reorganizacao-catalogo-regioes.md)
+> para o estado atual, as capturas e a validação da branch `feat/catalogo-regioes`.
+
 Pesquisa e implementação revisadas em **14/10/2026**. O trabalho está na branch
 `feat/seo-portfolio-temas`, baseada na `origin/main` atualizada em
 `f2a2007fa47a4ad9956f50a036b2041719f23570` (integração do PR #1). O diretório

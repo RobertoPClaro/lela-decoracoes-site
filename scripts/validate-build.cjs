@@ -1,9 +1,12 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const site = require("../src/_data/site.cjs");
+const faqs = require("../src/_data/faqs.cjs");
 const locations = require("../src/_data/locations.cjs");
 const portfolio = require("../src/_data/portfolio.cjs");
 const themes = require("../src/_data/themes.cjs");
+const localCatalog = require("../src/_data/localCatalog.cjs");
+const commercial = require("../src/_data/commercial.cjs");
 
 const root = path.resolve(__dirname, "../dist");
 const required = [
@@ -14,7 +17,7 @@ const required = [
   "favicon.svg", "assets/css/styles.css", "assets/js/main.js"
 ];
 const allowedCoverageStatuses = new Set(["UNCONFIRMED", "CONFIRMED", "CONDITIONAL", "NOT_OFFERED"]);
-const publishableStatus = "READY_FOR_REVIEW";
+const publishableStatus = "READY_INDEX";
 const stopWords = new Set([
   "a", "ao", "aos", "as", "com", "como", "da", "das", "de", "do", "dos", "e", "em", "entre",
   "essa", "esse", "esta", "este", "para", "pela", "pelas", "pelo", "pelos", "por", "que", "se",
@@ -28,6 +31,13 @@ function fail(message) {
   console.error(`Build inválido: ${message}`);
   process.exit(1);
 }
+
+const faqIds = new Set();
+if (!Array.isArray(faqs) || !faqs.length || faqs.some((faq) => {
+  if (!faq.id || faqIds.has(faq.id) || !faq.category || !faq.confirmationStatus || !faq.services?.length || !faq.source?.length) return true;
+  faqIds.add(faq.id);
+  return faq.source.some((source) => !fs.existsSync(path.join(__dirname, "../src", source.replace(/^\//, ""), "index.njk")));
+})) fail("cadastro central de FAQs sem IDs únicos, fontes locais ou status de confirmação");
 
 function normalizeText(value) {
   return String(value)
@@ -158,18 +168,21 @@ function validateContent(page) {
   )) {
     fail(`perguntas locais incompletas: ${page.name}`);
   }
+  for (const faq of content.faqs) {
+    const source = faqs.byId?.get(faq.id);
+    if (!source || source.answer !== faq.answer || source.category !== faq.category ||
+        source.confirmationStatus !== faq.confirmationStatus || JSON.stringify(source.source) !== JSON.stringify(faq.source)) {
+      fail(`FAQ local não corresponde à fonte central: ${faq.id || page.name}`);
+    }
+  }
   if (!content.h1.toLowerCase().includes(page.name.toLowerCase())) {
     fail(`H1 não identifica a localidade: ${page.name}`);
   }
 }
 
 function meaningfulTokens(page) {
-  const texts = [
-    page.content.intro,
-    page.content.detailTitle,
-    page.content.detailText,
-    ...page.content.faqs.flatMap((faq) => [faq.question, faq.answer])
-  ].join(" ");
+  // Perguntas e respostas reutilizadas da fonte central não medem distinção editorial local.
+  const texts = [page.content.title, page.content.h1, page.content.intro, page.content.detailTitle, page.content.detailText].join(" ");
   return new Set(
     texts.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
       .replace(/[^a-z0-9]+/g, " ").split(/\s+/)
@@ -193,113 +206,217 @@ function validateDistinctContent(pages) {
   }
 }
 
+function validateCatalogRegistry() {
+  if (!Array.isArray(portfolio.all) || !Array.isArray(portfolio.catalog) || !Array.isArray(portfolio.categories)) {
+    fail("catálogo ou inventário de imagens incompleto");
+  }
+  const categorySlugs = new Set(portfolio.categories.map((category) => category.slug));
+  if (categorySlugs.size !== portfolio.categories.length || [...categorySlugs].some((slug) => !slug)) {
+    fail("categorias do catálogo ausentes ou duplicadas");
+  }
+
+  const sourceByFile = new Map();
+  const sourceIds = new Set();
+  const generatedNames = new Set();
+  for (const item of portfolio.all) {
+    const file = `${item.folder}/${item.filename}`;
+    if (sourceByFile.has(file)) fail(`imagem original cadastrada mais de uma vez: ${file}`);
+    if (!fs.existsSync(item.sourcePath)) fail(`imagem original do catálogo ausente: ${file}`);
+    if (!item.id || sourceIds.has(item.id)) fail(`id de imagem ausente ou duplicado: ${file}`);
+    if (!item.generatedBase || generatedNames.has(item.generatedBase)) fail(`nome derivado de imagem ausente ou duplicado: ${file}`);
+    if (item.slug !== slugify(item.themeName) || !categorySlugs.has(item.category)) {
+      fail(`slug ou categoria de imagem inconsistente: ${file}`);
+    }
+    if (!["theme", "kit-example"].includes(item.sourceType) || !item.alt || !item.caption || item.width < 1 || item.height < 1) {
+      fail(`metadados de imagem incompletos: ${file}`);
+    }
+    sourceByFile.set(file, item);
+    sourceIds.add(item.id);
+    generatedNames.add(item.generatedBase);
+  }
+
+  const groupSlugs = new Set();
+  const groupNames = new Set();
+  const catalogFiles = new Set();
+  for (const group of portfolio.catalog) {
+    const name = String(group.themeName || "").trim();
+    if (!name || groupNames.has(name.toLocaleLowerCase("pt-BR"))) fail(`nome de tema ausente ou duplicado no catálogo: ${name}`);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(group.slug || "") || group.slug !== slugify(name) || groupSlugs.has(group.slug)) {
+      fail(`slug de tema ausente, inválido ou duplicado: ${name}`);
+    }
+    if (!categorySlugs.has(group.category) || !Array.isArray(group.images) || group.images.length === 0) {
+      fail(`grupo de catálogo sem categoria ou imagens: ${name}`);
+    }
+    groupNames.add(name.toLocaleLowerCase("pt-BR"));
+    groupSlugs.add(group.slug);
+    const groupFiles = new Set();
+    for (const item of group.images) {
+      const file = `${item.folder}/${item.filename}`;
+      if (!sourceByFile.has(file) || groupFiles.has(file) || catalogFiles.has(file)) {
+        fail(`imagem ausente ou repetida em grupos do catálogo: ${file}`);
+      }
+      if (item.themeName !== name || item.slug !== group.slug || item.category !== group.category) {
+        fail(`imagem vinculada a tema, slug ou categoria errada: ${file}`);
+      }
+      groupFiles.add(file);
+      catalogFiles.add(file);
+    }
+    if (group.previewImage?.themeName !== name || !group.images.includes(group.previewImage)) {
+      fail(`imagem principal do grupo não pertence ao tema: ${name}`);
+    }
+    if (group.hasThemeReference !== group.images.some((item) => item.sourceType === "theme") ||
+        group.hasMountedExample !== group.images.some((item) => item.sourceType === "kit-example")) {
+      fail(`tipos de imagem do grupo não correspondem às fotos: ${name}`);
+    }
+    if (typeof group.nameNeedsConfirmation !== "boolean" || !group.searchText.includes(name)) {
+      fail(`status de nome ou termos de busca ausentes: ${name}`);
+    }
+    if (portfolio.catalogByName[name] !== group) fail(`índice por nome não corresponde ao grupo: ${name}`);
+  }
+  if (catalogFiles.size !== sourceByFile.size || [...sourceByFile.keys()].some((file) => !catalogFiles.has(file))) {
+    fail("cada imagem original deve pertencer a um único grupo de tema no catálogo");
+  }
+  if (!Array.isArray(portfolio.featuredCatalog) || portfolio.featuredCatalog.some((group) => !portfolio.catalog.includes(group))) {
+    fail("seleção de temas em destaque aponta para grupos ausentes");
+  }
+}
+
+function themeContentTokens(page) {
+  const common = new Set([...stopWords, "acervo", "painel", "painéis", "referência", "referências", "foto", "fotos", "imagem", "imagens", "mesa", "montagem", "exemplo", "disponível", "disponibilidade", "consulta", "consultar", "data", "formato", "festa", "festas", "tema", "temas", "ideia", "ideias", "visual", "cores"]);
+  const text = [page.intro, page.about, page.use, page.galleryTitle, page.galleryText, ...page.faqs.flatMap((faq) => [faq.question, faq.answer])].join(" ");
+  return new Set(text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter((word) => word.length > 3 && !common.has(word)));
+}
+
 function validateThemeRegistry() {
-  if (!Array.isArray(themes.pages) || !Array.isArray(themes.published)) fail("cadastro de temas incompleto");
-  const allowedStatuses = new Set(["DRAFT", "READY_FOR_REVIEW", "PUBLISHED"]);
-  const publishedByStatus = themes.pages.filter((page) => page.publicationStatus === "PUBLISHED");
-  if (publishedByStatus.length !== themes.published.length ||
-      publishedByStatus.some((page, index) => themes.published[index]?.path !== page.path)) {
-    fail("themes.published deve conter somente as páginas com status PUBLISHED");
+  if (!Array.isArray(themes.details) || !Array.isArray(themes.pages) || !Array.isArray(themes.published)) fail("cadastro de detalhes e páginas de temas incompleto");
+  if (themes.details.length !== portfolio.catalog.length || themes.pages.length !== themes.details.length) fail("cada grupo do catálogo deve ter uma página de detalhe");
+  const indexable = themes.details.filter((page) => page.indexable);
+  if (indexable.length !== themes.published.length || indexable.some((page, index) => themes.published[index]?.path !== page.path)) {
+    fail("themes.published deve conter somente detalhes marcados como indexáveis");
   }
 
   const slugs = new Set();
+  const ids = new Set();
   const paths = new Set(["/temas/"]);
   const names = new Set();
   const catalogByFile = new Map(portfolio.all.map((item) => [`${item.folder}/${item.filename}`, item]));
   const publishedTitles = new Set();
   const publishedDescriptions = new Set();
   const publishedFaqQuestions = new Set();
-  const uniqueCopy = new Map(["intro", "galleryTitle", "galleryText"].map((field) => [field, new Set()]));
+  const uniqueCopy = new Map(["intro", "about", "use", "galleryTitle", "galleryText"].map((field) => [field, new Set()]));
+  const publishedContentTokens = [];
 
-  for (const page of themes.pages) {
-    if (!allowedStatuses.has(page.publicationStatus)) fail(`status de publicação de tema inválido: ${page.name}`);
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(page.slug || "") || page.path !== `/temas/${page.slug}/`) {
-      fail(`slug ou URL de tema inválido: ${page.name || page.slug}`);
-    }
-    if (slugs.has(page.slug) || paths.has(page.path)) fail(`slug ou URL de tema duplicado: ${page.path}`);
+  for (const page of themes.details) {
+    const group = portfolio.catalogByName[page.name];
+    if (!group || group.slug !== page.catalogSlug || page.id !== group.slug) fail(`detalhe sem grupo de catálogo correspondente: ${page.name}`);
+    if (ids.has(page.id)) fail(`identificador de grupo duplicado: ${page.id}`);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(page.slug || "") || page.path !== `/temas/${page.slug}/`) fail(`slug ou URL inválido: ${page.name}`);
+    if (slugs.has(page.slug) || paths.has(page.path)) fail(`slug ou URL de detalhe duplicado: ${page.path}`);
     const nameKey = String(page.name || "").trim().toLocaleLowerCase("pt-BR");
     if (!nameKey || names.has(nameKey)) fail(`nome de tema ausente ou duplicado: ${page.name || page.slug}`);
+    ids.add(page.id);
     slugs.add(page.slug);
     paths.add(page.path);
     names.add(nameKey);
 
-    if (page.publicationStatus !== "PUBLISHED") {
-      if (themes.byName[page.name]?.path === page.path) fail(`tema não publicado exposto em links internos: ${page.path}`);
-      if (site.sitemapPaths.includes(page.path)) fail(`tema não publicado no sitemap: ${page.path}`);
-      const unpublishedFile = `${page.path.replace(/^\//, "")}index.html`;
-      if (fs.existsSync(path.join(root, unpublishedFile))) fail(`tema não publicado possui página gerada: ${page.path}`);
-      continue;
-    }
-
-    const requiredText = ["name", "title", "description", "h1", "intro", "galleryTitle", "galleryText"];
-    if (requiredText.some((field) => typeof page[field] !== "string" || !page[field].trim())) {
-      fail(`conteúdo de tema incompleto: ${page.name || page.slug}`);
-    }
-    if (page.title.length < 35 || page.description.length < 80 || page.intro.length < 80 || page.galleryText.length < 90) {
-      fail(`conteúdo de tema curto para justificar página própria: ${page.name}`);
-    }
-    const titleSlug = slugify(page.title);
-    const identifyingSlugTerms = page.slug.split("-").filter((word) => !["a", "as", "da", "das", "de", "do", "dos", "e"].includes(word));
-    if (identifyingSlugTerms.some((word) => !titleSlug.includes(word)) ||
-        !page.title.includes("Joinville") || !page.title.includes("Araquari") ||
-        !page.description.includes("Joinville") || !page.description.includes("Araquari") ||
-        !page.h1.includes("Joinville") || !page.h1.includes("Araquari")) {
-      fail(`título, descrição ou H1 não identifica tema e área de atendimento: ${page.name}`);
-    }
-    if (page.availabilityStatus !== "VERIFY_BY_DATE") {
-      fail(`disponibilidade de tema não pode ser afirmada sem confirmação por data: ${page.name}`);
-    }
-    if (!Array.isArray(page.images) || page.images.length === 0 || !page.images.some((item) => item.sourceType === "theme")) {
-      fail(`tema sem material visual suficiente para página própria: ${page.name}`);
-    }
+    if (!Array.isArray(page.images) || !page.images.length || page.images.length !== group.images.length) fail(`detalhe não inclui todas as imagens do grupo: ${page.name}`);
     const imageFiles = new Set();
     for (const image of page.images) {
       const file = `${image.folder}/${image.filename}`;
       const catalogItem = catalogByFile.get(file);
-      if (!catalogItem || catalogItem.themeName !== page.name || catalogItem.sourceType !== image.sourceType) {
-        fail(`imagem não corresponde ao tema publicado ${page.name}: ${file}`);
-      }
+      if (!catalogItem || catalogItem.themeName !== page.name || catalogItem.sourceType !== image.sourceType ||
+          !group.images.some((candidate) => `${candidate.folder}/${candidate.filename}` === file)) fail(`imagem não corresponde ao grupo ${page.name}: ${file}`);
       if (imageFiles.has(file)) fail(`imagem repetida na página ${page.name}: ${file}`);
-      if (!image.alt || image.alt.length < 20 || !image.caption || image.caption.length < 12) {
-        fail(`imagem de tema sem texto alternativo ou legenda útil: ${file}`);
-      }
+      if (!image.alt || image.alt.length < 20 || !image.caption || image.caption.length < 12) fail(`imagem sem alt ou legenda útil: ${file}`);
       imageFiles.add(file);
     }
-    if (!Array.isArray(page.faqs) || page.faqs.length === 0 || page.faqs.some((faq) =>
-      !faq.question || faq.question.length < 18 || !faq.answer || faq.answer.length < 50
-    )) fail(`FAQ de tema incompleto: ${page.name}`);
-    for (const faq of page.faqs) {
-      const question = faq.question.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
-      if (publishedFaqQuestions.has(question)) fail(`pergunta de FAQ repetida entre páginas de tema: ${page.name}`);
-      publishedFaqQuestions.add(question);
+    if (group.images.some((image) => !imageFiles.has(`${image.folder}/${image.filename}`))) fail(`imagem original ausente do detalhe: ${page.name}`);
+    if (page.indexable !== (page.editorialStatus === "REVIEWED") ||
+        page.needsNameConfirmation !== group.nameNeedsConfirmation ||
+        page.needsAssociationConfirmation !== group.imageAssociationNeedsConfirmation ||
+        (page.indexable && (group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation))) {
+      fail(`indexabilidade contradiz a revisão editorial ou de imagens do grupo: ${page.name}`);
     }
+    if (page.availabilityStatus !== "VERIFY_BY_DATE") fail(`disponibilidade não pode ser afirmada sem consulta: ${page.name}`);
+    if (themes.byName[page.name]?.path !== page.path) fail(`índice de detalhes por nome não aponta para a rota: ${page.name}`);
+    if (!Array.isArray(page.related) || page.related.includes(page.name) || page.related.some((name) => !portfolio.catalogByName[name])) fail(`temas relacionados inválidos: ${page.name}`);
 
-    if (publishedTitles.has(page.title) || publishedDescriptions.has(page.description)) {
-      fail(`title ou meta description de tema duplicado: ${page.name}`);
+    const requiredText = ["name", "title", "description", "h1", "intro", "about", "use", "galleryTitle", "galleryText"];
+    if (requiredText.some((field) => typeof page[field] !== "string" || !page[field].trim())) fail(`conteúdo de detalhe incompleto: ${page.name}`);
+    if (!Array.isArray(page.faqs)) fail(`FAQ de detalhe precisa ser uma lista: ${page.name}`);
+    if (page.indexable) {
+      if (page.publicationStatus !== "PUBLISHED" || page.publicationBasis !== "CURATED_CATALOG_REFERENCE" || group.nameNeedsConfirmation || group.imageAssociationNeedsConfirmation) fail(`página indexável sem identificação editorial e visual confirmada: ${page.name}`);
+      if (page.title.length < 35 || page.description.length < 80 || page.intro.length < 80 || page.about.length < 80 || page.use.length < 70) fail(`conteúdo indexável curto para página própria: ${page.name}`);
+      if (!page.title.includes("Joinville") || !page.title.includes("Araquari") || !page.description.includes("Joinville") || !page.description.includes("Araquari")) fail(`title/description não identificam área atendida: ${page.name}`);
+      if (!page.h1.toLocaleLowerCase("pt-BR").includes(page.name.split(/[ –—]/)[0].toLocaleLowerCase("pt-BR"))) fail(`H1 não identifica a opção: ${page.name}`);
+      if (!page.faqs.length || page.faqs.some((faq) => !faq.question || faq.question.length < 18 || !faq.answer || faq.answer.length < 50)) fail(`FAQ editorial incompleto: ${page.name}`);
+      for (const faq of page.faqs) {
+        const question = faq.question.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+        if (publishedFaqQuestions.has(question)) fail(`pergunta de FAQ repetida entre páginas de tema: ${page.name}`);
+        publishedFaqQuestions.add(question);
+      }
+      if (publishedTitles.has(page.title) || publishedDescriptions.has(page.description)) fail(`title ou meta description duplicado: ${page.name}`);
+      publishedTitles.add(page.title);
+      publishedDescriptions.add(page.description);
+      for (const [field, values] of uniqueCopy) {
+        const normalized = page[field].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+        if (values.has(normalized)) fail(`texto ${field} repetido entre páginas indexáveis: ${page.name}`);
+        values.add(normalized);
+      }
+      if (!site.sitemapPaths.includes(page.path)) fail(`página indexável ausente do sitemap: ${page.path}`);
+      publishedContentTokens.push({ page, tokens: themeContentTokens(page) });
+    } else {
+      if (page.publicationStatus === "PUBLISHED" || page.publicationBasis !== "CUSTOMER_DETAIL_ONLY") fail(`detalhe não revisado marcado como publicado: ${page.name}`);
+      if (site.sitemapPaths.includes(page.path)) fail(`detalhe noindex entrou no sitemap: ${page.path}`);
     }
-    publishedTitles.add(page.title);
-    publishedDescriptions.add(page.description);
-    for (const [field, values] of uniqueCopy) {
-      const normalized = page[field].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
-      if (values.has(normalized)) fail(`texto ${field} repetido em páginas de tema: ${page.name}`);
-      values.add(normalized);
-    }
-    if (!site.sitemapPaths.includes(page.path)) fail(`página publicada de tema ausente do sitemap: ${page.path}`);
   }
 
-  for (const route of themes.published.map((page) => page.path)) {
-    if (site.sitemapPaths.filter((item) => item === route).length !== 1) fail(`URL de tema ausente ou repetida no sitemap: ${route}`);
+  for (const group of portfolio.catalog) {
+    if (!themes.byName[group.themeName] || themes.byName[group.themeName].catalogSlug !== group.slug) fail(`grupo sem rota individual: ${group.themeName}`);
+  }
+  for (let left = 0; left < publishedContentTokens.length; left++) {
+    for (let right = left + 1; right < publishedContentTokens.length; right++) {
+      const first = publishedContentTokens[left];
+      const second = publishedContentTokens[right];
+      const union = new Set([...first.tokens, ...second.tokens]);
+      const intersection = [...first.tokens].filter((token) => second.tokens.has(token)).length;
+      if (Math.min(first.tokens.size, second.tokens.size) >= 8 && union.size && intersection / union.size >= 0.78) fail(`conteúdo de tema quase duplicado: ${first.page.path} e ${second.page.path}`);
+    }
+  }
+  for (const page of themes.details) {
+    const count = site.sitemapPaths.filter((item) => item === page.path).length;
+    if (count !== (page.indexable ? 1 : 0)) fail(`sitemap incompatível com estado editorial de ${page.path}`);
   }
 }
 
 function validateRegistry() {
-  const { cities, neighborhoods, publishedPages } = locations;
-  if (![cities, neighborhoods, publishedPages].every(Array.isArray)) fail("cadastro de localidades incompleto");
+  const { cities, neighborhoods, publishedPages, previewPages, buildPages } = locations;
+  if (![cities, neighborhoods, publishedPages, previewPages, buildPages].every(Array.isArray)) fail("cadastro de localidades incompleto");
+  if (locations.reviewMode !== (process.env.LELA_LOCAL_REVIEW === "1")) fail("modo de revisão regional incompatível com a configuração do build");
   for (const requiredCity of ["joinville", "araquari"]) {
     if (!cities.some((city) => city.slug === requiredCity)) fail(`cidade principal ausente: ${requiredCity}`);
   }
   if (!locations.geographyRegisterStatus || !locations.geographyRegisterNote) {
     fail("situação e escopo do cadastro geográfico não informados");
+  }
+  const peg = commercial.services.pegueEMonte;
+  const mini = commercial.services.miniFestaNaMesa;
+  if (commercial.ownerConfirmation.checkedAt !== "2026-10-14" ||
+      commercial.ownerConfirmation.type !== "OWNER_CONFIRMATION" ||
+      commercial.pickupPoint !== site.address ||
+      peg.residentEligibility !== "CONFIRMED_ALL_NEIGHBORHOODS_WITH_PICKUP" ||
+      peg.pickup.status !== "CONFIRMED" || peg.pickup.customerReturnsKit !== true ||
+      peg.delivery.status !== "CONDITIONAL_ON_AVAILABILITY" ||
+      !["date", "eventAddress", "ownerAvailability"].every((item) => peg.delivery.dependsOn.includes(item)) ||
+      peg.delivery.fee !== "CONFIRM_WITH_OWNER" ||
+      mini.logistics !== "CONFIRM_WITH_OWNER" || mini.pickup !== "NOT_CONFIRMED_BY_THIS_POLICY" ||
+      mini.delivery !== "NOT_CONFIRMED_BY_THIS_POLICY" || mini.assembly !== "NOT_CONFIRMED_BY_THIS_POLICY") {
+    fail("fonte central de regras comerciais incoerente, incompleta ou extrapolada para Mini Festa na Mesa");
+  }
+  if (!commercial.ownerConfirmation.statement.includes("Joinville e Araquari") ||
+      !commercial.ownerConfirmation.statement.includes("data e o endereço")) {
+    fail("confirmação do responsável não registra cobertura por retirada e condição da entrega");
   }
 
   const cityBySlug = new Map();
@@ -313,6 +430,14 @@ function validateRegistry() {
     if (city.path !== expectedPath || paths.has(city.path)) fail(`URL de cidade inválida ou duplicada: ${city.path}`);
     cityBySlug.set(city.slug, city);
     paths.add(city.path);
+    const cityNeighborhoods = neighborhoods
+      .filter((item) => item.citySlug === city.slug)
+      .sort((left, right) => left.name.localeCompare(right.name, "pt-BR", { sensitivity: "base" }));
+    if (!Array.isArray(city.neighborhoods) ||
+        city.neighborhoods.length !== cityNeighborhoods.length ||
+        city.neighborhoods.some((item, index) => item.slug !== cityNeighborhoods[index]?.slug)) {
+      fail(`lista geográfica da cidade não corresponde ao cadastro: ${city.name}`);
+    }
     if (!sourceIsValid(city.geographySource, (hostname) =>
       hostname.endsWith(".joinville.sc.gov.br") || hostname === "ibge.gov.br" || hostname.endsWith(".ibge.gov.br")
     ) || !city.geographyStatus) {
@@ -320,6 +445,9 @@ function validateRegistry() {
     }
     if (!city.commercialConfirmationScope || !hasCommercialEvidence(city)) {
       fail(`confirmação comercial da cidade sem escopo ou evidência: ${city.name}`);
+    }
+    if (city.pickupEligibilityStatus !== "CONFIRMED_CITYWIDE" || city.deliveryStatus !== "CONDITIONAL_ON_AVAILABILITY") {
+      fail(`política de retirada/entrega inconsistente na página de cidade: ${city.name}`);
     }
     if (city.indexable) {
       if (city.commercialStatus !== "CONFIRMED" || city.publicationStatus !== publishableStatus || city.publicationBasis !== "CITY_SERVICE") {
@@ -353,9 +481,10 @@ function validateRegistry() {
     }
     paths.add(neighborhood.path);
     neighborhoodPaths.add(neighborhood.path);
-    if (!sourceIsValid(neighborhood.geographySource, (hostname) =>
-      hostname.endsWith(".joinville.sc.gov.br") || hostname === "araquari.atende.net" || hostname.endsWith(".araquari.atende.net") || hostname.endsWith(".ibge.gov.br")
-    ) || !neighborhood.geographyStatus || !neighborhood.geographyConfirmationScope) {
+      if (!sourceIsValid(neighborhood.geographySource, (hostname) =>
+      hostname.endsWith(".joinville.sc.gov.br") || hostname === "araquari.atende.net" || hostname.endsWith(".araquari.atende.net") || hostname.endsWith(".araquari.sc.gov.br") || hostname.endsWith(".ibge.gov.br") || hostname.endsWith(".cvaraquari.sc.gov.br")
+    ) || !neighborhood.geographyStatus || !neighborhood.geographyConfirmationScope ||
+        !["neighborhood", "district", "locality"].includes(neighborhood.type) || (neighborhood.type !== "neighborhood" && city.slug !== "araquari")) {
       fail(`fonte ou escopo geográfico inválido: ${neighborhood.name}`);
     }
     if (!allowedCoverageStatuses.has(neighborhood.serviceCoverageStatus)) {
@@ -379,6 +508,18 @@ function validateRegistry() {
     if (neighborhood.commercialStatus === "CONFIRMED" && (!neighborhood.commercialConfirmationScope || !hasCommercialEvidence(neighborhood) || !hasConfirmedFacts(neighborhood))) {
       fail(`fato comercial do bairro sem escopo ou evidência: ${neighborhood.name}`);
     }
+    if (neighborhood.commercialStatus !== "CONFIRMED" ||
+        neighborhood.pickupEligibilityStatus !== "CONFIRMED_CITYWIDE" ||
+        neighborhood.deliveryStatus !== "CONDITIONAL_ON_AVAILABILITY" ||
+        !neighborhood.commercialEvidence.some((evidence) => evidence.checkedAt === commercial.ownerConfirmation.checkedAt) ||
+        neighborhood.serviceCoverageStatus !== "UNCONFIRMED") {
+      fail(`elegibilidade com retirada ou condição de entrega inconsistente: ${neighborhood.name}`);
+    }
+    if (!neighborhood.indexable && (!neighborhood.editorialReadiness ||
+        neighborhood.editorialReadiness.decision !== "RETAIN_DRAFT_PREVIEW" ||
+        neighborhood.editorialReadiness.status !== "INSUFFICIENT_LOCAL_DISTINCTIVE_EVIDENCE")) {
+      fail(`rascunho regional sem avaliação editorial explícita: ${neighborhood.name}`);
+    }
     if (neighborhood.indexable) {
       if (neighborhood.publicationStatus !== publishableStatus) fail(`bairro indexável sem status de publicação pronto: ${neighborhood.name}`);
       validateContent(neighborhood);
@@ -391,9 +532,20 @@ function validateRegistry() {
       if (!coverageConfirmed && (neighborhood.serviceCoverageStatus !== "UNCONFIRMED" || neighborhood.publicationBasis !== "PICKUP_LOCATION")) {
         fail(`bairro sem cobertura confirmada só pode publicar fato pontual de retirada: ${neighborhood.name}`);
       }
-    } else if (neighborhood.publicationStatus === publishableStatus) {
-      fail(`bairro pronto para publicação, mas não indexável: ${neighborhood.name}`);
+    } else if (neighborhood.publicationStatus !== "DRAFT_PREVIEW") {
+      fail(`localidade não indexável deve ficar em DRAFT_PREVIEW: ${neighborhood.name}`);
     }
+  }
+
+  const draftRecords = neighborhoods.filter((item) => !item.indexable);
+  if (locations.reviewMode) {
+    if (previewPages.length !== draftRecords.length || previewPages.some((page) =>
+      !page.previewOnly || page.indexable || page.publicationStatus !== "DRAFT_PREVIEW" ||
+      page.serviceCoverageStatus !== "UNCONFIRMED" || !draftRecords.some((record) => record.path === page.path)
+    )) fail("páginas DRAFT_PREVIEW não correspondem às localidades pendentes e sem cobertura confirmada");
+    for (const page of previewPages) validateContent(page);
+  } else if (previewPages.length || buildPages.some((page) => page.previewOnly)) {
+    fail("páginas DRAFT_PREVIEW não podem ser geradas no build público padrão");
   }
 
   const candidates = [...cities, ...neighborhoods].filter((item) => item.indexable && item.publicationStatus === publishableStatus);
@@ -417,12 +569,13 @@ function validateRegistry() {
   }
 }
 
+validateCatalogRegistry();
 validateRegistry();
 validateThemeRegistry();
 
 const dynamicRequired = [
-  ...locations.publishedPages,
-  ...themes.published
+  ...locations.buildPages,
+  ...themes.details
 ].map((item) => `${item.path.replace(/^\//, "")}index.html`);
 const missing = [...new Set([...required, ...dynamicRequired])].filter((file) => !fs.existsSync(path.join(root, file)));
 if (missing.length) fail(`arquivos ausentes: ${missing.join(", ")}`);
@@ -540,7 +693,7 @@ const generatedImageFiles = filesUnder(path.join(root, "assets/images/generated"
   .concat(filesUnder(path.join(root, "assets/images/generated"), ".webp"), filesUnder(path.join(root, "assets/images/generated"), ".jpg"));
 const productionBase = String(fullSiteBase || "").replace(/\/$/, "");
 
-const regionalPaths = ["/regioes-atendidas/", ...locations.publishedPages.map((item) => item.path)];
+const regionalPaths = ["/regioes-atendidas/", ...locations.buildPages.map((item) => item.path)];
 for (const route of regionalPaths) {
   const file = `${route.replace(/^\//, "")}index.html`;
   const html = readOutput(file);
@@ -548,7 +701,11 @@ for (const route of regionalPaths) {
   const h1s = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
   const descriptionTag = html.match(/<meta\b[^>]*\bname="description"[^>]*>/i)?.[0];
   const description = descriptionTag && getAttribute(descriptionTag, "content");
-  if (!title || !description || h1s.length !== 1) fail(`title/description/H1 ausente ou repetido: ${route}`);
+  const robotsTag = html.match(/<meta\b[^>]*\bname="robots"[^>]*>/i)?.[0];
+  const robots = robotsTag && getAttribute(robotsTag, "content");
+  const page = locations.buildPages.find((item) => item.path === route);
+  const expectedRobots = route === "/regioes-atendidas/" || page?.indexable ? "index,follow" : "noindex,follow";
+  if (!title || !description || h1s.length !== 1 || robots !== expectedRobots) fail(`title/description/H1/robots ausente, incorreto ou repetido: ${route}`);
   if (productionOrigin) {
     const canonicalTag = html.match(/<link\b[^>]*\brel="canonical"[^>]*>/i)?.[0];
     const canonical = canonicalTag && getAttribute(canonicalTag, "href");
@@ -568,17 +725,29 @@ for (const route of regionalPaths) {
   if (productionOrigin && webPage.url !== `${fullSiteBase}${route}`) fail(`WebPage URL incorreta em ${route}`);
   if (productionOrigin && faqPage.url !== `${fullSiteBase}${route}`) fail(`FAQPage URL incorreta em ${route}`);
 
-  const visibleQuestions = [...html.matchAll(/<summary>([\s\S]*?)<\/summary>/gi)]
+  const visibleQuestions = [...html.matchAll(/<details\b[^>]*class="faq-item"[^>]*>[\s\S]*?<summary>([\s\S]*?)<\/summary>/gi)]
     .map((match) => normalizeText(match[1].replace(/<span\b[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/span>/i, "")));
   const schemaQuestions = (faqPage.mainEntity || []).map((item) => item.name);
+  const schemaAnswers = (faqPage.mainEntity || []).map((item) => item.acceptedAnswer?.text || "");
+  const expectedFaqs = route === "/regioes-atendidas/" ? locations.indexFaqs : (page?.content.faqs || []);
   if (visibleQuestions.length !== schemaQuestions.length || visibleQuestions.some((question, index) => question !== schemaQuestions[index])) {
     fail(`FAQPage não corresponde às perguntas visíveis em ${route}`);
   }
-  const page = locations.publishedPages.find((item) => item.path === route);
+  if (expectedFaqs.length !== schemaAnswers.length || expectedFaqs.some((faq, index) => normalizeText(schemaAnswers[index]) !== normalizeText(faq.answer))) {
+    fail(`respostas do FAQPage não correspondem às respostas visíveis/cadastradas em ${route}`);
+  }
   const expectedQuestions = route === "/regioes-atendidas/"
     ? locations.indexFaqs.map((item) => item.question)
     : (page?.content.faqs || []).map((item) => item.question);
   if (JSON.stringify(schemaQuestions) !== JSON.stringify(expectedQuestions)) fail(`FAQ de ${route} não corresponde ao conteúdo cadastrado`);
+  if (page) {
+    const minimumFaqs = 8;
+    const maximumFaqs = 12;
+    if (page.content.faqs.length < minimumFaqs || page.content.faqs.length > maximumFaqs ||
+        page.content.faqs.some((item) => !item.id || !item.category || !item.confirmationStatus || !item.source?.length || !item.services?.length)) {
+      fail(`FAQ regional fora do intervalo ou sem origem/status registrados em ${route}`);
+    }
+  }
 
   const expectedBreadcrumbs = route === "/regioes-atendidas/"
     ? [{ label: "Início", url: "/" }, { label: "Regiões atendidas", url: route }]
@@ -597,6 +766,31 @@ for (const route of regionalPaths) {
     }
     const service = schemaOfType(schemas, "Service");
     if (page.type === "city") {
+      const localityItems = [...html.matchAll(/<li\b[^>]*data-locality-reference-item=/gi)];
+      const visibleText = normalizeText(html).toLocaleLowerCase("pt-BR");
+      if (localityItems.length !== page.neighborhoods.length ||
+          page.neighborhoods.some((place) => !visibleText.includes(place.name.toLocaleLowerCase("pt-BR"))) ||
+          !visibleText.includes("podem contratar") || !visibleText.includes("depende da disponibilidade") ||
+          (page.slug === "araquari" && !visibleText.includes("a lista pode estar incompleta"))) {
+        fail(`lista geográfica ou informação de retirada/entrega incompleta em ${route}`);
+      }
+      const sortedPlaces = [...page.neighborhoods].sort((a, b) => a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" }));
+      const listedSlugs = [...html.matchAll(/<li\b[^>]*data-locality-reference-item="([^"]+)"/gi)].map((match) => match[1]);
+      const actualTypeLabels = [...html.matchAll(/<span\b[^>]*class="locality-directory__type"[^>]*>([\s\S]*?)<\/span>/gi)]
+        .map((match) => normalizeText(match[1]));
+      const expectedTypeLabels = sortedPlaces.filter((place) => place.type !== "neighborhood")
+        .map((place) => place.type === "district" ? "Distrito" : "Localidade");
+      if (listedSlugs.some((slug, index) => slug !== sortedPlaces[index]?.slug) ||
+          JSON.stringify(actualTypeLabels) !== JSON.stringify(expectedTypeLabels) ||
+          /class="locality-directory__type">Bairro<\/span>/i.test(html)) {
+        fail(`lista geográfica fora de ordem ou com rótulo repetido de bairro em ${route}`);
+      }
+      const listedLinks = [...html.matchAll(/<li\b[^>]*data-locality-reference-item=[^>]*>[\s\S]*?<\/li>/gi)]
+        .flatMap((match) => [...match[0].matchAll(/<a\b[^>]*href="([^"]+)"/gi)].map((link) => link[1]));
+      const expectedListed = page.neighborhoods.filter((place) => place.indexable || locations.reviewMode);
+      if (listedLinks.length !== expectedListed.length || expectedListed.some((place) => !listedLinks.includes(`${site.pathPrefix}${place.path.replace(/^\//, "")}`))) {
+        fail(`links de localidades não correspondem ao estado de revisão em ${route}`);
+      }
       if (!service || !Array.isArray(service.areaServed) || service.areaServed.join("|") !== page.schemaServiceAreas.join("|")) {
         fail(`Service/areaServed não corresponde à cidade em ${route}`);
       }
@@ -606,6 +800,64 @@ for (const route of regionalPaths) {
         fail(`Service/areaServed sem confirmação correspondente em ${route}`);
       }
       if (!coverageConfirmed && service) fail(`bairro sem cobertura confirmada declara Service em ${route}`);
+      if (page.previewOnly) {
+        const robotsTag = html.match(/<meta\b[^>]*\bname="robots"[^>]*>/i)?.[0];
+        const whatsappTag = [...html.matchAll(/<a\b[^>]*href="([^"]*wa\.me[^"]*)"[^>]*>/gi)]
+          .map((match) => match[1].replace(/&amp;/g, "&"))
+          .find((href) => {
+            try { return new URL(href).searchParams.get("text")?.includes(page.name); } catch { return false; }
+          });
+        const whatsappMessage = whatsappTag ? new URL(whatsappTag).searchParams.get("text") : "";
+        if (!robotsTag || getAttribute(robotsTag, "content") !== "noindex,follow" ||
+            !html.includes("Prévia local em revisão") || !whatsappMessage?.includes(page.city) ||
+            !whatsappMessage?.includes(page.name) || !html.includes(page.city) || !html.includes(page.name)) {
+          fail(`página de localidade em revisão sem noindex, aviso ou CTA contextualizado: ${route}`);
+        }
+        if (site.sitemapPaths.includes(route)) fail(`página DRAFT_PREVIEW entrou no sitemap: ${route}`);
+      }
+    }
+
+    const groups = localCatalog.catalogGroupsFor(page.type === "city" ? page.slug : page.citySlug, page.type === "city");
+    const cards = [...html.matchAll(/<article\b(?=[^>]*\bdata-local-theme-card="([^"]+)")[^>]*>[\s\S]*?<\/article>/gi)];
+    const cardIds = cards.map((match) => match[1]);
+    if (groups.length !== portfolio.catalog.length || cards.length !== groups.length || new Set(cardIds).size !== groups.length) {
+      fail(`catálogo local precisa renderizar cada grupo uma vez em ${route}`);
+    }
+    const citySlug = page.type === "city" ? page.slug : page.citySlug;
+    const cityName = page.type === "city" ? page.name : page.city;
+    for (const group of groups) {
+      const theme = themes.byName[group.themeName];
+      const card = cards.find((match) => match[1] === group.slug)?.[0] || "";
+      const cardTag = card.slice(0, card.indexOf(">") + 1);
+      const placeName = page.type === "city" ? "" : page.name;
+      const expectedHref = `${site.pathPrefix}${theme.path.replace(/^\//, "")}?cidade=${citySlug}&servico=pegue-e-monte${placeName ? `&localidade=${page.slug}` : ""}`;
+      const normalizedCard = card.replace(/&amp;/g, "&");
+      if (!card || (normalizedCard.match(new RegExp(`href="${expectedHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`, "g")) || []).length < 2) {
+        fail(`card local não leva à página contextualizada de ${group.themeName} em ${route}`);
+      }
+      const placeLabel = !placeName ? `em ${cityName}` : page.type === "district"
+        ? `no distrito de ${placeName}, em ${cityName}`
+        : page.type === "locality"
+          ? `na localidade de ${placeName}, em ${cityName}`
+          : `no bairro ${placeName}, em ${cityName}`;
+      const message = `Olá, Lela! Estou procurando uma decoração ${group.themeName} para o Pegue e Monte ${placeLabel}. Gostaria de consultar a disponibilidade e as condições de retirada ou entrega.`;
+      if (!theme || !normalizedCard.includes(site.whatsappLink(message))) {
+        fail(`WhatsApp do tema não preserva a localidade em ${route}: ${group.themeName}`);
+      }
+      if (!normalizedCard.includes(group.previewImage.generatedBase + "-480.jpg") || !normalizedCard.includes(group.themeName) ||
+          normalizeText(getAttribute(cardTag, "data-category")) !== group.category ||
+          normalizeText(getAttribute(cardTag, "data-search")) !== normalizeText(group.searchText) ||
+          getAttribute(cardTag, "data-has-montage") !== String(Boolean(group.hasMountedExample))) {
+        fail(`card local sem imagem, nome, categoria ou termos de busca corretos em ${route}: ${group.themeName}`);
+      }
+    }
+    const regionalFilters = [...html.matchAll(/data-filter-button\b/g)].length;
+    const expectedFilters = site.categories.length + 1 + (localCatalog.hasMountedExamples ? 1 : 0);
+    if (!html.includes(`id="catalogo-local"`) || !html.includes("data-local-catalog-controls") ||
+        !html.includes(`data-catalog-limit="12"`) || !normalizeText(html).toLocaleLowerCase("pt-BR").includes("moradores de") ||
+        !normalizeText(html).toLocaleLowerCase("pt-BR").includes("depende da disponibilidade") ||
+        regionalFilters !== expectedFilters || !html.includes("data-catalog-more")) {
+      fail(`catálogo local sem busca/filtros, limite progressivo ou regras comerciais em ${route}`);
     }
   }
 }
@@ -625,80 +877,121 @@ for (const route of ["/portfolio/", "/regioes-atendidas/joinville/", "/regioes-a
     fail(`diretório de temas sem link interno para ${route}`);
   }
 }
-for (const page of themes.published) {
-  const href = `${site.pathPrefix}${page.path.replace(/^\//, "")}`;
-  if (!themesIndex.includes(`href="${href}"`)) fail(`diretório de temas não lista ${page.path}`);
-
+for (const page of themes.details) {
   const file = `${page.path.replace(/^\//, "")}index.html`;
   const html = readOutput(file);
+  const title = html.match(/<title>(.*?)<\/title>/i)?.[1];
+  const h1s = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+  const descriptionTag = html.match(/<meta\b[^>]*\bname="description"[^>]*>/i)?.[0];
+  const description = descriptionTag && getAttribute(descriptionTag, "content");
+  const robotsTag = html.match(/<meta\b[^>]*\bname="robots"[^>]*>/i)?.[0];
+  const robots = robotsTag && getAttribute(robotsTag, "content");
+  const expectedRobots = page.indexable ? "index,follow" : "noindex,follow";
+  if (!title || title !== page.title || !description || description !== page.description || h1s.length !== 1 || !robotsTag || robots !== expectedRobots) {
+    fail(`title/description/H1/robots não correspondem ao detalhe: ${page.path}`);
+  }
   const schemas = schemasIn(html, file);
   const localBusiness = schemaOfType(schemas, "LocalBusiness");
   const breadcrumb = schemaOfType(schemas, "BreadcrumbList");
   const webPage = schemaOfType(schemas, "WebPage");
   const service = schemaOfType(schemas, "Service");
   const faqPage = schemaOfType(schemas, "FAQPage");
-  if (site.origin && (!localBusiness || !breadcrumb || !webPage || !service || !faqPage)) {
-    fail(`dados estruturados incompletos na página de tema: ${page.path}`);
-  }
-  if (localBusiness && (!Array.isArray(localBusiness.areaServed) ||
-      localBusiness.areaServed.join("|") !== "Joinville, SC|Araquari, SC")) {
-    fail(`LocalBusiness/areaServed inconsistente em ${page.path}`);
-  }
-  if (service && (!Array.isArray(service.areaServed) ||
-      service.areaServed.join("|") !== "Joinville, SC|Araquari, SC")) {
-    fail(`Service/areaServed inconsistente em ${page.path}`);
-  }
+  if (site.origin && (!localBusiness || !breadcrumb || !webPage)) fail(`dados estruturados essenciais ausentes em ${page.path}`);
+  if (page.indexable !== Boolean(service) || page.indexable !== Boolean(faqPage)) fail(`schemas de serviço/FAQ incompatíveis com indexabilidade em ${page.path}`);
+  if (localBusiness && (!Array.isArray(localBusiness.areaServed) || localBusiness.areaServed.join("|") !== "Joinville, SC|Araquari, SC")) fail(`LocalBusiness/areaServed inconsistente em ${page.path}`);
+  if (service && (!Array.isArray(service.areaServed) || service.areaServed.join("|") !== "Joinville, SC|Araquari, SC")) fail(`Service/areaServed inconsistente em ${page.path}`);
   if (productionOrigin) {
     const canonicalTag = html.match(/<link\b[^>]*\brel="canonical"[^>]*>/i)?.[0];
     const canonical = canonicalTag && getAttribute(canonicalTag, "href");
     if (canonical !== `${fullSiteBase}${page.path}`) fail(`canonical incorreta em ${page.path}: ${canonical}`);
-    if (webPage?.url !== `${fullSiteBase}${page.path}` || faqPage?.url !== `${fullSiteBase}${page.path}`) {
-      fail(`WebPage ou FAQPage URL incorreta em ${page.path}`);
-    }
+    if (webPage?.url !== `${fullSiteBase}${page.path}` || (faqPage && faqPage.url !== `${fullSiteBase}${page.path}`)) fail(`WebPage ou FAQPage URL incorreta em ${page.path}`);
   }
-  if (!html.includes(page.h1) || !html.includes(page.galleryText)) fail(`conteúdo específico do tema ausente em ${page.path}`);
-  if (!page.images.every((image) => html.includes(image.alt))) fail(`alt de imagem do tema ausente em ${page.path}`);
+  if (!html.includes(page.h1) || !html.includes(page.about) || !html.includes(page.use) || !html.includes(page.galleryText)) fail(`conteúdo de detalhe ausente em ${page.path}`);
+  if (!page.images.every((image) => html.includes(image.alt))) fail(`alt de imagem ausente em ${page.path}`);
+  if (!html.includes('id="locality-context-data"') || (html.match(/data-theme-context-whatsapp/g) || []).length !== 2) {
+    fail(`página de tema não oferece contexto local para os CTAs do WhatsApp: ${page.path}`);
+  }
 
-  const visibleQuestions = [...html.matchAll(/<summary>([\s\S]*?)<\/summary>/gi)]
+  const visibleQuestions = [...html.matchAll(/<details\b[^>]*class="faq-item"[^>]*>[\s\S]*?<summary>([\s\S]*?)<\/summary>/gi)]
     .map((match) => normalizeText(match[1].replace(/<span\b[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/span>/i, "")));
   const schemaQuestions = (faqPage?.mainEntity || []).map((item) => item.name);
   const expectedQuestions = page.faqs.map((item) => item.question);
-  if (visibleQuestions.length !== expectedQuestions.length ||
-      visibleQuestions.some((question, index) => question !== expectedQuestions[index]) ||
-      schemaQuestions.length !== expectedQuestions.length ||
-      schemaQuestions.some((question, index) => question !== expectedQuestions[index])) {
-    fail(`FAQ visível e JSON-LD não correspondem em ${page.path}`);
-  }
+  if (visibleQuestions.length !== expectedQuestions.length || visibleQuestions.some((question, index) => question !== expectedQuestions[index]) ||
+      (page.indexable && (schemaQuestions.length !== expectedQuestions.length || schemaQuestions.some((question, index) => question !== expectedQuestions[index])))) fail(`FAQ visível e JSON-LD não correspondem em ${page.path}`);
   const expectedBreadcrumbs = [
     { label: "Início", url: "/" },
-    { label: "Temas", url: "/temas/" },
+    { label: "Catálogo", url: "/portfolio/" },
     { label: page.name, url: page.path }
   ];
   const crumbs = breadcrumb?.itemListElement || [];
-  if (crumbs.length !== expectedBreadcrumbs.length || crumbs.some((crumb, index) =>
-    crumb.name !== expectedBreadcrumbs[index].label ||
-    (productionOrigin && crumb.item !== `${fullSiteBase}${expectedBreadcrumbs[index].url}`)
-  )) fail(`BreadcrumbList não corresponde à página de tema: ${page.path}`);
+  if (crumbs.length !== expectedBreadcrumbs.length || crumbs.some((crumb, index) => crumb.name !== expectedBreadcrumbs[index].label ||
+      (productionOrigin && crumb.item !== `${fullSiteBase}${expectedBreadcrumbs[index].url}`))) fail(`BreadcrumbList não corresponde à página: ${page.path}`);
 
   const message = `Olá, Lela! Vi a página do tema ${page.name} e quero consultar a disponibilidade para [data]. Cidade/bairro: [local].`;
-  if (!html.replace(/&amp;/g, "&").includes(site.whatsappLink(message))) {
-    fail(`CTA do WhatsApp não identifica o tema em ${page.path}`);
+  if (!html.replace(/&amp;/g, "&").includes(site.whatsappLink(message))) fail(`CTA do WhatsApp não identifica o tema em ${page.path}`);
+  for (const relatedRoute of ["/portfolio/", "/pegue-e-monte/", "/mini-festa-na-mesa/", "/regioes-atendidas/joinville/", "/regioes-atendidas/araquari/"]) {
+    if (!html.includes(`href="${site.pathPrefix}${relatedRoute.replace(/^\//, "")}`)) fail(`página de tema sem link para ${relatedRoute}: ${page.path}`);
   }
-  for (const relatedRoute of [
-    "/pegue-e-monte/", "/mini-festa-na-mesa/", "/regioes-atendidas/",
-    "/regioes-atendidas/joinville/", "/regioes-atendidas/araquari/"
-  ]) {
-    if (!html.includes(`href="${site.pathPrefix}${relatedRoute.replace(/^\//, "")}"`)) {
-      fail(`página de tema sem link relacionado para ${relatedRoute}: ${page.path}`);
-    }
-  }
+  if (page.indexable && !themesIndex.includes(`href="${site.pathPrefix}${page.path.replace(/^\//, "")}`)) fail(`diretório editorial não lista ${page.path}`);
+  if (!page.indexable && themesIndex.includes(`href="${site.pathPrefix}${page.path.replace(/^\//, "")}`)) fail(`página noindex entrou no diretório indexável: ${page.path}`);
 }
 
 for (const route of ["/", "/pegue-e-monte/", "/mini-festa-na-mesa/", "/portfolio/", "/regioes-atendidas/joinville/", "/regioes-atendidas/araquari/"]) {
   const file = route === "/" ? "index.html" : `${route.replace(/^\//, "")}index.html`;
-  if (!readOutput(file).includes(`href="${site.pathPrefix}temas/"`)) {
-    fail(`página importante sem integração para /temas/: ${route}`);
+  const html = readOutput(file);
+  if (!html.includes(`href="${site.pathPrefix}portfolio/"`)) fail(`página importante sem integração para o catálogo: ${route}`);
+}
+
+for (const route of ["/", "/portfolio/", "/sobre/", "/duvidas/", "/contato/", "/regioes-atendidas/"]) {
+  const file = route === "/" ? "index.html" : `${route.replace(/^\//, "")}index.html`;
+  const html = readOutput(file);
+  const nav = html.match(/<nav\b(?=[^>]*data-menu)[\s\S]*?<\/nav>/i)?.[0] || "";
+  if (!nav) fail(`navegação principal ausente em ${route}`);
+  const navRoutes = [...nav.matchAll(/<li\b[^>]*>\s*<a\b[^>]*href="([^"]+)"/gi)].map((match) => match[1]);
+  const expectedNavRoutes = site.nav.map((item) => `${site.pathPrefix}${item.url.replace(/^\//, "")}`);
+  if (JSON.stringify(navRoutes) !== JSON.stringify(expectedNavRoutes) || /Institucional|<details\b/i.test(nav)) {
+    fail(`ordem ou conteúdo da navegação principal incorreto em ${route}`);
   }
+  for (const importantRoute of ["/sobre/", "/duvidas/", "/contato/"]) {
+    if (!nav.includes(`href="${site.pathPrefix}${importantRoute.replace(/^\//, "")}`)) fail(`navegação principal não expõe ${importantRoute} em ${route}`);
+  }
+  if (!nav.includes("button--header") || !nav.includes("Consultar disponibilidade")) fail(`CTA de WhatsApp ausente na navegação: ${route}`);
+  if (["/sobre/", "/duvidas/", "/contato/"].includes(route)) {
+    const activeHref = nav.match(new RegExp(`<a\\b(?=[^>]*href="${site.pathPrefix}${route.replace(/^\//, "")}")(?=[^>]*aria-current="page")[^>]*>`, "i"));
+    if (!activeHref) fail(`navegação principal não indica página atual em ${route}`);
+  }
+}
+
+const catalogHtml = readOutput("portfolio/index.html");
+const catalogCardIds = [...catalogHtml.matchAll(/<article\b(?=[^>]*\bdata-filter-item)(?=[^>]*\bid="(tema-[^"]+)")[^>]*>/gi)]
+  .map((match) => match[1]);
+if (catalogCardIds.length !== portfolio.catalog.length || new Set(catalogCardIds).size !== catalogCardIds.length) {
+  fail("catálogo publicado não corresponde aos grupos de tema sem duplicidade");
+}
+for (const group of portfolio.catalog) {
+  if (!catalogCardIds.includes("tema-" + group.slug)) fail("grupo ausente no catálogo publicado: " + group.themeName);
+  const articleStart = catalogHtml.indexOf(`id="tema-${group.slug}"`);
+  const articleEnd = catalogHtml.indexOf("</article>", articleStart);
+  const card = catalogHtml.slice(articleStart, articleEnd);
+  const detail = themes.byName[group.themeName];
+  if (!detail) fail(`grupo sem detalhe de tema: ${group.themeName}`);
+  const detailHref = `href="${site.pathPrefix}${detail.path.replace(/^\//, "")}`;
+  if ((card.split(detailHref).length - 1) < 3) fail(`imagem/nome/ação do card não levam ao detalhe: ${group.themeName}`);
+  if (card.includes("data-lightbox-trigger") || !card.includes(group.previewImage.generatedBase + "-1200.jpg")) fail(`card deve navegar para o detalhe e exibir a imagem principal: ${group.themeName}`);
+  const detailHtml = readOutput(`${detail.path.replace(/^\//, "")}index.html`);
+  for (const image of detail.images) {
+    if (!detailHtml.includes(image.alt) || !detailHtml.includes(image.generatedBase + "-1200.jpg")) fail(`foto do grupo não aparece na página individual de ${group.themeName}: ${image.generatedBase}`);
+  }
+  const message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar a disponibilidade para [data]. Cidade/bairro: [local].";
+  if (!catalogHtml.replace(/&amp;/g, "&").includes(site.whatsappLink(message))) {
+    fail("CTA do catálogo não identifica o tema: " + group.themeName);
+  }
+}
+for (const category of portfolio.categories) {
+  if (!catalogHtml.includes("data-filter=\"" + category.slug + "\"")) fail("filtro ausente no catálogo: " + category.slug);
+}
+if (!catalogHtml.includes('data-filter="montagem"') || !catalogHtml.includes('placeholder="Ex.: Safari, Bluey, chá de revelação"')) {
+  fail("busca ou filtro de exemplos de montagem ausente no catálogo");
 }
 
 if (productionOrigin) {
@@ -719,4 +1012,4 @@ if (prefix && prefix !== "/") {
   }
 }
 
-console.log(`Build validado: ${htmlFiles.length} HTML, ${referencedImages.size} imagens locais referenciadas (${generatedImageFiles.length} derivadas geradas), ${locations.cities.length} cidades e ${locations.neighborhoods.length} bairros cadastrados; ${locations.publishedPages.length} páginas locais e ${themes.published.length} páginas de tema indexáveis.`);
+console.log(`Build validado: ${htmlFiles.length} HTML, ${referencedImages.size} imagens locais referenciadas (${generatedImageFiles.length} derivadas geradas), ${locations.cities.length} cidades e ${locations.neighborhoods.length} registros geográficos; ${locations.publishedPages.length} páginas locais indexáveis, ${locations.previewPages.length} prévias DRAFT_PREVIEW e ${themes.published.length} páginas de tema indexáveis.`);

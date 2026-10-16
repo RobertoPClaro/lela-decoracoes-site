@@ -11,7 +11,7 @@
     <nav id="primary-nav" class="primary-nav" aria-label="Navegação principal" data-menu>
       <ul>
         {% for item in site.nav %}
-          <li><a href="{{ item.url | url }}"{% if item.url == page.url %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+          <li><a href="{{ item.url | url }}"{% if item.url == page.url or (item.url != '/' and page.url.slice(0, item.url.length) == item.url) or (item.url == '/portfolio/' and page.url.slice(0, 7) == '/temas/') %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
         {% endfor %}
       </ul>
       <a class="button button--small button--header" href="{{ site.whatsappLink('Olá, Lela! Quero consultar a disponibilidade de uma decoração.') }}" target="_blank" rel="noopener">Consultar disponibilidade</a>

@@ -1,0 +1,43 @@
+name: Validate site builds
+
+on:
+  pull_request:
+    branches: [main, feat/catalogo-regioes]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [feat/catalogo-regioes, feat/seo-audit-optimization]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    env:
+      PATH_PREFIX: /
+      SITE_URL: https://leladecoracoes.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check JavaScript syntax
+        run: find src scripts -type f \( -name '*.js' -o -name '*.cjs' \) -print0 | xargs -0 -n1 node --check
+
+      - name: Build and validate public site
+        run: npm test
+
+      - name: Build and validate local review site
+        run: npm run build:review

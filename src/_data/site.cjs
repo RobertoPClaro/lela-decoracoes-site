@@ -2,7 +2,12 @@ const rawPrefix = String(process.env.PATH_PREFIX || "").trim();
 const localData = require("./locations.cjs");
 const portfolio = require("./portfolio.cjs");
 const themePages = require("./themes.cjs");
+const commercial = require("./commercial.cjs");
 const serviceAreas = ["Joinville, SC", "Araquari, SC"];
+const localityContext = {
+  cities: localData.cities.map(({ slug, name }) => ({ slug, name })),
+  places: localData.neighborhoods.map(({ slug, citySlug, name, type }) => ({ slug, citySlug, name, type }))
+};
 const pathPrefix = rawPrefix && rawPrefix !== "/"
   ? `/${rawPrefix.replace(/^\/+|\/+$/g, "")}/`
   : "/";
@@ -13,15 +18,7 @@ const organizationId = baseUrl ? `${baseUrl}/#organization` : "";
 const phoneDisplay = "(47) 98856-7488";
 const phoneDigits = "5547988567488";
 const instagramUrl = "https://www.instagram.com/letticia_moreira/";
-const address = {
-  streetAddress: "R. Matusalém Gonçalves Pinheiro, 83",
-  neighborhood: "Paranaguamirim",
-  city: "Joinville",
-  state: "SC",
-  postalCode: "89231-603",
-  country: "BR",
-  display: "R. Matusalém Gonçalves Pinheiro, 83 - Paranaguamirim, Joinville - SC, 89231-603"
-};
+const address = commercial.pickupPoint;
 const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address.display)}`;
 
 function whatsappLink(message = "") {
@@ -126,6 +123,7 @@ module.exports = {
   instagramUrl,
   instagramHandle: "@letticia_moreira",
   address,
+  commercial,
   mapsUrl,
   ownerAvatar: {
     src: "/assets/images/reference/avatar-leticia.png",
@@ -145,21 +143,21 @@ module.exports = {
   nav: [
     { label: "Início", url: "/" },
     { label: "Serviços", url: "/servicos/" },
-    { label: "Portfólio", url: "/portfolio/" },
-    { label: "Temas", url: "/temas/" },
+    { label: "Catálogo", url: "/portfolio/" },
     { label: "Como funciona", url: "/como-funciona/" },
     { label: "Sobre a Lela", url: "/sobre/" },
     { label: "Dúvidas", url: "/duvidas/" },
-    { label: "Regiões", url: "/regioes-atendidas/" },
+    { label: "Regiões atendidas", url: "/regioes-atendidas/" },
     { label: "Contato", url: "/contato/" }
   ],
+  localityContext,
   categories: portfolio.categories.map(({ slug, label, copy }) => ({ slug, label, description: copy })),
   facts: {
     serviceHours: "09h às 20h",
     reservationEntry: "50% de entrada para confirmar a data",
     returnWindow: "Devolução em até 24 horas",
     payment: "Pix, dinheiro ou cartão de crédito; confirme taxas e condições no atendimento.",
-    delivery: "Entrega e retirada no local podem ser consultadas, sujeitas a disponibilidade e taxa.",
+    delivery: `${commercial.copy.pickupEligibility} ${commercial.copy.deliveryConditions}`,
     disclaimer: "Consulte valores, disponibilidade e condições de reserva pelo WhatsApp."
   },
   sitemapPaths: [
