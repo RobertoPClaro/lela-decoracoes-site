@@ -447,6 +447,31 @@ function validateRegistry() {
       !commercial.ownerConfirmation.statement.includes("data e o endereço")) {
     fail("confirmação do responsável não registra cobertura por retirada e condição da entrega");
   }
+  const pegOnlyPolicies = ["reservation", "return-period", "payment-methods", "cancellation", "damaged-item"];
+  for (const id of pegOnlyPolicies) {
+    const faq = faqs.byId.get(id);
+    if (!faq || faq.services.length !== 1 || faq.services[0] !== "pegue-e-monte") {
+      fail(`regra comercial de Pegue e Monte extrapolada para outro serviço: ${id}`);
+    }
+  }
+  const miniServiceSchema = JSON.parse(site.serviceSchema("Mini Festa na Mesa", "Condições sob consulta.", "/mini-festa-na-mesa/", []));
+  if (Object.hasOwn(miniServiceSchema, "areaServed")) fail("schema da Mini Festa declara cobertura territorial sem confirmação");
+  const anaCastelaReview = themeEditorialReviews["Ana Castela – A Boiadeira"];
+  if (!anaCastelaReview || anaCastelaReview.indexDecision !== "CONFIRMATION_REQUIRED" ||
+      [anaCastelaReview.visual, anaCastelaReview.editorial, anaCastelaReview.selection, anaCastelaReview.meta,
+        anaCastelaReview.indexationReason, anaCastelaReview.imageAlt, anaCastelaReview.faqAnswer]
+        .some((value) => /cantora/i.test(value))) {
+    fail("descrição da referência Ana Castela afirma identidade ou ocupação não confirmada");
+  }
+  const jacu = neighborhoods.find((place) => place.name === "Jacu" && place.citySlug === "araquari");
+  if (!jacu || jacu.type !== "reference" || jacu.indexable ||
+      !jacu.geographyConfirmationScope.includes("não confirmam uma classificação territorial única")) {
+    fail("Jacu precisa permanecer com classificação territorial em verificação e noindex");
+  }
+  const tropaTheme = themes.byName["Tropa dos Rosa"];
+  if (!tropaTheme || tropaTheme.indexable || tropaTheme.editorialDecision !== "CONFIRMATION_REQUIRED") {
+    fail("associação das imagens de Tropa dos Rosa não pode ser apresentada como confirmada");
+  }
 
   const cityBySlug = new Map();
   const paths = new Set(["/regioes-atendidas/"]);
@@ -513,7 +538,7 @@ function validateRegistry() {
       if (!sourceIsValid(neighborhood.geographySource, (hostname) =>
       hostname.endsWith(".joinville.sc.gov.br") || hostname === "araquari.atende.net" || hostname.endsWith(".araquari.atende.net") || hostname.endsWith(".araquari.sc.gov.br") || hostname.endsWith(".ibge.gov.br") || hostname.endsWith(".cvaraquari.sc.gov.br")
     ) || !neighborhood.geographyStatus || !neighborhood.geographyConfirmationScope ||
-        !["neighborhood", "district", "locality"].includes(neighborhood.type) || (neighborhood.type !== "neighborhood" && city.slug !== "araquari")) {
+        !["neighborhood", "district", "locality", "reference"].includes(neighborhood.type) || (neighborhood.type !== "neighborhood" && city.slug !== "araquari")) {
       fail(`fonte ou escopo geográfico inválido: ${neighborhood.name}`);
     }
     if (!allowedCoverageStatuses.has(neighborhood.serviceCoverageStatus)) {
@@ -864,12 +889,15 @@ for (const route of regionalPaths) {
     }
     const service = schemaOfType(schemas, "Service");
     if (page.type === "city") {
+      const localityNotice = html.match(/<p\b[^>]*class="locality-directory__notice"[^>]*>([\s\S]*?)<\/p>/i)?.[1];
       const localityItems = [...html.matchAll(/<li\b[^>]*data-locality-reference-item=/gi)];
       const visibleText = normalizeText(html).toLocaleLowerCase("pt-BR");
       if (localityItems.length !== page.neighborhoods.length ||
           page.neighborhoods.some((place) => !visibleText.includes(place.name.toLocaleLowerCase("pt-BR"))) ||
           !visibleText.includes("podem contratar") || !visibleText.includes("depende da disponibilidade") ||
-          (page.slug === "araquari" && !visibleText.includes("a lista pode estar incompleta"))) {
+          !localityNotice || normalizeText(localityNotice).toLocaleLowerCase("pt-BR") !==
+            normalizeText(page.content.localityDirectoryNotice).toLocaleLowerCase("pt-BR") ||
+          (page.slug === "araquari" && !visibleText.includes("a classificação de jacu permanece em verificação"))) {
         fail(`lista geográfica ou informação de retirada/entrega incompleta em ${route}`);
       }
       if (page.content.geographyReference &&
@@ -882,7 +910,11 @@ for (const route of regionalPaths) {
       const actualTypeLabels = [...html.matchAll(/<span\b[^>]*class="locality-directory__type"[^>]*>([\s\S]*?)<\/span>/gi)]
         .map((match) => normalizeText(match[1]));
       const expectedTypeLabels = sortedPlaces.filter((place) => place.type !== "neighborhood")
-        .map((place) => place.type === "district" ? "Distrito" : "Localidade");
+        .map((place) => place.type === "district"
+          ? "Distrito"
+          : place.type === "locality"
+            ? "Localidade"
+            : "Classificação geográfica em verificação");
       if (listedSlugs.some((slug, index) => slug !== sortedPlaces[index]?.slug) ||
           JSON.stringify(actualTypeLabels) !== JSON.stringify(expectedTypeLabels) ||
           /class="locality-directory__type">Bairro<\/span>/i.test(html)) {
@@ -947,7 +979,9 @@ for (const route of regionalPaths) {
         ? `no distrito de ${placeName}, em ${cityName}`
         : page.type === "locality"
           ? `na localidade de ${placeName}, em ${cityName}`
-          : `no bairro ${placeName}, em ${cityName}`;
+          : page.type === "reference"
+            ? `na região de ${placeName}, em ${cityName}`
+            : `no bairro ${placeName}, em ${cityName}`;
       const message = `Olá, Lela! Estou procurando uma decoração ${group.themeName} para o Pegue e Monte ${placeLabel}. Gostaria de consultar a disponibilidade e as condições de retirada ou entrega.`;
       if (!theme || !normalizedCard.includes(site.whatsappLink(message))) {
         fail(`WhatsApp do tema não preserva a localidade em ${route}: ${group.themeName}`);
@@ -1016,8 +1050,9 @@ for (const page of themes.details) {
   }
   if (!html.includes(page.h1) || !html.includes(page.about) || !html.includes(page.use) || !html.includes(page.galleryText)) fail(`conteúdo de detalhe ausente em ${page.path}`);
   if (!page.images.every((image) => html.includes(image.alt))) fail(`alt de imagem ausente em ${page.path}`);
-  if (!html.includes('id="locality-context-data"') || (html.match(/data-theme-context-whatsapp/g) || []).length !== 2) {
-    fail(`página de tema não oferece contexto local para os CTAs do WhatsApp: ${page.path}`);
+  if (!html.includes('id="locality-context-data"') || (html.match(/data-theme-context-whatsapp/g) || []).length !== 4 ||
+      (html.match(new RegExp(`data-theme-name="${page.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`, "g")) || []).length < 4) {
+    fail(`página de tema não oferece contexto local aos CTAs globais e específicos do WhatsApp: ${page.path}`);
   }
 
   const visibleQuestions = [...html.matchAll(/<details\b[^>]*class="faq-item"[^>]*>[\s\S]*?<summary>([\s\S]*?)<\/summary>/gi)]
@@ -1071,6 +1106,7 @@ for (const route of ["/", "/portfolio/", "/sobre/", "/duvidas/", "/contato/", "/
 }
 
 const catalogHtml = readOutput("portfolio/index.html");
+if (!catalogHtml.includes('id="locality-context-data"')) fail("catálogo não dispõe dos dados necessários para preservar o contexto regional");
 const catalogCardIds = [...catalogHtml.matchAll(/<article\b(?=[^>]*\bdata-filter-item)(?=[^>]*\bid="(tema-[^"]+)")[^>]*>/gi)]
   .map((match) => match[1]);
 if (catalogCardIds.length !== portfolio.catalog.length || new Set(catalogCardIds).size !== catalogCardIds.length) {
@@ -1093,6 +1129,10 @@ for (const group of portfolio.catalog) {
   const message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar se há disponibilidade para minha data. Posso informar a data e a cidade ou o bairro da festa.";
   if (!catalogHtml.replace(/&amp;/g, "&").includes(site.whatsappLink(message))) {
     fail("CTA do catálogo não identifica o tema: " + group.themeName);
+  }
+  if (!card.includes(`data-theme-name="${group.themeName}"`) || !card.includes("data-theme-context-whatsapp") ||
+      (card.match(/data-preserve-regional-context/g) || []).length < 3) {
+    fail("links do catálogo não permitem preservar cidade/bairro durante a navegação aos temas");
   }
 }
 for (const category of portfolio.categories) {
@@ -1128,6 +1168,40 @@ if (!builtCss.includes("@media (max-width: 360px)") ||
     !builtCss.includes(".audience-grid, .comparison, .policy-grid { grid-template-columns: minmax(0, 1fr); }") ||
     !builtCss.includes(".faq-page .whatsapp-float { display: none; }")) {
   fail("correções responsivas para 320 px ou FAQ mobile ausentes");
+}
+
+const homeHtml = readOutput("index.html");
+const homeDescription = getAttribute(homeHtml.match(/<meta\b[^>]*\bname="description"[^>]*>/i)?.[0] || "", "content");
+if (!homeDescription.startsWith("Pegue e Monte para moradores de Joinville e Araquari.") ||
+    !homeHtml.includes("Moradores de Joinville e Araquari podem contratar o Pegue e Monte.")) {
+  fail("home precisa delimitar a cobertura municipal ao Pegue e Monte e apresentar a Mini Festa separadamente");
+}
+
+const contactHtml = readOutput("contato/index.html");
+const contactInterest = contactHtml.match(/<select\b[^>]*\bname="interest"[^>]*>([\s\S]*?)<\/select>/i)?.[1] || "";
+const contactFirstOption = contactInterest.match(/<option\b[^>]*>([\s\S]*?)<\/option>/i);
+const contactFirstOptionTag = contactInterest.match(/<option\b[^>]*>/i)?.[0] || "";
+if (!contactFirstOption || getAttribute(contactFirstOptionTag, "value") !== "" ||
+    !/\bselected(?:\s*=\s*["']selected["'])?/.test(contactFirstOptionTag) ||
+    normalizeText(contactFirstOption[1]) !== "Ainda não sei") {
+  fail("formulário de contato não deve presumir Pegue e Monte como serviço escolhido");
+}
+
+const howItWorksHtml = readOutput("como-funciona/index.html");
+const howItWorksTimeline = howItWorksHtml.match(/<div\b[^>]*class="timeline"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/section>/i)?.[1] || "";
+if (!howItWorksTimeline || /Mini Festa na Mesa/i.test(howItWorksTimeline) ||
+    !normalizeText(howItWorksHtml).includes("Estas etapas e condições se aplicam ao Pegue e Monte") ||
+    !normalizeText(howItWorksHtml).includes("No Pegue e Monte, a devolução deve ocorrer em até 24 horas")) {
+  fail("passo a passo do Pegue e Monte está incompleto ou mistura regras da Mini Festa");
+}
+
+if (site.origin) {
+  for (const file of ["servicos/index.html", "mini-festa-na-mesa/index.html"]) {
+    const service = schemaOfType(schemasIn(readOutput(file), file), "Service");
+    if (!service || Object.hasOwn(service, "areaServed")) {
+      fail(`Service não deve declarar cobertura municipal não confirmada: ${routeForHtml(file)}`);
+    }
+  }
 }
 
 const prefix = String(process.env.PATH_PREFIX || "").replace(/\/+$/, "");

@@ -47,4 +47,5 @@ breadcrumbs:
   </div>
 </section>
 
+<script type="application/json" id="locality-context-data">{{ site.localityContext | json | safe }}</script>
 {% set message = "Olá, Lela! Vi uma referência no catálogo e quero consultar se há disponibilidade para minha data. Posso informar o tema e a cidade ou o bairro da festa." %}{% set label = "Consultar uma referência" %}{% include "partials/whatsapp-cta.njk" %}

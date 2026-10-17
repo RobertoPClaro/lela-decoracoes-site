@@ -93,7 +93,8 @@ const araquariNames = [
   },
   {
     name: "Jacu",
-    source: araquariSources.municipalDistrict
+    source: araquariSources.municipalDistrict,
+    geographicType: "reference"
   },
   {
     name: "Ponto Alto",
@@ -148,7 +149,7 @@ const commonServices = [
   {
     name: "Mini Festa na Mesa",
     path: "/mini-festa-na-mesa/",
-    description: "Uma composição compacta para aniversários, mêsversários e celebrações íntimas."
+    description: "Conheça a proposta compacta e confirme com a Lela as condições de atendimento, composição e logística para sua cidade."
   },
   {
     name: "Temas e decorações",
@@ -157,10 +158,8 @@ const commonServices = [
   }
 ];
 
-function servicesForCity(cityName) {
-  return commonServices.map((service) => service.name === "Pegue e Monte"
-    ? { ...service, description: `Retirada e devolução do kit no Paranaguamirim. Consulte tema e data; a possibilidade de entrega depende da disponibilidade.` }
-    : service);
+function servicesForCity() {
+  return commonServices.map((service) => ({ ...service }));
 }
 
 const cities = [
@@ -197,7 +196,7 @@ const cities = [
       detailText: `${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions}`,
       pickupNeighborhoodPath: "/regioes-atendidas/joinville/paranaguamirim/",
       pickupLabel: "Ver informações do ponto de retirada no Paranaguamirim",
-      services: servicesForCity("Joinville"),
+      services: servicesForCity(),
       localityDirectoryNotice: "Os 45 bairros abaixo seguem a relação do guia municipal Joinville Bairro a Bairro (2026).",
       geographyReference: {
         text: "Para conferir a relação e informações territoriais dos bairros, consulte a publicação municipal.",
@@ -248,8 +247,8 @@ const cities = [
       detailText: `${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions} A lista abaixo reúne referências geográficas citadas em fontes públicas; pode estar incompleta e distingue bairros, localidades e o distrito de Itapocu.`,
       pickupNeighborhoodPath: null,
       pickupLabel: "Ver o endereço de retirada informado em Joinville",
-      services: servicesForCity("Araquari"),
-      localityDirectoryNotice: "A lista pode estar incompleta e reúne registros de fontes públicas; bairros, localidades e o distrito de Itapocu aparecem identificados separadamente.",
+      services: servicesForCity(),
+      localityDirectoryNotice: "A lista pode estar incompleta e reúne registros de fontes públicas; bairros, localidades e o distrito de Itapocu aparecem identificados separadamente. A classificação de Jacu permanece em verificação por divergência entre fontes públicas.",
       geographyReference: {
         text: "A Prefeitura descreve o distrito de Itapocu e as áreas atendidas pela subprefeitura.",
         label: "Subprefeitura do Itapocu",
@@ -281,19 +280,29 @@ const neighborhoods = [
   const city = cities.find((item) => item.slug === entry.citySlug);
   const slug = slugify(entry.name);
   const placeKind = entry.geographicType || "neighborhood";
-  const kindLabel = placeKind === "district" ? "distrito" : placeKind === "locality" ? "localidade" : "bairro";
+  const kindLabel = placeKind === "district"
+    ? "distrito"
+    : placeKind === "locality"
+      ? "localidade"
+      : placeKind === "reference"
+        ? "referência geográfica; classificação em verificação"
+        : "bairro";
   const placePhrase = placeKind === "neighborhood"
     ? `no bairro ${entry.name}, em ${city.name}`
     : placeKind === "district"
       ? `no distrito de ${entry.name}, em ${city.name}`
-      : `na localidade de ${entry.name}, em ${city.name}`;
+      : placeKind === "locality"
+        ? `na localidade de ${entry.name}, em ${city.name}`
+        : `na região de ${entry.name}, em ${city.name}`;
   const localIntro = placeKind === "neighborhood"
     ? `Moradores do bairro ${entry.name}, em ${city.name}, podem contratar o Pegue e Monte.`
     : `Para festas ${placePhrase}, consulte com a Lela as condições do Pegue e Monte.`;
   const localityContent = {
     title: `Pegue e Monte em ${entry.name}, ${city.name} | Lela Decorações`,
     description: `Veja como contratar Pegue e Monte em ${entry.name}, ${city.name}, com retirada no Paranaguamirim e devolução combinada. Consulte a possibilidade de entrega para sua data.`,
-    eyebrow: `${entry.name} · ${kindLabel} de ${city.name}`,
+    eyebrow: placeKind === "reference"
+      ? `${entry.name} · ${city.name} · classificação em verificação`
+      : `${entry.name} · ${kindLabel} de ${city.name}`,
     h1: placeKind === "neighborhood"
       ? `Pegue e Monte no bairro ${entry.name}, em ${city.name}`
       : `Pegue e Monte em ${entry.name}, ${city.name}`,
@@ -337,6 +346,8 @@ const neighborhoods = [
               : entry.name === "Morro Grande"
                 ? "Uma proposição legislativa municipal cita Morro Grande como localidade; a vigência e a classificação territorial atual ainda precisam de confirmação."
             : "A fonte municipal consultada menciona a área como localidade ou comunidade; o nome não é tratado aqui como bairro oficialmente delimitado."
+          : entry.geographicType === "reference"
+            ? "As fontes municipais consultadas usam referências diferentes para Jacu e não confirmam uma classificação territorial única; a página evita chamá-lo de bairro, localidade ou distrito até essa classificação ser verificada."
           : entry.name === "Jacu"
             ? "A Prefeitura inclui Jacu entre os bairros atendidos pela Subprefeitura do Itapocu e registra o nome em publicação municipal de vagas; essas referências não definem limites territoriais nem constituem lista legal completa."
           : entry.name === "Guamiranga"

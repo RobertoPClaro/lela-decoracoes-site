@@ -52,23 +52,18 @@ permalink: "{{ local.path }}"
       {% if local.neighborhoods.length %}
         <div class="locality-directory">
           <h2>Encontre sua localidade</h2>
-          {% if local.slug == "joinville" %}
-            <p>A relação segue o guia municipal Joinville Bairro a Bairro (2026).</p>
-          {% else %}
-            <p>A lista pode estar incompleta; reúne bairros, localidades e distrito citados em fontes públicas.</p>
-          {% endif %}
           <details class="locality-directory__details">
             <summary>Ver bairros e localidades ({{ local.neighborhoods.length }})</summary>
             <ul class="locality-directory__list">
               {% for place in local.neighborhoods %}
                 <li data-locality-reference-item="{{ place.slug }}">
                   {% if place.publicationStatus == "PUBLIC_INDEX" or place.publicationStatus == "PUBLIC_NOINDEX" or locations.reviewMode %}<a href="{{ place.path | url }}">{{ place.name }}{% if place.previewOnly %}<span class="sr-only"> (prévia em revisão)</span>{% endif %}</a>{% else %}<span class="locality-directory__name">{{ place.name }}</span>{% endif %}
-                  {% if place.type != "neighborhood" %}<span class="locality-directory__type">{{ "Distrito" if place.type == "district" else "Localidade" }}</span>{% endif %}
+                  {% if place.type != "neighborhood" %}<span class="locality-directory__type">{% if place.type == "district" %}Distrito{% elif place.type == "locality" %}Localidade{% else %}Classificação geográfica em verificação{% endif %}</span>{% endif %}
                 </li>
               {% endfor %}
             </ul>
           </details>
-          <p class="locality-directory__notice">{{ local.localityDirectoryNotice }}</p>
+          <p class="locality-directory__notice">{{ local.content.localityDirectoryNotice }}</p>
           {% if local.content.geographyReference %}
             <p class="locality-directory__source">{{ local.content.geographyReference.text }} <a href="{{ local.content.geographyReference.url }}" target="_blank" rel="noopener">{{ local.content.geographyReference.label }} <span aria-hidden="true">↗</span></a></p>
           {% endif %}

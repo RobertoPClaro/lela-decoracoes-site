@@ -22,7 +22,7 @@ const items = [
   },
   {
     id: "kit-composition",
-    question: "O que vem em cada kit?",
+    question: "O que vem em cada kit do Pegue e Monte?",
     answer: "A composição varia conforme o tema e o porte. O Kit Minimalista é apresentado com painel de 50 × 50 cm, balões e outros elementos; o Kit Grande, com painéis de 1,50 × 1,50 m, cilindros P/M/G e outros elementos. Confirme a lista exata antes de reservar.",
     category: "kit",
     source: ["/pegue-e-monte/", "/duvidas/"],
@@ -40,12 +40,12 @@ const items = [
   },
   {
     id: "reservation",
-    question: "Como faço para reservar?",
+    question: "Como faço para reservar o Pegue e Monte?",
     answer: "Envie pelo WhatsApp a data, cidade/bairro, tema e porte desejado. A reserva é confirmada após o pagamento da entrada de 50%.",
     category: "booking",
     source: ["/como-funciona/", "/duvidas/"],
     confirmationStatus: "PUBLISHED_SITE_COPY",
-    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+    services: ["pegue-e-monte"]
   },
   {
     id: "delivery",
@@ -77,7 +77,7 @@ const items = [
   },
   {
     id: "return-period",
-    question: "Por quanto tempo fico com a decoração?",
+    question: "Qual é o prazo de devolução do kit Pegue e Monte?",
     answer: "A decoração deve ser devolvida em até 24 horas. Após esse prazo, é cobrada uma taxa diária de 30% do valor total da festa. Se precisar de mais tempo, solicite com antecedência.",
     category: "logistics",
     source: ["/como-funciona/", "/duvidas/"],
@@ -86,25 +86,25 @@ const items = [
   },
   {
     id: "payment-methods",
-    question: "Quais formas de pagamento são aceitas?",
+    question: "Quais formas de pagamento são aceitas no Pegue e Monte?",
     answer: "O pagamento pode ser feito por Pix, dinheiro ou cartão de crédito. No cartão, a taxa da maquininha fica por conta do cliente, conforme a operadora.",
     category: "payment",
     source: ["/duvidas/"],
     confirmationStatus: "PUBLISHED_SITE_COPY",
-    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+    services: ["pegue-e-monte"]
   },
   {
     id: "cancellation",
-    question: "O que acontece se eu precisar cancelar?",
+    question: "O que acontece se eu cancelar uma reserva de Pegue e Monte?",
     answer: "A entrada de 50% não é reembolsável. O valor pode ficar como crédito por até três meses para uma nova reserva, sujeito à disponibilidade.",
     category: "booking",
     source: ["/duvidas/"],
     confirmationStatus: "PUBLISHED_SITE_COPY",
-    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+    services: ["pegue-e-monte"]
   },
   {
     id: "damaged-item",
-    question: "E se alguma peça for danificada?",
+    question: "O que acontece se uma peça do kit Pegue e Monte for danificada?",
     answer: "Em caso de perda, avaria ou dano, será cobrado o valor do item. Siga as orientações de cuidado recebidas na retirada.",
     category: "care",
     source: ["/duvidas/"],
@@ -151,14 +151,16 @@ function regionalFor(location) {
       ? `no distrito de ${location.name}, em ${cityName}`
       : location.type === "locality"
         ? `na localidade de ${location.name}, em ${cityName}`
-        : `no bairro ${location.name}, em ${cityName}`;
+        : location.type === "reference"
+          ? `na região de ${location.name}, em ${cityName}`
+          : `no bairro ${location.name}, em ${cityName}`;
   const questionOverrides = {
     "pickup-eligibility": isCity
       ? `Quem mora em ${cityName} pode contratar o Pegue e Monte?`
       : location.type === "neighborhood"
         ? `Moradores do bairro ${location.name}, em ${cityName}, podem contratar o Pegue e Monte?`
         : `Como consultar o Pegue e Monte para uma festa ${placePhrase}?`,
-    reservation: `Como faço para reservar uma decoração para uma festa ${placePhrase}?`,
+    reservation: `Como faço para reservar o Pegue e Monte para uma festa ${placePhrase}?`,
     delivery: `Como consulto a possibilidade de entrega para uma festa ${placePhrase}?`,
     "pickup-location": `Onde fica o ponto de retirada para uma festa ${placePhrase}?`,
     "catalog-theme-choice": `Posso consultar um tema do catálogo para uma festa ${placePhrase}?`
