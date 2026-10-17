@@ -157,17 +157,17 @@ const pageDefinitions = [
   {
     slug: "tropa-dos-rosa", name: "Tropa dos Rosa",
     title: "Tropa dos Rosa em Joinville e Araquari | Lela Decorações",
-    description: "Explore duas artes de painel associadas a Tropa dos Rosa no acervo. Consulte data e formato de decoração em Joinville ou Araquari.",
-    h1: "Referências de decoração Tropa dos Rosa",
-    intro: "O acervo tem duas referências visuais associadas a Tropa dos Rosa, com personagens e elementos gráficos em rosa e outras cores vivas. Consulte qual arte está disponível para sua data.",
-    galleryTitle: "Duas artes associadas a Tropa dos Rosa",
-    galleryText: "As imagens têm composições diferentes e compartilham elementos visuais associados ao grupo. Os nomes de arquivo não descrevem corretamente o conteúdo; por isso, as referências foram reunidas pelo que aparece nas artes.",
+    description: "Compare duas artes cadastradas sob Tropa dos Rosa. A associação das imagens ao nome ainda precisa ser confirmada com a Lela.",
+    h1: "Artes cadastradas como Tropa dos Rosa",
+    intro: "O cadastro reúne duas artes com grupos ilustrados e grafismos em rosa e outras cores. A correspondência com o nome Tropa dos Rosa ainda precisa ser confirmada com a Lela.",
+    galleryTitle: "Artes cadastradas neste grupo",
+    galleryText: "As imagens têm estilos diferentes e não há confirmação de que pertençam à mesma referência. Consulte com a Lela qual arte corresponde ao tema antes de reservar.",
     related: ["Guerreiras do K-Pop – HUNTR/X", "Barbie", "Apaixonada por Dorama"],
     images: [
-      { file: "Tema Menina/tema-grupo-pop-01.jpeg", alt: "Painel de referência com integrantes e elementos gráficos associados a Tropa dos Rosa.", caption: "Arte com o grupo em destaque" },
-      { file: "Tema Menina/tema-rainbow-friends-01.jpeg", alt: "Outra referência de painel associada visualmente a Tropa dos Rosa.", caption: "Outra arte associada ao grupo" }
+      { file: "Tema Menina/tema-grupo-pop-01.jpeg", alt: "Arte ilustrada com um grupo de personagens e grafismos coloridos; associação ao tema pendente.", caption: "Primeira arte cadastrada" },
+      { file: "Tema Menina/tema-rainbow-friends-01.jpeg", alt: "Arte ilustrada com personagens em cores vivas; associação ao tema pendente.", caption: "Segunda arte cadastrada" }
     ],
-    faqs: [{ question: "Por que imagens com nomes de arquivo diferentes aparecem juntas?", answer: "A inspeção visual mostrou que as duas artes retratam o mesmo tema associado a Tropa dos Rosa. O atendimento confirma qual delas está disponível e em qual formato." }]
+    faqs: [{ question: "As duas imagens pertencem à mesma referência?", answer: "Ainda não há confirmação. A Lela precisa identificar cada arte antes de confirmar a associação ao nome Tropa dos Rosa." }]
   },
   {
     slug: "eu-amo-tete", name: "Eu Amo Tetê – Vaquinha",

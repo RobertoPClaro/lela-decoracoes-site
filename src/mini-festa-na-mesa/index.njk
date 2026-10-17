@@ -1,10 +1,11 @@
 ---
 layout: layouts/base.njk
-title: "Mini Festa na Mesa em Joinville | Lela Decorações"
-description: "Mini Festa na Mesa da Lela Decorações para mêsversário, aniversário e celebrações íntimas em Joinville e Araquari."
+title: "Mini Festa na Mesa | Lela Decorações"
+description: "Conheça a proposta compacta da Lela Decorações para aniversários e celebrações íntimas. Consulte composição, disponibilidade e logística para sua data."
 permalink: /mini-festa-na-mesa/
 schemaServiceName: "Mini Festa na Mesa"
-schemaServiceDescription: "Decoração compacta para celebrações pequenas em Joinville e Araquari."
+schemaServiceDescription: "Proposta compacta de decoração para celebrações íntimas. Composição, disponibilidade e logística devem ser confirmadas para cada consulta."
+schemaServiceAreas: []
 breadcrumbs:
   - label: Início
     url: /
@@ -15,6 +16,7 @@ breadcrumbs:
 ---
 
 {% include "partials/breadcrumbs.njk" %}
+{% set miniFestaMessage = "Olá, Lela! Tenho interesse na Mini Festa na Mesa. Posso informar a data e o tema ou a ocasião para consultar a proposta e confirmar as condições de montagem e logística." %}
 <section class="page-hero">
   <div class="container page-hero__grid">
     <div><p class="eyebrow">Uma celebração compacta</p><h1>Às vezes, uma mesa conta a história inteira.</h1></div>
@@ -34,7 +36,7 @@ breadcrumbs:
         <li>Permite começar pelo tema e adaptar a linguagem visual.</li>
         <li>O que está incluso é explicado antes da reserva.</li>
       </ul>
-      <div style="margin-top:1.6rem"><a class="button" href="{{ site.whatsappLink('Olá, Lela! Quero montar uma Mini Festa na Mesa.') }}" target="_blank" rel="noopener">Quero uma Mini Festa <span aria-hidden="true">↗</span></a></div>
+      <div style="margin-top:1.6rem"><a class="button" href="{{ site.whatsappLink(miniFestaMessage) }}" target="_blank" rel="noopener">Quero uma Mini Festa <span aria-hidden="true">↗</span></a></div>
     </div>
     <div class="split__visual mini-festa__visual">
       {% set image = portfolio.featured[3] %}
@@ -62,4 +64,4 @@ breadcrumbs:
 
 <section class="section section--tight"><div class="container"><p class="provisional-note">Antes de reservar, confirme a composição da proposta e se ela inclui montagem no local, entrega ou retirada dos itens. Esses serviços não devem ser presumidos para todas as datas. Consulte também se bolo, doces, personalizados, mobiliário e outros itens fazem parte da composição escolhida.</p>{% include "partials/regions-note.njk" %}</div></section>
 
-{% set message = "Olá, Lela! Tenho interesse na Mini Festa na Mesa. Posso informar a data e o tema ou a ocasião para consultar a proposta e confirmar as condições de montagem e logística." %}{% set label = "Planejar minha Mini Festa" %}{% include "partials/whatsapp-cta.njk" %}
+{% set message = miniFestaMessage %}{% set label = "Planejar minha Mini Festa" %}{% include "partials/whatsapp-cta.njk" %}

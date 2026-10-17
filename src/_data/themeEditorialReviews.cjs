@@ -23,11 +23,11 @@ function review(visual, editorial, selection, meta, options = {}) {
 
 const reviews = {
   "Ana Castela – A Boiadeira": review(
-    "um retrato de cantora com chapéu western rosa, roupa em tons de rosa e moldura floral",
+    "uma pessoa retratada com chapéu western rosa, roupa em tons de rosa e moldura floral",
     "A fotografia permite identificar uma estética country em rosa, com flores e franjas. O arquivo original está nomeado como cowgirl e não confirma, por si só, a identidade da pessoa retratada.",
     "Use a foto para mostrar à Lela qual referência visual você procura. A identificação comercial como Ana Castela precisa ser confirmada antes de apresentar o nome como correspondência certa.",
     "Retrato em estilo country rosa com chapéu western e moldura floral.",
-    { indexDecision: "CONFIRMATION_REQUIRED", indexationReason: "A arte mostra uma cantora com chapéu western rosa, mas a imagem e o nome de arquivo não confirmam que a pessoa seja Ana Castela. Manter noindex até a proprietária confirmar a identificação comercial.", imageAlt: "Painel circular com retrato de uma cantora usando chapéu western rosa, roupa rosa e moldura floral.", faqQuestion: "A imagem confirma que o painel é da Ana Castela?", faqAnswer: "A fotografia mostra uma cantora com chapéu western rosa, mas não traz identificação legível. O cadastro associa a arte a Ana Castela – A Boiadeira; confirme esse nome com a Lela antes de solicitar a reserva." }
+    { indexDecision: "CONFIRMATION_REQUIRED", indexationReason: "A arte mostra uma pessoa com chapéu western rosa, mas a imagem e o nome de arquivo não confirmam que ela seja Ana Castela. Manter noindex até a proprietária confirmar a identificação comercial.", imageAlt: "Painel circular com uma pessoa retratada usando chapéu western rosa, roupa rosa e moldura floral.", faqQuestion: "A imagem confirma que o painel é da Ana Castela?", faqAnswer: "A fotografia mostra uma pessoa com chapéu western rosa, mas não traz identificação legível. O cadastro associa a arte a Ana Castela – A Boiadeira; confirme esse nome com a Lela antes de solicitar a reserva." }
   ),
   "Apaixonada por Dorama": review(
     "a frase “Apaixonada por Dorama”, corações e pequenos ícones ligados a cinema",

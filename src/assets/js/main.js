@@ -44,12 +44,26 @@
             ? `no distrito de ${place.name}, em ${city.name}`
             : place.type === "locality"
               ? `na localidade de ${place.name}, em ${city.name}`
-              : `no bairro ${place.name}, em ${city.name}`
+              : place.type === "reference"
+                ? `na região de ${place.name}, em ${city.name}`
+                : `no bairro ${place.name}, em ${city.name}`
           : `em ${city.name}`;
-        const service = params.get("servico") === "pegue-e-monte";
+        const service = params.get("servico");
+        const serviceLabel = service === "pegue-e-monte"
+          ? "o Pegue e Monte"
+          : service === "mini-festa-na-mesa"
+            ? "a Mini Festa na Mesa"
+            : "uma festa";
+        document.querySelectorAll("[data-preserve-regional-context]").forEach((link) => {
+          const url = new URL(link.href, window.location.href);
+          url.searchParams.set("cidade", city.slug);
+          if (["pegue-e-monte", "mini-festa-na-mesa"].includes(service)) url.searchParams.set("servico", service);
+          if (place) url.searchParams.set("localidade", place.slug);
+          link.href = `${url.pathname}${url.search}${url.hash}`;
+        });
         document.querySelectorAll("[data-theme-context-whatsapp]").forEach((link) => {
           const themeName = link.dataset.themeName || "decoração escolhida";
-          const request = service ? `o Pegue e Monte ${locationLabel}` : `uma festa ${locationLabel}`;
+          const request = service ? `${serviceLabel} ${locationLabel}` : `uma festa ${locationLabel}`;
           const message = `Olá, Lela! Estou procurando uma decoração ${themeName} para ${request}. Gostaria de consultar a disponibilidade e as condições de retirada ou eventual entrega.`;
           const url = new URL(link.href);
           url.searchParams.set("text", message);
@@ -58,7 +72,7 @@
         document.querySelectorAll("[data-lightbox-whatsapp][data-theme-name]").forEach((trigger) => {
           const url = new URL(trigger.dataset.lightboxWhatsapp);
           const themeName = trigger.dataset.themeName || "decoração escolhida";
-          const request = service ? `o Pegue e Monte ${locationLabel}` : `uma festa ${locationLabel}`;
+          const request = service ? `${serviceLabel} ${locationLabel}` : `uma festa ${locationLabel}`;
           const message = `Olá, Lela! Estou procurando uma decoração ${themeName} para ${request}. Gostaria de consultar a disponibilidade e as condições de retirada ou eventual entrega.`;
           url.searchParams.set("text", message);
           trigger.dataset.lightboxWhatsapp = url.toString();

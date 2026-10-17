@@ -33,7 +33,7 @@ function absoluteUrl(urlPath = "/") {
 }
 
 function serviceSchema(name, description, urlPath, areaServed = serviceAreas) {
-  return JSON.stringify({
+  const schema = {
     "@context": "https://schema.org",
     "@type": "Service",
     name,
@@ -43,9 +43,10 @@ function serviceSchema(name, description, urlPath, areaServed = serviceAreas) {
       ...(organizationId ? { "@id": organizationId } : {}),
       name: "Lela Decorações"
     },
-    areaServed,
     url: absoluteUrl(urlPath)
-  });
+  };
+  if (Array.isArray(areaServed) && areaServed.length) schema.areaServed = areaServed;
+  return JSON.stringify(schema);
 }
 
 function webPageSchema(name, description, urlPath) {
@@ -154,7 +155,7 @@ module.exports = {
   categories: portfolio.categories.map(({ slug, label, copy }) => ({ slug, label, description: copy })),
   facts: {
     serviceHours: "09h às 20h",
-    reservationEntry: "50% de entrada para confirmar a data",
+    reservationEntry: "No Pegue e Monte, a data é confirmada com uma entrada de 50%",
     returnWindow: "Devolução em até 24 horas",
     payment: "Pix, dinheiro ou cartão de crédito; confirme taxas e condições no atendimento.",
     delivery: `${commercial.copy.pickupEligibility} ${commercial.copy.deliveryConditions}`,
