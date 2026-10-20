@@ -16,9 +16,17 @@ Os três pacotes são dependências de desenvolvimento usadas no build. Não sã
 
 ## Segurança e ressalvas
 
-A auditoria anterior do registry registrou 3 vulnerabilidades altas e nenhuma moderada ou crítica, agrupadas pelos pacotes acima. Após a atualização, npm audit --json não completou por falha DNS EAI_AGAIN registry.npmjs.org; não há contagem posterior confiável e não se declara que o projeto está livre de vulnerabilidades.
+A auditoria válida do registry antes da migração registrou 3 vulnerabilidades altas e nenhuma moderada ou crítica, agrupadas pelos pacotes acima. A auditoria final, executada em 2026-10-20 após a atualização, retornou zero vulnerabilidades (0 low, moderate, high ou critical). Uma tentativa anterior falhou por EAI_AGAIN, mas a consulta final concluiu com sucesso. Esse resultado descreve a base de advisories retornada pelo registry e não resolve a advisory repository-level contraditória de image-size abaixo.
 
-A versão image-size 2.0.4 é a versão latest atualmente listada pelo npm. Entretanto, o advisory público GHSA-qmwv-h59h-wjxj no repositório oficial image-size apresenta uma fronteira inconsistente: marca <=2.0.4 como afetada e também 2.0.4 como corrigida. A base global de advisories e o registry não permitiram resolver a inconsistência nesta execução. Portanto, a atualização atende às correções indicadas pelas advisories retornadas no audit anterior, mas 2.0.4 não é certificada aqui como solução inequívoca para esse advisory específico. Não foi adotado um fork de terceiros.
+| Auditoria npm | Antes | Depois |
+|---|---:|---:|
+| Críticas | 0 | 0 |
+| Altas | 3 | 0 |
+| Moderadas | 0 | 0 |
+| Baixas/informativas | 0 | 0 |
+| Total | 3 | 0 |
+
+Em 2026-10-20, o npm lista image-size 2.0.4 como latest. Entretanto, o advisory público GHSA-qmwv-h59h-wjxj no repositório oficial image-size apresenta uma fronteira inconsistente: marca <=2.0.4 como afetada e também 2.0.4 como corrigida. A consulta global do GitHub Advisory Database retorna 404 para esse identificador, e o npm audit concluído não o reportou; nenhum dos dois resultados resolve a inconsistência do texto do advisory. Portanto, a atualização atende às correções indicadas pelos advisories npm anteriores, mas 2.0.4 não é certificada aqui como solução inequívoca para esse advisory específico. Não foi adotado um fork de terceiros.
 
 A migração de sharp também removeu a necessidade do install/check observado na versão 0.33.5. Em npm 10.9.9 com Node 22, npm ci terminou sem aviso de scripts e o módulo nativo codificou uma imagem JPEG. A diferença de política de lifecycle entre npm 10 e npm 11 pode produzir avisos diferentes; o CI seleciona Node 22, mas não fixa a versão npm.
 
@@ -34,7 +42,7 @@ Executado com Node 22.23.3 e npm 10.9.9:
 - git diff --check: sucesso.
 - npm ls: uma instância de cada dependência-alvo; Sharp deduplicado pelo Eleventy Img.
 - Decodificação integral: todos os derivados da baseline e da migração foram lidos sem erro.
-- npm audit --json: inconclusivo por EAI_AGAIN no registry.
+- npm audit --json: execução final com código 0 e contagem 0/0/0/0 no registry. A resposta foi salva fora do repositório em /tmp/lela-security-image-migration/agents/05-npm-audit-final.json.
 - npm audit --omit=dev: saída vazia para o escopo sem dependências de runtime; não substitui a auditoria das ferramentas de build.
 
 O build validado contém 157 HTML, 1.425 imagens derivadas (475 AVIF, 475 JPG e 475 WebP), 76 páginas de temas (73 indexáveis e 3 noindex), 61 páginas individuais de localidades noindex, 3 páginas regionais indexáveis, 92 URLs no sitemap e zero DRAFT_PREVIEW.
@@ -51,9 +59,8 @@ Nomes e dimensões dos 1.425 derivados coincidem com a baseline Node 22. Todos o
 
 ## Risco residual e acompanhamento
 
-1. Reexecutar npm audit --json com acesso ao registry e salvar a resposta integral.
-2. Obter esclarecimento do responsável pelo GHSA-qmwv-h59h-wjxj sobre a versão efetivamente corrigida.
-3. Se o advisory continuar sem fronteira confiável, avaliar uma versão upstream posterior ou uma alternativa mantida; qualquer substituição exige nova análise de compatibilidade e regressões.
-4. O resultado npm audit --omit=dev não cobre os riscos das ferramentas de build.
+1. Obter esclarecimento do responsável pelo GHSA-qmwv-h59h-wjxj sobre a fronteira de versão: a auditoria do registry retorna zero, mas o advisory da página do projeto continua contraditório e não aparece na consulta npm concluída.
+2. Se o advisory continuar sem fronteira confiável, avaliar uma versão upstream posterior ou uma alternativa mantida; qualquer substituição exige nova análise de compatibilidade e regressões.
+3. O resultado npm audit --omit=dev não cobre os riscos das ferramentas de build.
 
-Status: testes de build e integridade de imagens aprovados; confirmação final de advisories permanece pendente por indisponibilidade do registry e metadados contraditórios.
+Status: migração e auditoria npm do registry aprovadas; permanece documentada a incerteza específica do advisory repository-level de image-size.
