@@ -1,5 +1,4 @@
 const path = require("node:path");
-const Image = require("@11ty/eleventy-img");
 const { minify } = require("html-minifier-terser");
 const site = require("./src/_data/site.cjs");
 
@@ -30,6 +29,7 @@ module.exports = function configure(eleventyConfig) {
     "responsiveImage",
     async function responsiveImage(source, alt, className, sizes, loading, fetchPriority, preset) {
       if (!source) return "";
+      const { default: Image } = await import("@11ty/eleventy-img");
       const widths = preset === "hero" ? [480, 768, 1200, 1600] : [320, 480, 768, 1200];
       const metadata = await Image(source, {
         widths,

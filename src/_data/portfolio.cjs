@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const imageSize = require("image-size");
+const { imageSize } = require("image-size");
 
 const root = path.resolve(__dirname, "../assets/images/originals");
 const categoryFolders = ["Tema Menina", "Tema Menino", "Tema Adulto", "Tema Diversos", "Tema Futebol"];
@@ -168,7 +168,7 @@ function readImages(folder, sourceType) {
       const themeName = displayNames[displayNameKey];
       if (!themeName) throw new Error(`Nome de exibição não cadastrado para ${displayNameKey}`);
       const sourcePath = path.join(folderPath, entry.name);
-      const dimensions = imageSize(sourcePath);
+      const dimensions = imageSize(fs.readFileSync(sourcePath));
       const category = categoryFor(themeName, folder);
       const generatedBase = entry.name.replace(/\.[^.]+$/, "").toLowerCase();
       return {
