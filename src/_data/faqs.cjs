@@ -113,7 +113,7 @@ const items = [
   },
   {
     id: "pickup-location",
-    question: "Onde fica a retirada?",
+    question: "Onde fica o ponto de retirada do Pegue e Monte?",
     answer: `O ponto de retirada fica em ${commercial.pickupPoint.display}. ${commercial.services.pegueEMonte.pickup.scheduling}`,
     category: "logistics",
     source: ["/contato/", "/duvidas/"],
@@ -162,7 +162,7 @@ function regionalFor(location) {
         : `Como consultar o Pegue e Monte para uma festa ${placePhrase}?`,
     reservation: `Como faço para reservar o Pegue e Monte para uma festa ${placePhrase}?`,
     delivery: `Como consulto a possibilidade de entrega para uma festa ${placePhrase}?`,
-    "pickup-location": `Onde fica o ponto de retirada para uma festa ${placePhrase}?`,
+    "pickup-location": `Onde retiro o kit Pegue e Monte para uma festa ${placePhrase}?`,
     "catalog-theme-choice": `Posso consultar um tema do catálogo para uma festa ${placePhrase}?`
   };
   const ids = isCity ? cityQuestionIds : localityQuestionIds;
