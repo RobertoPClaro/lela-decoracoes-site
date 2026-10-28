@@ -14,7 +14,7 @@
     <div class="split__visual theme-page__hero-image">
       {% set item = theme.heroImage %}
       {% set topicMessage = "Olá, Lela! Tenho interesse na decoração " + theme.name + ". Gostaria de consultar a disponibilidade e os formatos possíveis para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
-      <button class="theme-page__hero-trigger" type="button" data-lightbox-trigger data-lightbox-group="{{ theme.catalogSlug }}" data-theme-name="{{ theme.name }}" data-lightbox-src="{{ site.pathPrefix }}assets/images/generated/{{ item.generatedBase }}-1200.jpg" data-lightbox-alt="{{ item.alt }}" data-lightbox-caption="{{ item.caption }}" data-lightbox-whatsapp="{{ site.whatsappLink(topicMessage) }}" aria-label="Ampliar foto de {{ theme.name }}">
+      <button class="theme-page__hero-trigger" type="button" data-lightbox-trigger data-lightbox-group="{{ theme.catalogSlug }}" data-theme-name="{{ theme.name }}" data-theme-slug="{{ theme.slug }}" data-lightbox-src="{{ site.pathPrefix }}assets/images/generated/{{ item.generatedBase }}-1200.jpg" data-lightbox-alt="{{ item.alt }}" data-lightbox-caption="{{ item.caption }}" data-lightbox-whatsapp="{{ site.whatsappLink(topicMessage) }}" aria-label="Ampliar foto de {{ theme.name }}">
         {% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 42vw, 92vw" %}{% set imageLoading = "eager" %}{% set imageFetchPriority = "high" %}{% set imagePreset = "hero" %}{% include "partials/image.njk" %}
       </button>
       <p class="portfolio-card__tag">{{ item.caption }} · toque para ampliar</p>
@@ -34,7 +34,7 @@
       <p>{{ theme.galleryText }}</p>
       <p>Moradores de todos os bairros de <a class="text-link" href="{{ '/regioes-atendidas/joinville/' | url }}">Joinville</a> e <a class="text-link" href="{{ '/regioes-atendidas/araquari/' | url }}">Araquari</a> podem contratar o Pegue e Monte com retirada e devolução no Paranaguamirim. A disponibilidade deste tema e a possibilidade de entrega para a data e o endereço precisam ser confirmadas com a Lela.</p>
       <div class="button-row">
-        <a class="button" href="{{ site.whatsappLink(topicMessage) }}" data-theme-context-whatsapp data-theme-name="{{ theme.name }}" target="_blank" rel="noopener">Consultar {{ theme.name }} <span aria-hidden="true">↗</span></a>
+      <a class="button" href="{{ site.whatsappLink(topicMessage) }}" data-theme-context-whatsapp data-theme-name="{{ theme.name }}" data-theme-slug="{{ theme.slug }}" data-analytics-placement="theme_detail" target="_blank" rel="noopener">Consultar {{ theme.name }} <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="{{ ('/portfolio/#tema-' + theme.catalogSlug) | url }}" data-preserve-regional-context>Voltar ao catálogo <span aria-hidden="true">→</span></a>
       </div>
     </div>

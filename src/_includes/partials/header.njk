@@ -14,7 +14,7 @@
           <li><a href="{{ item.url | url }}"{% if item.url == page.url or (item.url != '/' and page.url.slice(0, item.url.length) == item.url) or (item.url == '/portfolio/' and page.url.slice(0, 7) == '/temas/') %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
         {% endfor %}
       </ul>
-      <a class="button button--small button--header" href="{{ site.whatsappLink(globalWhatsAppMessage) }}"{% if theme is defined and theme.name %} data-theme-context-whatsapp data-theme-name="{{ theme.name }}"{% endif %} target="_blank" rel="noopener">Consultar disponibilidade</a>
+      <a class="button button--small button--header" href="{{ site.whatsappLink(globalWhatsAppMessage) }}" data-analytics-placement="header"{% if theme is defined and theme.name %} data-theme-context-whatsapp data-theme-name="{{ theme.name }}" data-theme-slug="{{ theme.slug }}"{% endif %} target="_blank" rel="noopener">Consultar disponibilidade</a>
     </nav>
   </div>
 </header>

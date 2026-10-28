@@ -6,9 +6,9 @@
   "type": "commonjs",
   "scripts": {
     "clean": "node scripts/clean.cjs",
-    "build": "npm run clean && node scripts/generate-images.cjs && eleventy && node scripts/validate-build.cjs",
+    "build": "npm run clean && node scripts/generate-images.cjs && eleventy && node scripts/validate-build.cjs && node scripts/validate-analytics.cjs",
     "start": "eleventy --serve",
-    "test": "npm run build",
+    "test": "npm run build && node scripts/test-analytics-config.cjs",
     "build:review": "LELA_LOCAL_REVIEW=1 npm run build",
     "build:pages": "npm run build"
   },

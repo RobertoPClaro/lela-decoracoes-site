@@ -128,7 +128,8 @@
       alt: trigger.dataset.lightboxAlt || "",
       caption: trigger.dataset.lightboxCaption || "",
       whatsapp: trigger.dataset.lightboxWhatsapp || "",
-      themeName: trigger.dataset.themeName || "tema escolhido"
+      themeName: trigger.dataset.themeName || "tema escolhido",
+      themeSlug: trigger.dataset.themeSlug || ""
     };
   }
 
@@ -146,6 +147,8 @@
     box.querySelector(".lightbox__next").hidden = lightboxItems.length < 2;
     const whatsapp = box.querySelector(".lightbox__cta");
     whatsapp.href = item.whatsapp;
+    whatsapp.dataset.themeSlug = item.themeSlug;
+    whatsapp.dataset.analyticsPlacement = "lightbox";
     whatsapp.setAttribute("aria-label", `Consultar ${item.themeName} pelo WhatsApp`);
     box.setAttribute("aria-label", `Fotos do tema ${item.themeName}`);
   }
