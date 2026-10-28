@@ -11,5 +11,21 @@ breadcrumbs:
 ---
 
 {% include "partials/breadcrumbs.njk" %}
-<section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Transparência</p><h1>Privacidade em linguagem simples.</h1></div><p class="page-hero__copy">Esta página descreve o comportamento previsto para a versão estática do site.</p></div></section>
-<section class="section"><div class="container legal-copy"><p>O site da Lela Decorações é uma página estática. Nesta versão, não há cadastro de usuário, banco de dados, área logada, cookies de publicidade ou ferramenta de analytics configurada.</p><h2>Contato pelo WhatsApp</h2><p>Ao clicar em um botão de WhatsApp, você é encaminhado para um serviço externo. As informações enviadas passam a seguir as políticas do WhatsApp e da própria conversa com a Lela.</p><h2>Instagram e links externos</h2><p>Links para Instagram e WhatsApp levam a plataformas de terceiros. Consulte as políticas desses serviços quando necessário.</p><h2>Formulário</h2><p>O formulário de contato não envia dados para este site. Ele apenas monta uma mensagem no navegador e abre o WhatsApp para que você decida se deseja enviá-la.</p><h2>Atualizações</h2><p>Esta página deve ser revisada se forem adicionados analytics, formulários hospedados, cookies, ferramentas de marketing ou qualquer integração que altere o tratamento de dados.</p></div></section>
+<section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Transparência</p><h1>Privacidade em linguagem simples.</h1></div><p class="page-hero__copy">Esta página descreve o comportamento desta versão estática do site.</p></div></section>
+<section class="section"><div class="container legal-copy">
+  <p>O site da Lela Decorações é uma página estática. Não há cadastro de usuário, área logada nem formulário enviado a um servidor da Lela.</p>
+  {% if site.analyticsEnabled %}
+    <h2>Medição opcional do site</h2>
+    <p>O Google Analytics 4 só é carregado depois que você escolhe “Aceitar medição”. Se você recusar, a tag não é carregada. A preferência fica salva neste navegador e pode ser revista pelo link “Preferências de medição” no rodapé. Ao revogar uma autorização, a medição é pausada e os cookies Google Analytics acessíveis neste domínio são removidos.</p>
+    <p>A medição registra visualizações de página e interações gerais com catálogo, filtros, busca e links de contato. Os eventos próprios do site não incluem nome, telefone, conteúdo de formulários, texto de mensagens ou URL completa do WhatsApp. O Google ainda pode processar dados técnicos de navegação necessários ao serviço; consulte a documentação e a política de privacidade do Google. A medição de cliques de saída e interações automáticas de formulário precisa permanecer desativada na configuração do fluxo Web para impedir o envio automático dos destinos desses links.</p>
+  {% else %}
+    <h2>Medição do site</h2>
+    <p>Nesta publicação, o Google Analytics não está ativo e a tag do Google não é incluída nas páginas. Uma futura ativação dependerá de configuração explícita do identificador e da desativação da medição automática de cliques de saída e de interações de formulário no fluxo Web, além de uma escolha de consentimento no site.</p>
+  {% endif %}
+  <h2>Contato pelo WhatsApp</h2>
+  <p>Ao clicar em um botão de WhatsApp, você é encaminhado para um serviço externo. O formulário de contato apenas monta uma mensagem no navegador e abre o WhatsApp; o site não recebe nem envia essa mensagem ao Google Analytics. Você decide se deseja enviá-la. Depois que a conversa começa, as informações ficam sujeitas às políticas do WhatsApp e à própria conversa com a Lela.</p>
+  <h2>Instagram e links externos</h2>
+  <p>Links para Instagram e outros serviços levam a plataformas de terceiros. Consulte as políticas desses serviços quando necessário.</p>
+  <h2>Atualizações</h2>
+  <p>Esta política deve ser revisada se forem adicionadas integrações ou formas de tratamento que alterem o comportamento descrito aqui.</p>
+</div></section>

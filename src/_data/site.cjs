@@ -12,6 +12,17 @@ const pathPrefix = rawPrefix && rawPrefix !== "/"
   ? `/${rawPrefix.replace(/^\/+|\/+$/g, "")}/`
   : "/";
 const origin = String(process.env.SITE_URL || "").replace(/\/$/, "");
+const rawGa4MeasurementId = String(process.env.GA4_MEASUREMENT_ID || "").trim();
+if (rawGa4MeasurementId && !/^G-[A-Z0-9]{6,20}$/i.test(rawGa4MeasurementId)) {
+  throw new Error("GA4_MEASUREMENT_ID inválido; use o ID do fluxo Web, sem incluir outros valores.");
+}
+const enhancedOutboundClicksDisabled = process.env.GA4_ENHANCED_OUTBOUND_CLICKS_DISABLED === "true";
+const enhancedFormInteractionsDisabled = process.env.GA4_ENHANCED_FORM_INTERACTIONS_DISABLED === "true";
+const analyticsEnabled = Boolean(rawGa4MeasurementId && enhancedOutboundClicksDisabled && enhancedFormInteractionsDisabled);
+const ga4MeasurementId = analyticsEnabled ? rawGa4MeasurementId : "";
+if (rawGa4MeasurementId && !analyticsEnabled) {
+  console.warn("GA4 permanece desativado: confirme que os cliques de saída e as interações automáticas de formulário estão desativados no fluxo Web.");
+}
 const baseUrl = origin ? `${origin}${pathPrefix === "/" ? "" : pathPrefix.slice(0, -1)}` : "";
 const organizationId = baseUrl ? `${baseUrl}/#organization` : "";
 
@@ -119,6 +130,8 @@ module.exports = {
   origin,
   baseUrl,
   pathPrefix,
+  analyticsEnabled,
+  ga4MeasurementId,
   phoneDisplay,
   phoneDigits,
   instagramUrl,

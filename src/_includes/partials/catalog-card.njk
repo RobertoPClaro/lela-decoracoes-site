@@ -17,7 +17,7 @@
   {% set message = "Olá, Lela! Vi a referência de " + group.themeName + " no catálogo e quero consultar se há disponibilidade para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
 {% endif %}
 <article class="catalog-card{% if localCatalogContext %} catalog-card--regional{% endif %}" id="tema-{{ group.slug }}" data-catalog-group="{{ group.slug }}"{% if localCatalogContext %} data-local-theme-card="{{ group.slug }}"{% endif %} data-filter-item data-category="{{ group.category }}" data-has-montage="{{ 'true' if group.hasMountedExample else 'false' }}" data-search="{{ group.searchText }}">
-  <a class="catalog-card__image-link" href="{{ themeUrl }}" data-preserve-regional-context aria-label="Ver decoração: {{ group.themeName }}">
+  <a class="catalog-card__image-link" href="{{ themeUrl }}" data-preserve-regional-context data-analytics-theme-link data-theme-slug="{{ themePage.slug }}" data-analytics-placement="regional_catalog_card" aria-label="Ver decoração: {{ group.themeName }}">
     <span class="catalog-card__media{% if image.width / image.height < 0.68 %} catalog-card__media--portrait{% elif image.width / image.height > 1.15 %} catalog-card__media--landscape{% else %} catalog-card__media--square{% endif %}">
       {% set imageClass = "catalog-card__image" %}{% set imageSizes = "(min-width: 1100px) 24vw, (min-width: 700px) 32vw, 46vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
       <span class="catalog-card__image-label">Ver decoração <span aria-hidden="true">↗</span></span>
@@ -25,7 +25,7 @@
   </a>
   <div class="catalog-card__content">
     <span class="portfolio-card__tag">{{ group.categoryLabel }}</span>
-    {% if catalogCardHeadingLevel == 3 %}<h3 class="catalog-card__title"><a href="{{ themeUrl }}" data-preserve-regional-context>{{ group.themeName }}</a></h3>{% else %}<h2 class="catalog-card__title"><a href="{{ themeUrl }}" data-preserve-regional-context>{{ group.themeName }}</a></h2>{% endif %}
+    {% if catalogCardHeadingLevel == 3 %}<h3 class="catalog-card__title"><a href="{{ themeUrl }}" data-preserve-regional-context data-analytics-theme-link data-theme-slug="{{ themePage.slug }}" data-analytics-placement="regional_catalog_card">{{ group.themeName }}</a></h3>{% else %}<h2 class="catalog-card__title"><a href="{{ themeUrl }}" data-preserve-regional-context data-analytics-theme-link data-theme-slug="{{ themePage.slug }}" data-analytics-placement="regional_catalog_card">{{ group.themeName }}</a></h2>{% endif %}
     <p class="catalog-card__meta">
       {% if group.nameNeedsConfirmation %}Identificação em revisão · {% endif %}
       {{ group.images.length }} {% if group.images.length == 1 %}imagem{% else %}imagens{% endif %} no acervo
@@ -35,7 +35,7 @@
     </p>
     <div class="catalog-card__actions">
       {% if not localCatalogContext %}<a class="catalog-card__details" href="{{ themeUrl }}" data-preserve-regional-context>Ver detalhes do tema <span aria-hidden="true">→</span></a>{% endif %}
-      <a class="catalog-card__contact" href="{{ site.whatsappLink(message) }}" data-theme-context-whatsapp data-theme-name="{{ group.themeName }}" target="_blank" rel="noopener">Consultar disponibilidade <span aria-hidden="true">↗</span></a>
+      <a class="catalog-card__contact" href="{{ site.whatsappLink(message) }}" data-theme-context-whatsapp data-theme-name="{{ group.themeName }}" data-theme-slug="{{ themePage.slug }}" data-analytics-placement="catalog_card" target="_blank" rel="noopener">Consultar disponibilidade <span aria-hidden="true">↗</span></a>
     </div>
   </div>
 </article>

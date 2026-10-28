@@ -20,6 +20,9 @@ jobs:
     env:
       PATH_PREFIX: ${{ vars.PATH_PREFIX || '/' }}
       SITE_URL: ${{ vars.SITE_URL || 'https://leladecoracoes.com' }}
+      GA4_MEASUREMENT_ID: ${{ vars.GA4_MEASUREMENT_ID || '' }}
+      GA4_ENHANCED_OUTBOUND_CLICKS_DISABLED: ${{ vars.GA4_ENHANCED_OUTBOUND_CLICKS_DISABLED || 'false' }}
+      GA4_ENHANCED_FORM_INTERACTIONS_DISABLED: ${{ vars.GA4_ENHANCED_FORM_INTERACTIONS_DISABLED || 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

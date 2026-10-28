@@ -8,7 +8,7 @@
       <p>Pequenos momentos, cenários cheios de carinho.</p>
       <div class="footer-socials">
         <a href="{{ site.instagramUrl }}" target="_blank" rel="noopener">Instagram <span aria-hidden="true">↗</span></a>
-        <a href="{{ site.whatsappLink() }}" target="_blank" rel="noopener">WhatsApp <span aria-hidden="true">↗</span></a>
+        <a href="{{ site.whatsappLink() }}" data-analytics-placement="footer_social" target="_blank" rel="noopener">WhatsApp <span aria-hidden="true">↗</span></a>
       </div>
     </div>
     <div>
@@ -30,6 +30,7 @@
         <li><a href="{{ '/contato/' | url }}">Contato</a></li>
         <li><a href="{{ '/parceiros/' | url }}">Parceiros</a></li>
         <li><a href="{{ '/politica-de-privacidade/' | url }}">Privacidade</a></li>
+        {% if site.analyticsEnabled %}<li><button class="footer-links__privacy-settings" type="button" data-open-analytics-settings aria-controls="analytics-consent" aria-expanded="false">Preferências de medição</button></li>{% endif %}
       </ul>
     </div>
     <div>
@@ -37,7 +38,7 @@
       <ul class="footer-links">
         <li><address><a href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ site.address.streetAddress }}<br>{{ site.address.neighborhood }}, {{ site.address.city }} - {{ site.address.state }}<br>CEP {{ site.address.postalCode }}</a></address></li>
         <li>{{ site.facts.serviceHours }}</li>
-        <li><a href="{{ site.whatsappLink() }}" target="_blank" rel="noopener">{{ site.phoneDisplay }}</a></li>
+        <li><a href="{{ site.whatsappLink() }}" data-analytics-placement="footer_phone" target="_blank" rel="noopener">{{ site.phoneDisplay }}</a></li>
       </ul>
     </div>
   </div>
