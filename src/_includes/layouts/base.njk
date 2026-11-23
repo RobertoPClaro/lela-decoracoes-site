@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="{{ '/assets/css/styles.css' | url }}">
     {% if site.origin %}
       <script type="application/ld+json">{{ site.localBusinessSchema | safe }}</script>
+      <script type="application/ld+json">{{ site.webSiteSchema | safe }}</script>
       <script type="application/ld+json">{{ site.breadcrumbSchema(breadcrumbs or [{label: 'Início', url: '/'}]) | safe }}</script>
     {% endif %}
     {% if schemaServiceName and (not theme or theme.indexable) %}
@@ -57,6 +58,18 @@
       {% set globalWhatsAppMessage = "Olá, Lela! Tenho interesse na decoração " + theme.name + ". Gostaria de consultar a disponibilidade e os formatos possíveis para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
     {% elif local is defined and local.whatsappMessage %}
       {% set globalWhatsAppMessage = local.whatsappMessage %}
+    {% elif page.url == "/pegue-e-monte/" %}
+      {% set globalWhatsAppMessage = "Olá, Lela! Quero consultar um kit Pegue e Monte. Posso informar a data, o tema e a cidade ou o bairro da festa." %}
+    {% elif page.url == "/mini-festa-na-mesa/" %}
+      {% set globalWhatsAppMessage = "Olá, Lela! Tenho interesse na Mini Festa na Mesa. Posso informar a data, o tema e a cidade ou o bairro para consultar proposta e logística." %}
+    {% elif page.url == "/festas-infantis/" %}
+      {% set globalWhatsAppMessage = "Olá, Lela! Quero consultar uma decoração infantil. Posso informar o tema, a data e a cidade ou o bairro da festa." %}
+    {% elif page.url == "/cha-de-bebe/" %}
+      {% set globalWhatsAppMessage = "Olá, Lela! Quero consultar uma decoração para chá de bebê. Posso informar a data e a cidade ou o bairro da festa." %}
+    {% elif page.url == "/cha-revelacao/" %}
+      {% set globalWhatsAppMessage = "Olá, Lela! Quero planejar uma decoração para chá revelação. Posso informar a data e a cidade ou o bairro da festa." %}
+    {% elif page.url == "/portfolio/" or page.url == "/temas/" %}
+      {% set globalWhatsAppMessage = "Olá, Lela! Vi as decorações no catálogo do site e quero consultar disponibilidade de um tema para minha data." %}
     {% endif %}
     {% include "partials/header.njk" %}
     <main id="main-content">

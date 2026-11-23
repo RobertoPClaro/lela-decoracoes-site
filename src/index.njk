@@ -1,7 +1,7 @@
 ---
 layout: layouts/base.njk
-title: "Lela Decorações | Pegue e Monte em Joinville e Araquari"
-description: "Pegue e Monte para moradores de Joinville e Araquari. Conheça também a Mini Festa na Mesa e consulte a proposta e as condições para sua data."
+title: "Lela Decorações | Decoração de Festas em Joinville e Araquari"
+description: "Pegue e Monte para moradores de Joinville e Araquari. Conheça também a Mini Festa na Mesa, mais de 70 temas no acervo e consulte disponibilidade pelo WhatsApp."
 permalink: /
 activeNav: home
 bodyClass: home
@@ -15,15 +15,15 @@ breadcrumbs:
   <div class="container hero-grid">
     <div class="hero-copy-block">
       <p class="eyebrow">Lela Decorações · Joinville &amp; Araquari</p>
-      <h1>Uma festa bonita, <em>leve</em> de montar.</h1>
-      <p class="hero-copy">Moradores de Joinville e Araquari podem contratar o Pegue e Monte. Conheça também a Mini Festa na Mesa e consulte sua proposta e condições para a data.</p>
+      <h1>Decoração de festas em <em>Joinville e Araquari</em>.</h1>
+      <p class="hero-copy">Moradores de Joinville e Araquari podem contratar o Pegue e Monte. Conheça também a Mini Festa na Mesa, explore mais de 70 temas no catálogo e consulte retirada no Paranaguamirim ou entrega para sua data.</p>
       <div class="hero-actions">
         <a class="button" href="{{ site.whatsappLink('Olá, Lela! Quero consultar a disponibilidade de uma decoração.') }}" data-analytics-placement="home_hero" target="_blank" rel="noopener">Consultar disponibilidade <span aria-hidden="true">↗</span></a>
         <a class="button button--secondary" href="{{ '/portfolio/' | url }}">Abrir catálogo</a>
       </div>
       <div class="hero-note" aria-label="Diferenciais">
-        <span>Referências do acervo</span>
-        <span>Processo explicado</span>
+        <span>+70 temas no acervo</span>
+        <span>Retirada no Paranaguamirim</span>
         <span>Atendimento próximo</span>
       </div>
     </div>
@@ -44,7 +44,7 @@ breadcrumbs:
     <div class="service-grid">
       {% set number = "01" %}{% set eyebrow = "Serviço principal" %}{% set heading = "Pegue e Monte" %}{% set copy = "Você escolhe o tema, agenda a retirada, monta no seu evento e devolve na data combinada. Autonomia com orientação." %}{% set url = "/pegue-e-monte/" %}{% set linkLabel = "Entender como funciona" %}{% set featured = true %}
       {% include "partials/service-card.njk" %}
-      {% set number = "02" %}{% set eyebrow = "Serviço principal" %}{% set heading = "Mini Festa na Mesa" %}{% set copy = "Uma composição compacta para o bolo, o mêsversário, a casa, o restaurante ou aquela celebração íntima cheia de significado." %}{% set url = "/mini-festa-na-mesa/" %}{% set linkLabel = "Ver a proposta" %}{% set featured = true %}
+      {% set number = "02" %}{% set eyebrow = "Serviço principal" %}{% set heading = "Mini Festa na Mesa" %}{% set copy = "Uma composição compacta para o bolo, o mesversário, a casa, o restaurante ou aquela celebração íntima cheia de significado." %}{% set url = "/mini-festa-na-mesa/" %}{% set linkLabel = "Ver a proposta" %}{% set featured = true %}
       {% include "partials/service-card.njk" %}
       {% set number = "03" %}{% set eyebrow = "Variações de porte" %}{% set heading = "Minimalista ou Grande" %}{% set copy = "Escolha o impacto e o espaço da montagem. A composição final e a disponibilidade são confirmadas no atendimento." %}{% set url = "/pegue-e-monte/" %}{% set linkLabel = "Comparar opções" %}{% set featured = false %}
       {% include "partials/service-card.njk" %}
@@ -55,15 +55,17 @@ breadcrumbs:
 <section class="section section--lilac" id="portfolio-home">
   <div class="container">
     <div class="section-intro-row">
-      <div>{% set eyebrow = "Catálogo de decorações" %}{% set heading = "Encontre um tema para começar a planejar." %}{% set copy = "Cada opção reúne as fotos associadas ao mesmo tema, com painéis de referência e exemplos de montagem quando há imagens." %}{% include "partials/section-heading.njk" %}</div>
-      <a class="text-link" href="{{ '/portfolio/' | url }}">Explorar todo o catálogo <span aria-hidden="true">→</span></a>
+      <div>{% set eyebrow = "Catálogo de decorações" %}{% set heading = "Temas em destaque para começar a planejar." %}{% set copy = "Cada opção reúne painéis de referência e exemplos de montagem quando há fotos no acervo. Consulte a disponibilidade para sua data." %}{% include "partials/section-heading.njk" %}</div>
+      <a class="text-link" href="{{ '/portfolio/' | url }}">Explorar catálogo visual com busca e filtros <span aria-hidden="true">→</span></a>
     </div>
     <div class="portfolio-grid">
-      {% for group in portfolio.featuredCatalog | take(4) %}
-        {% include "partials/catalog-card.njk" %}
+      {% set homeHighlightThemes = ["Patrulha Canina", "A Casa Mágica da Gabby", "Bluey", "Fazendinha", "Ursinho Bebê Azul", "Chá Revelação – Menino ou Menina"] %}
+      {% for themeName in homeHighlightThemes %}
+        {% set group = portfolio.catalogByName[themeName] %}
+        {% if group %}{% include "partials/catalog-card.njk" %}{% endif %}
       {% endfor %}
     </div>
-    <p style="margin-top:1.5rem"><a class="text-link" href="{{ '/temas/' | url }}">Ver páginas detalhadas dos temas <span aria-hidden="true">→</span></a></p>
+    <p style="margin-top:1.5rem"><a class="text-link" href="{{ '/temas/' | url }}">Ver índice completo de temas por categoria <span aria-hidden="true">→</span></a></p>
   </div>
 </section>
 
@@ -92,6 +94,11 @@ breadcrumbs:
         </a>
       {% endfor %}
     </div>
+    <p class="button-row" style="margin-top:1.5rem">
+      <a class="text-link" href="{{ '/festas-infantis/' | url }}">Decoração de festa infantil <span aria-hidden="true">→</span></a>
+      <a class="text-link" href="{{ '/cha-de-bebe/' | url }}">Decoração de chá de bebê <span aria-hidden="true">→</span></a>
+      <a class="text-link" href="{{ '/cha-revelacao/' | url }}">Decoração de chá revelação <span aria-hidden="true">→</span></a>
+    </p>
   </div>
 </section>
 

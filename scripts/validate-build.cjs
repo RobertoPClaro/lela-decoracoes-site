@@ -958,10 +958,13 @@ for (const route of regionalPaths) {
     }
 
     const groups = localCatalog.catalogGroupsFor(page.type === "city" ? page.slug : page.citySlug, page.type === "city");
+    const expectedCuratedCount = page.type === "city"
+      ? localCatalog.cityThemes[page.slug].length
+      : localCatalog.neighborhoodThemes.length;
     const cards = [...html.matchAll(/<article\b(?=[^>]*\bdata-local-theme-card="([^"]+)")[^>]*>[\s\S]*?<\/article>/gi)];
     const cardIds = cards.map((match) => match[1]);
-    if (groups.length !== portfolio.catalog.length || cards.length !== groups.length || new Set(cardIds).size !== groups.length) {
-      fail(`catálogo local precisa renderizar cada grupo uma vez em ${route}`);
+    if (groups.length !== expectedCuratedCount || cards.length !== groups.length || new Set(cardIds).size !== groups.length) {
+      fail(`seleção local precisa renderizar cada tema curado uma vez em ${route}`);
     }
     const citySlug = page.type === "city" ? page.slug : page.citySlug;
     const cityName = page.type === "city" ? page.name : page.city;
@@ -993,13 +996,11 @@ for (const route of regionalPaths) {
         fail(`card local sem imagem, nome, categoria ou termos de busca corretos em ${route}: ${group.themeName}`);
       }
     }
-    const regionalFilters = [...html.matchAll(/data-filter-button\b/g)].length;
-    const expectedFilters = site.categories.length + 1 + (localCatalog.hasMountedExamples ? 1 : 0);
-    if (!html.includes(`id="catalogo-local"`) || !html.includes("data-local-catalog-controls") ||
-        !html.includes(`data-catalog-limit="12"`) || !normalizeText(html).toLocaleLowerCase("pt-BR").includes("moradores de") ||
-        !normalizeText(html).toLocaleLowerCase("pt-BR").includes("depende da disponibilidade") ||
-        regionalFilters !== expectedFilters || !html.includes("data-catalog-more")) {
-      fail(`catálogo local sem busca/filtros, limite progressivo ou regras comerciais em ${route}`);
+    if (!html.includes(`id="catalogo-local"`) ||
+        !html.includes(`href="${site.pathPrefix}portfolio/"`) ||
+        !normalizeText(html).toLocaleLowerCase("pt-BR").includes("moradores de") ||
+        !normalizeText(html).toLocaleLowerCase("pt-BR").includes("depende da disponibilidade")) {
+      fail(`seleção local sem link ao catálogo completo ou regras comerciais em ${route}`);
     }
   }
 }

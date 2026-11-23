@@ -108,7 +108,7 @@ const localBusinessSchema = JSON.stringify({
   "@type": "LocalBusiness",
   "@id": organizationId || instagramUrl,
   name: "Lela Decorações",
-  description: "Pegue e Monte e Mini Festa na Mesa com praticidade, delicadeza e economia.",
+  description: "Decoração de festas em Joinville e Araquari com Pegue e Monte e Mini Festa na Mesa.",
   telephone: `+${phoneDigits}`,
   address: {
     "@type": "PostalAddress",
@@ -121,7 +121,20 @@ const localBusinessSchema = JSON.stringify({
   hasMap: mapsUrl,
   areaServed: serviceAreas,
   sameAs: [instagramUrl],
-  ...(baseUrl ? { url: absoluteUrl("/") } : {})
+  ...(baseUrl ? {
+    url: absoluteUrl("/"),
+    image: absoluteUrl("/assets/images/generated/kit-ursinho-bebe-01-1200.jpg")
+  } : {})
+});
+
+const webSiteSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${absoluteUrl("/")}#website`,
+  name: "Lela Decorações",
+  url: absoluteUrl("/"),
+  inLanguage: "pt-BR",
+  ...(organizationId ? { publisher: { "@id": organizationId } } : {})
 });
 
 module.exports = {
@@ -148,6 +161,7 @@ module.exports = {
   whatsappLink,
   absoluteUrl,
   localBusinessSchema,
+  webSiteSchema,
   serviceSchema,
   breadcrumbSchema,
   faqSchema,

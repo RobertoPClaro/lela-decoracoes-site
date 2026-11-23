@@ -187,10 +187,10 @@ const cities = [
     publicationBasis: "CITY_SERVICE",
     schemaServiceAreas: ["Joinville, SC"],
     content: {
-      title: "Pegue e Monte em Joinville: temas e retirada | Lela Decorações",
-      description: "Moradores de Joinville podem contratar Pegue e Monte com retirada e devolução no Paranaguamirim. Consulte temas, data e possibilidade de entrega.",
+      title: "Pegue e Monte em Joinville | Decoração e Retirada — Lela",
+      description: "Decoração de festas e Pegue e Monte para moradores de todos os bairros de Joinville, com retirada no Paranaguamirim e consulta de entrega. Veja temas e reserve.",
       eyebrow: "Joinville · Santa Catarina",
-      h1: "Pegue e Monte em Joinville",
+      h1: "Pegue e Monte e decoração em Joinville",
       intro: `Moradores de todos os bairros de Joinville podem contratar o Pegue e Monte. ${commercial.copy.pickupOption} Explore os temas e consulte a disponibilidade para sua data.`,
       detailTitle: "Retirada e logística em Joinville",
       detailText: `${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions}`,
@@ -238,10 +238,10 @@ const cities = [
     publicationBasis: "CITY_SERVICE",
     schemaServiceAreas: ["Araquari, SC"],
     content: {
-      title: "Pegue e Monte em Araquari com retirada em Joinville | Lela Decorações",
-      description: "Moradores de Araquari podem contratar Pegue e Monte com retirada e devolução em Joinville. Consulte temas e a possibilidade de entrega para seu endereço.",
+      title: "Pegue e Monte em Araquari | Decoração de Festas — Lela",
+      description: "Decoração de festas e Pegue e Monte para moradores de Araquari, com retirada próxima no Paranaguamirim (Joinville) e consulta de entrega. Veja temas e reserve.",
       eyebrow: "Araquari · Santa Catarina",
-      h1: "Pegue e Monte para festas em Araquari",
+      h1: "Pegue e Monte e decoração em Araquari",
       intro: `Moradores de todos os bairros de Araquari podem contratar o Pegue e Monte. ${commercial.copy.pickupOption} Explore os temas e consulte a data desejada.`,
       detailTitle: "Logística para festas em Araquari",
       detailText: `${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions} A lista abaixo reúne referências geográficas citadas em fontes públicas; pode estar incompleta e distingue bairros, localidades e o distrito de Itapocu.`,
@@ -393,10 +393,10 @@ pickupNeighborhood.publicationStatus = "PUBLIC_INDEX";
 pickupNeighborhood.indexable = true;
 pickupNeighborhood.publicationBasis = "PICKUP_LOCATION";
 pickupNeighborhood.content = {
-  title: "Retirada de Pegue e Monte no Paranaguamirim, Joinville | Lela Decorações",
-  description: "Veja o endereço de retirada da Lela no Paranaguamirim, em Joinville. Moradores de Joinville e Araquari podem contratar; consulte tema e data.",
+  title: "Pegue e Monte no Paranaguamirim, Joinville | Lela Decorações",
+  description: "Ponto de retirada e devolução do Pegue e Monte da Lela no Paranaguamirim, em Joinville. Atendimento para toda Joinville e Araquari; consulte tema e data.",
   eyebrow: "Ponto de retirada · Joinville",
-  h1: "Retirada de kits Pegue e Monte no Paranaguamirim",
+  h1: "Retirada de Pegue e Monte no Paranaguamirim, Joinville",
   intro: "O ponto de retirada da Lela fica no Paranaguamirim. Moradores de Joinville e Araquari podem contratar o Pegue e Monte retirando e devolvendo o kit neste endereço; combine os detalhes antes de ir.",
   detailTitle: "O que combinar antes da retirada",
   detailText: `${commercial.copy.pickupOption} ${commercial.copy.customerAssembly} ${commercial.services.pegueEMonte.pickup.scheduling} ${commercial.copy.deliveryConditions}`,
