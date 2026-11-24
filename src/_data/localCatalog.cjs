@@ -4,12 +4,13 @@ const themes = require("./themes.cjs");
 
 // Curadoria editorial fixa. Não representa popularidade, estoque ou preferência por bairro.
 const citySelection = [
-  "safari-baby", "bluey", "dinossauros", "borboletas-e-flores",
-  "happy-birthday", "cha-revelacao", "toy-story", "corinthians"
+  "patrulha-canina", "casa-magica-da-gabby", "bluey", "fazendinha",
+  "safari-baby", "ursinho-bebe-azul", "cha-revelacao", "barbie",
+  "dinossauros", "tardezinha", "borboletas-e-flores", "happy-birthday"
 ];
 const neighborhoodSelection = [
-  "safari-baby", "bluey", "dinossauros", "borboletas-e-flores",
-  "happy-birthday", "cha-revelacao"
+  "patrulha-canina", "casa-magica-da-gabby", "bluey", "safari-baby",
+  "fazendinha", "cha-revelacao", "dinossauros", "happy-birthday"
 ];
 
 const themesBySlug = new Map(themes.details.map((theme) => [theme.slug, theme]));
@@ -57,8 +58,7 @@ function catalogGroupsFor(citySlug, isCity) {
     if (!group) throw new Error(`Grupo de catálogo ausente para ${theme.slug}`);
     return group;
   });
-  const curatedSlugs = new Set(curatedGroups.map((group) => group.slug));
-  return [...curatedGroups, ...portfolio.catalog.filter((group) => !curatedSlugs.has(group.slug))];
+  return curatedGroups;
 }
 
 module.exports = {
