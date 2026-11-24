@@ -1,10 +1,10 @@
 ---
 layout: layouts/base.njk
-title: "Decoração de Festa Infantil em Joinville e Araquari | Lela Decorações"
+title: "Decoração de Festa Infantil em Joinville e Araquari | Lela"
 description: "Aluguel de decoração de festa infantil em Joinville e Araquari no formato Pegue e Monte. Veja temas como Patrulha Canina, Casa Mágica da Gabby, Bluey e Fazendinha."
 permalink: /festas-infantis/
 schemaServiceName: "Decoração infantil"
-schemaServiceDescription: "Temas infantis para aniversários e mesversários em Joinville e Araquari."
+schemaServiceDescription: "Temas infantis para aniversários e mesversários com Pegue e Monte para moradores de Joinville e Araquari (retirada no Paranaguamirim) e Mini Festa na Mesa sob consulta."
 breadcrumbs:
   - label: Início
     url: /
@@ -15,9 +15,9 @@ breadcrumbs:
 ---
 
 {% include "partials/breadcrumbs.njk" %}
-<section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Temas para aniversário e mesversário</p><h1>Decoração de <em>festa infantil</em> em Joinville e Araquari.</h1></div><p class="page-hero__copy">Personagens, cores e cenários delicados para aniversários e mesversários no formato Pegue e Monte ou Mini Festa na Mesa, com retirada no Paranaguamirim e consulta rápida pelo WhatsApp.</p></div></section>
+<section class="page-hero"><div class="container page-hero__grid"><div><p class="eyebrow">Temas para aniversário e mesversário</p><h1>Decoração de <em>festa infantil</em> em Joinville e Araquari.</h1></div><p class="page-hero__copy">Personagens, cores e cenários delicados para aniversários e mesversários com Pegue e Monte para Joinville e Araquari (retirada no Paranaguamirim) ou Mini Festa na Mesa sob consulta pelo WhatsApp.</p></div></section>
 
-<section class="section"><div class="container"><div class="section-heading"><p class="eyebrow">Temas infantis em destaque</p><h2>Escolha o tema para consultar disponibilidade.</h2><p>Explore personagens e estilos infantis com painéis de referência e exemplos de montagem quando disponíveis no acervo.</p></div><div class="portfolio-grid">{% set infantHighlights = ["Patrulha Canina", "A Casa Mágica da Gabby", "Bluey", "Fazendinha", "Barbie", "Dinossauros", "Safari Baby", "Ursinho Bebê Azul"] %}{% for themeName in infantHighlights %}{% set group = portfolio.catalogByName[themeName] %}{% if group %}{% include "partials/catalog-card.njk" %}{% endif %}{% endfor %}</div><p style="margin-top:1.5rem"><a class="text-link" href="{{ '/portfolio/#infantil' | url }}">Ver todos os temas infantis no catálogo <span aria-hidden="true">→</span></a></p></div></section>
+<section class="section"><div class="container"><div class="section-heading"><p class="eyebrow">Temas infantis em destaque</p><h2>Escolha o tema para consultar disponibilidade.</h2><p>Explore personagens e estilos infantis com painéis de referência e exemplos de montagem quando disponíveis no acervo.</p></div><div class="portfolio-grid">{% set catalogCardHeadingLevel = 3 %}{% set infantHighlights = ["Patrulha Canina", "A Casa Mágica da Gabby", "Bluey", "Fazendinha", "Barbie", "Dinossauros", "Safari Baby", "Ursinho Bebê Azul"] %}{% for themeName in infantHighlights %}{% set group = portfolio.catalogByName[themeName] %}{% if group %}{% include "partials/catalog-card.njk" %}{% endif %}{% endfor %}</div><p style="margin-top:1.5rem"><a class="text-link" href="{{ '/portfolio/#infantil' | url }}">Ver todos os temas infantis no catálogo <span aria-hidden="true">→</span></a></p></div></section>
 
 <section class="section section--lilac"><div class="container split"><div class="split__visual">{% set image = portfolio.featured[2] %}{% set item = image %}{% set imageClass = "" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}</div><div class="split__content"><p class="eyebrow">Para decidir com segurança</p><h2>Tema é o começo, não a ficha completa.</h2><p>Antes de reservar, confirme o serviço escolhido, o tamanho da montagem, os itens inclusos, a disponibilidade e o que precisa ser levado por você.</p><ul class="check-list"><li>Envie o nome do personagem ou uma referência visual.</li><li>Informe data, cidade/bairro e espaço disponível.</li><li>Pergunte se o tema está disponível para o porte desejado.</li></ul></div></div></section>
 {% set message = "Olá, Lela! Quero consultar uma decoração infantil. Posso informar o tema, a data e a cidade ou o bairro da festa." %}{% set label = "Consultar tema infantil" %}{% include "partials/whatsapp-cta.njk" %}

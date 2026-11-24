@@ -59,6 +59,7 @@ breadcrumbs:
       <a class="text-link" href="{{ '/portfolio/' | url }}">Explorar catálogo visual com busca e filtros <span aria-hidden="true">→</span></a>
     </div>
     <div class="portfolio-grid">
+      {% set catalogCardHeadingLevel = 3 %}
       {% set homeHighlightThemes = ["Patrulha Canina", "A Casa Mágica da Gabby", "Bluey", "Fazendinha", "Ursinho Bebê Azul", "Chá Revelação – Menino ou Menina"] %}
       {% for themeName in homeHighlightThemes %}
         {% set group = portfolio.catalogByName[themeName] %}
@@ -116,7 +117,11 @@ breadcrumbs:
       <div style="margin-top:1.6rem"><a class="text-link" href="{{ '/sobre/' | url }}">Conhecer a história <span aria-hidden="true">→</span></a></div>
     </div>
     <div class="split__visual split__visual--owner">
-      <img src="{{ site.ownerAvatar.src | url }}" alt="{{ site.ownerAvatar.alt }}" width="{{ site.ownerAvatar.width }}" height="{{ site.ownerAvatar.height }}" loading="lazy" decoding="async">
+      <picture>
+        <source type="image/avif" srcset="{{ '/assets/images/generated/avatar-leticia-188.avif' | url }}">
+        <source type="image/webp" srcset="{{ '/assets/images/generated/avatar-leticia-188.webp' | url }}">
+        <img src="{{ site.ownerAvatar.src | url }}" alt="{{ site.ownerAvatar.alt }}" width="{{ site.ownerAvatar.width }}" height="{{ site.ownerAvatar.height }}" loading="lazy" decoding="async">
+      </picture>
     </div>
   </div>
 </section>
@@ -155,5 +160,3 @@ breadcrumbs:
 </section>
 
 {% set message = "Olá, Lela! Vi o site e quero consultar a disponibilidade para a minha festa." %}{% set label = "Falar sobre a minha festa" %}{% include "partials/whatsapp-cta.njk" %}
-
-<div class="lightbox" aria-hidden="true"></div>

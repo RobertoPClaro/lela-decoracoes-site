@@ -1,7 +1,11 @@
 <header class="site-header" data-header>
   <div class="container nav-wrap">
     <a class="brand" href="{{ '/' | url }}">
-      <img class="brand__logo" src="{{ '/assets/images/reference/763050356_18613920478042020_6619288363067691579_n.jpeg' | url }}" alt="" width="58" height="58">
+      <picture>
+        <source type="image/avif" srcset="{{ '/assets/images/generated/brand-logo-116.avif' | url }} 116w, {{ '/assets/images/generated/brand-logo-174.avif' | url }} 174w" sizes="(max-width: 560px) 46px, 52px">
+        <source type="image/webp" srcset="{{ '/assets/images/generated/brand-logo-116.webp' | url }} 116w, {{ '/assets/images/generated/brand-logo-174.webp' | url }} 174w" sizes="(max-width: 560px) 46px, 52px">
+        <img class="brand__logo" src="{{ '/assets/images/generated/brand-logo-116.jpg' | url }}" alt="" width="58" height="58" decoding="async">
+      </picture>
       <span class="brand__text"><strong>Lela</strong><span>Decorações</span></span>
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-menu-toggle>

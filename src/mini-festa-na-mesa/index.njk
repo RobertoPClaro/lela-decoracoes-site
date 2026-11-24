@@ -40,7 +40,7 @@ breadcrumbs:
     </div>
     <div class="split__visual mini-festa__visual">
       {% set image = portfolio.featured[3] %}
-      {% set item = image %}{% set imageClass = "mini-festa__image" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "lazy" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
+      {% set item = image %}{% set imageClass = "mini-festa__image" %}{% set imageSizes = "(min-width: 900px) 35vw, 90vw" %}{% set imageLoading = "eager" %}{% set imagePreset = "card" %}{% include "partials/image.njk" %}
     </div>
   </div>
 </section>

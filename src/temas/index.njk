@@ -27,6 +27,7 @@ breadcrumbs:
       <a class="text-link" href="{{ '/portfolio/' | url }}">Abrir catálogo visual com busca <span aria-hidden="true">→</span></a>
     </div>
     <div class="portfolio-grid">
+      {% set catalogCardHeadingLevel = 3 %}
       {% set themesHighlight = ["Patrulha Canina", "A Casa Mágica da Gabby", "Bluey", "Fazendinha", "Chá Revelação – Menino ou Menina", "Tardezinha"] %}
       {% for themeName in themesHighlight %}
         {% set group = portfolio.catalogByName[themeName] %}
