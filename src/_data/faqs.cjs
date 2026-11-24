@@ -128,10 +128,35 @@ const items = [
     source: ["/portfolio/", "/duvidas/"],
     confirmationStatus: "CATALOG_AND_PUBLISHED_SITE_COPY",
     services: ["pegue-e-monte", "mini-festa-na-mesa"]
+  },
+  {
+    id: "pegue-monte-vs-mini-festa",
+    question: "Qual é a diferença entre Pegue e Monte e Mini Festa na Mesa?",
+    answer: "No Pegue e Monte, moradores de Joinville e Araquari escolhem o tema e o porte, combinam retirada e devolução no Paranaguamirim (com prazo de até 24 horas, podendo solicitar mais tempo com antecedência) ou consultam entrega sob disponibilidade, e montam o kit. Já a Mini Festa na Mesa é uma proposta compacta para celebrações menores, como só um bolinho e mesversário, com composição, cobertura e logística confirmadas no atendimento.",
+    category: "service",
+    source: ["/pegue-e-monte/", "/mini-festa-na-mesa/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte", "mini-festa-na-mesa"]
+  },
+  {
+    id: "how-to-request-quote",
+    question: "Quais informações devo enviar para solicitar disponibilidade e orçamento?",
+    answer: "Envie pelo WhatsApp a data da festa, a cidade ou o bairro, o tema ou estilo desejado e se prefere Pegue e Monte ou Mini Festa na Mesa. Com esses dados, a Lela verifica disponibilidade, composição e logística para a sua data.",
+    category: "booking",
+    source: ["/contato/", "/como-funciona/", "/duvidas/"],
+    confirmationStatus: "PUBLISHED_SITE_COPY",
+    services: ["pegue-e-monte", "mini-festa-na-mesa"]
   }
 ];
 
 const byId = new Map(items.map((item) => [item.id, item]));
+function forIds(ids = []) {
+  return ids.map((id) => {
+    const entry = byId.get(id);
+    if (!entry) throw new Error(`FAQ não encontrado: ${id}`);
+    return entry;
+  });
+}
 const cityQuestionIds = [
   "pegue-monte-definition", "pickup-eligibility", "kit-composition", "customer-assembly", "reservation", "delivery",
   "mini-festa-logistics", "return-period", "payment-methods", "cancellation",
@@ -175,5 +200,6 @@ function regionalFor(location) {
 
 module.exports = items;
 module.exports.byId = byId;
+module.exports.forIds = forIds;
 module.exports.regionalFor = regionalFor;
 module.exports.regionalQuestionIds = { city: cityQuestionIds, locality: localityQuestionIds };

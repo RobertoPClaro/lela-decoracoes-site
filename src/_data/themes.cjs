@@ -352,6 +352,45 @@ function themeTitle(name) {
   return localizedTitle.length <= 60 ? localizedTitle : `${name} em Joinville | Lela`;
 }
 
+const prioritySeoOverrides = {
+  "Patrulha Canina": {
+    title: "Pegue e Monte Patrulha Canina em Joinville | Lela",
+    description: "Pegue e Monte Patrulha Canina em Joinville e Araquari: veja o painel dos filhotes no acervo e consulte também disponibilidade da Mini Festa.",
+    intro: "O painel Patrulha Canina destaca o grupo de filhotes uniformizados sobre base verde. Informe a data e o local para consultar o Pegue e Monte em Joinville e Araquari ou as condições da Mini Festa na Mesa."
+  },
+  "A Casa Mágica da Gabby": {
+    title: "Pegue e Monte Casa Mágica da Gabby em Joinville | Lela",
+    description: "Veja o painel ilustrado e o exemplo de mesa montada de A Casa Mágica da Gabby. Consulte disponibilidade em Pegue e Monte para Joinville ou Araquari."
+  },
+  "Bluey": {
+    title: "Decoração Bluey Pegue e Monte em Joinville | Lela",
+    description: "Compare o painel ilustrado e a mesa montada Bluey. Consulte disponibilidade de Pegue e Monte em Joinville e Araquari ou condições da Mini Festa."
+  },
+  "Fazendinha": {
+    title: "Decoração Fazendinha Pegue e Monte em Joinville | Lela",
+    description: "Veja o painel Fazendinha com celeiro, moinho, trator e animais no acervo da Lela e consulte disponibilidade de Pegue e Monte em Joinville e Araquari.",
+    intro: "O painel Fazendinha reúne celeiro, moinho, trator e animais em cores quentes e verdes. Envie a data e o bairro ou cidade para consultar o formato disponível."
+  },
+  "Ursinho Bebê Azul": {
+    title: "Ursinho Bebê Azul Pegue e Monte em Joinville | Lela",
+    description: "Veja a mesa montada Ursinho Bebê Azul com balões e suportes decorativos. Consulte Pegue e Monte em Joinville e Araquari ou condições da Mini Festa.",
+    intro: "A foto de Ursinho Bebê Azul apresenta uma montagem externa em azul e branco para chá de bebê, mesversário ou aniversário. Consulte com a Lela os itens e formatos disponíveis para a sua data."
+  },
+  "Chá Revelação – Menino ou Menina": {
+    title: "Chá Revelação Pegue e Monte em Joinville | Lela",
+    description: "Veja o painel neutro e a mesa montada de Chá Revelação. Combine o sigilo e consulte Pegue e Monte em Joinville e Araquari ou condições da Mini Festa."
+  },
+  "Safari Baby": {
+    title: "Decoração Safari Baby Pegue e Monte em Joinville | Lela",
+    description: "Veja o painel da savana e a mesa montada Safari Baby. Consulte Pegue e Monte em Joinville e Araquari ou disponibilidade e logística da Mini Festa."
+  },
+  "Stitch": {
+    title: "Decoração Stitch Pegue e Monte em Joinville | Lela",
+    description: "Veja a referência de painel Stitch azul em fundo rosa com corações no acervo da Lela e consulte disponibilidade de Pegue e Monte em Joinville e Araquari.",
+    intro: "O painel Stitch combina a personagem em azul com fundo rosa e corações. Envie a data da comemoração e a cidade para consultar a disponibilidade e o formato ideal."
+  }
+};
+
 const pages = portfolio.catalog.map((group) => {
   const review = editorialReviews[group.themeName];
   const definition = review
@@ -396,6 +435,7 @@ const pages = portfolio.catalog.map((group) => {
   const use = definition?.use || editorialCopy[group.themeName]?.use || (namePending
     ? "Antes de considerar esta referência como uma oferta, confirme o nome e a associação das imagens com a Lela. A consulta pode ser feita pelo WhatsApp nesta página."
     : "Use as imagens para indicar à Lela a referência visual que procura. Informe a data, a cidade e o serviço desejado; a equipe confirma a disponibilidade e os itens que podem compor a opção. As fotos não definem uma composição fixa.");
+  const seoOverride = prioritySeoOverrides[group.themeName] || {};
   return {
     ...(definition || {}),
     id: group.slug,
@@ -419,10 +459,10 @@ const pages = portfolio.catalog.map((group) => {
     availabilityStatus: "VERIFY_BY_DATE",
     needsNameConfirmation: namePending,
     needsAssociationConfirmation: associationPending,
-    title: themeTitle(group.themeName),
-    description: definition?.description || `Veja as fotos associadas a ${group.themeName} no catálogo da Lela. Consulte disponibilidade e composição para sua data em Joinville ou Araquari.`,
+    title: seoOverride.title || themeTitle(group.themeName),
+    description: seoOverride.description || definition?.description || `Veja as fotos associadas a ${group.themeName} no catálogo da Lela. Consulte disponibilidade e composição para sua data em Joinville ou Araquari.`,
     h1: definition?.h1 || `Referência de ${group.themeName} para sua comemoração`,
-    intro: definition?.intro || `Confira as fotos cadastradas como ${group.themeName}. ${group.hasThemeReference ? "O acervo inclui um painel de referência." : "O acervo inclui uma referência visual."}${group.hasMountedExample ? " Também há exemplo de montagem." : ""} A Lela confirma disponibilidade, formato e composição para a data solicitada.`,
+    intro: seoOverride.intro || definition?.intro || `Confira as fotos cadastradas como ${group.themeName}. ${group.hasThemeReference ? "O acervo inclui um painel de referência." : "O acervo inclui uma referência visual."}${group.hasMountedExample ? " Também há exemplo de montagem." : ""} A Lela confirma disponibilidade, formato e composição para a data solicitada.`,
     about,
     use,
     visualDescription: definition?.galleryText || images.map((image) => image.alt).join(" "),
