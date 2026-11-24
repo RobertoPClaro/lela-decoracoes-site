@@ -376,7 +376,7 @@ const reviews = {
     "A fotografia mostra um exemplo completo de apresentação em ambiente externo, com balões agrupados à esquerda e suportes de alturas diferentes. O registro ajuda a visualizar a paleta azul, mas não define o conteúdo de uma reserva.",
     "Mostre a imagem para consultar a proposta de montagem e confirme separadamente quais peças e qual serviço podem ser contratados para sua data.",
     "Exemplo de mesa Ursinho Bebê Azul com balões e suportes decorativos.",
-    { imageType: "mounted", faqQuestion: "A foto do Ursinho Bebê Azul define o kit reservado?", faqAnswer: "Não. A imagem é um exemplo de mesa com painel de ursinho, balões azuis e suportes decorativos. A composição e o serviço disponíveis para a data precisam ser confirmados com a Lela." }
+    { imageType: "mounted", faqQuestion: "A foto do Ursinho Bebê Azul define o kit reservado?", faqAnswer: "Não. A imagem é um exemplo de mesa com painel de ursinho, balões azuis e suportes decorativos. A composição e o serviço disponíveis para a data precisam ser confirmados com a Lela.", related: ["Safari Baby", "Chá Revelação – Menino ou Menina", "Eu Amo Tetê – Vaquinha"] }
   ),
   "Vasco da Gama": review(
     "um escudo preto e branco com navio ao centro, sobre fundo escuro",
