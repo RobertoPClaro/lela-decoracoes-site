@@ -86,7 +86,7 @@ permalink: "{{ local.path }}"
       <li><span>03</span><h3>Retire e monte</h3><p>Combine o horário da retirada. No Pegue e Monte, a cliente transporta, monta e desmonta conforme as orientações recebidas.</p></li>
       <li><span>04</span><h3>Devolva o kit</h3><p>Faça a devolução no ponto e no prazo combinados com a Lela.</p></li>
     </ol>
-    <p class="local-process__links"><a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Entenda o Pegue e Monte <span aria-hidden="true">→</span></a><a class="text-link" href="{{ '/mini-festa-na-mesa/' | url }}">Conheça a Mini Festa na Mesa <span aria-hidden="true">→</span></a></p>
+    <p class="local-process__links"><a class="text-link" href="{{ '/pegue-e-monte/' | url }}">Entenda o Pegue e Monte <span aria-hidden="true">→</span></a><a class="text-link" href="{{ '/mini-festa-na-mesa/' | url }}">Conheça a Mini Festa na Mesa <span aria-hidden="true">→</span></a><a class="text-link" href="{{ '/como-funciona/' | url }}">Ver como funciona <span aria-hidden="true">→</span></a><a class="text-link" href="{{ '/duvidas/' | url }}">Tirar dúvidas frequentes <span aria-hidden="true">→</span></a></p>
   </div>
 </section>
 
@@ -104,6 +104,9 @@ permalink: "{{ local.path }}"
       <address><a href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ site.address.display }}</a></address>
       {% if local.content.pickupNeighborhoodPath %}
         <p><a class="text-link" href="{{ local.content.pickupNeighborhoodPath | url }}">{{ local.content.pickupLabel }} <span aria-hidden="true">→</span></a></p>
+      {% elif local.type == "city" and citySlug == "araquari" %}
+        <p><a class="text-link" href="{{ '/regioes-atendidas/joinville/paranaguamirim/' | url }}">Ver detalhes do ponto de retirada no Paranaguamirim (Joinville) <span aria-hidden="true">→</span></a></p>
+        <p><a class="text-link" href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ local.content.pickupLabel }} <span aria-hidden="true">↗</span></a></p>
       {% elif local.type == "city" %}
         <p><a class="text-link" href="{{ site.mapsUrl }}" target="_blank" rel="noopener">{{ local.content.pickupLabel }} <span aria-hidden="true">↗</span></a></p>
       {% endif %}
@@ -113,11 +116,13 @@ permalink: "{{ local.path }}"
         <p class="eyebrow">Como consultar</p>
         <h2>Envie os dados da sua festa.</h2>
         <ul class="check-list">
-          <li>Cidade e bairro do evento.</li>
           <li>Data da comemoração.</li>
-          <li>Serviço ou tema que você procura.</li>
+          <li>Cidade e bairro do evento.</li>
+          <li>Tema ou estilo que você procura.</li>
+          <li>Serviço desejado (Pegue e Monte ou Mini Festa na Mesa).</li>
         </ul>
         <p>A Lela confirma disponibilidade, retirada e eventual entrega pelo WhatsApp.</p>
+        <p><a class="text-link" href="{{ '/contato/' | url }}">Abrir formulário de pré-orçamento <span aria-hidden="true">→</span></a></p>
       </div>
     </div>
   </div>
