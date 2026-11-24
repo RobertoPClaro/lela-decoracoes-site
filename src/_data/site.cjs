@@ -108,7 +108,7 @@ const localBusinessSchema = JSON.stringify({
   "@type": "LocalBusiness",
   "@id": organizationId || instagramUrl,
   name: "Lela Decorações",
-  description: "Decoração de festas em Joinville e Araquari com Pegue e Monte e Mini Festa na Mesa.",
+  description: "Decoração de festas com Pegue e Monte para moradores de Joinville e Araquari (retirada no Paranaguamirim) e Mini Festa na Mesa sob consulta.",
   telephone: `+${phoneDigits}`,
   address: {
     "@type": "PostalAddress",

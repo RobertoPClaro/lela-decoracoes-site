@@ -56,8 +56,10 @@
     {% set globalWhatsAppMessage = "Olá, Lela! Quero consultar a disponibilidade de uma decoração." %}
     {% if theme is defined and theme.name %}
       {% set globalWhatsAppMessage = "Olá, Lela! Tenho interesse na decoração " + theme.name + ". Gostaria de consultar a disponibilidade e os formatos possíveis para minha data. Posso informar a data e a cidade ou o bairro da festa." %}
-    {% elif local is defined and local.whatsappMessage %}
-      {% set globalWhatsAppMessage = local.whatsappMessage %}
+    {% elif local is defined and local.content and local.content.whatsappMessage %}
+      {% set globalWhatsAppMessage = local.content.whatsappMessage %}
+    {% elif page.url == "/regioes-atendidas/" %}
+      {% set globalWhatsAppMessage = "Olá, Lela! Quero consultar o Pegue e Monte para minha festa. Posso informar a cidade, o bairro, a data e o tema para confirmar retirada ou eventual entrega." %}
     {% elif page.url == "/pegue-e-monte/" %}
       {% set globalWhatsAppMessage = "Olá, Lela! Quero consultar um kit Pegue e Monte. Posso informar a data, o tema e a cidade ou o bairro da festa." %}
     {% elif page.url == "/mini-festa-na-mesa/" %}
